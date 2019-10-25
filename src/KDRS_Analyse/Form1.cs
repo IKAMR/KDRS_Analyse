@@ -57,7 +57,12 @@ namespace KDRS_Analyse
             else if (rBtnDcmLog.Checked)
                 ; // readDcmLog
             else if (rBtnDrdFiles.Checked)
-                ; // readDrdFiles
+            {
+                if (rBtnArch.Checked)
+                    ; // readDrdFilesArch
+                else
+                    ; // readDrdFilesProd
+            }
             else if (rBtnIKAVALog.Checked)
                 ; // readIKAVALog
             else if (rBtnIKAVANoConvFiles.Checked)
