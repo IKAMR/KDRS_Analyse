@@ -13,8 +13,9 @@ namespace KDRS_Analyse
     public partial class Form1 : Form
     {
 
-        string fileName = string.Empty;
+        string fileName = String.Empty;
         string outFolder = String.Empty;
+        string outFileName = "extractionAnalyse.xml";
 
         public Form1()
         {
@@ -33,13 +34,42 @@ namespace KDRS_Analyse
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-            fileName
+            fileName = files[0];
             if (files.Count() > 1)
                 MessageBox.Show("One file at the time");
             else
             {
+                outFolder = txtBoxOutFolder.Text;
 
+                if ("" != txtBoxOutFile.Text)
+                    outFileName = txtBoxOutFile.Text;
+
+                ReadFile();
             }
+        }
+
+        private void ReadFile()
+        {
+            if (rBtnInfoXml.Checked)
+                ;// readInfoXml
+            else if (rBtnDcmBlbRpt.Checked)
+                ;// readDcmBlbRpt
+            else if (rBtnDcmLog.Checked)
+                ; // readDcmLog
+            else if (rBtnDrdFiles.Checked)
+                ; // readDrdFiles
+            else if (rBtnIKAVALog.Checked)
+                ; // readIKAVALog
+            else if (rBtnIKAVANoConvFiles.Checked)
+                ; // readIKAVANoConvFiles
+            else if (rBtnVera.Checked)
+                ; // readVera
+            else if (rBtnArk5Xml.Checked)
+                ; // readArk5Xml
+            else if (rBtnDcmN5val.Checked)
+                ; // readDcmN5Val
+
+            // osv for resten
         }
     }
 }
