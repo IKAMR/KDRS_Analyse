@@ -34,8 +34,21 @@ namespace KDRS_Analyse
 
                 while ((line = reader.ReadLine()) != null)
                 {
-                    if (lineCount < 3)
+                    if (lineCount == 0)
+                    {
+                        string[] splitter = { "was"};
+                        dcmTool.dcmTool.name = line.Split(splitter, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        lineCount++;
                         break;
+                    }
+
+                    if (lineCount == 1)
+                    {
+                        string[] splitter = { "name" };
+
+                        dcmTool.project = line.Split(splitter, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        break;
+                    }
 
                     string[] firstSplit = line.Split(',');
                     File file = new File();
@@ -47,11 +60,19 @@ namespace KDRS_Analyse
                     file.end = firstSplit[5].Split(':')[1].Trim();
 
                     Globals.extractionAnalyse.files.Add(file);
+
+                    lineCount++;
                 }
             }
 
             Globals.extractionAnalyse.tools.Add(dcmTool);
+        }
 
+        public string timeConv(string timeString)
+        {
+            DateTime parseDate = DateTime.Parse(timeString);
+
+            return parseDate.ToString("yyyy-MM-dd HH:mm:mm");
         }
     }
 
