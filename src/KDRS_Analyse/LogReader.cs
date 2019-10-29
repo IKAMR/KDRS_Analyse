@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,9 +9,48 @@ namespace KDRS_Analyse
 {
     class LogReader
     {
-
-        private void readDcmBlbRpt()
+        private void ReadDcmBlbRpt(string fileName)
         {
+            string line;
+            using (StreamReader reader = new StreamReader(fileName))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+
+
+                }
+            }
+        }
+
+        private void ReadDcmLog(string fileName)
+        {
+            Globals.toolCounter++;
+            Tool dcmTool = new Tool(Globals.toolCounter.ToString(), "101", "Decom", "1.3.0");
+
+            string line;
+            using (StreamReader reader = new StreamReader(fileName))
+            {
+                int lineCount = 0;
+
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (lineCount < 3)
+                        break;
+
+                    string[] firstSplit = line.Split(',');
+                    File file = new File();
+                    file.start = firstSplit[0].Split(':')[1].Trim();
+                    file.input = firstSplit[1].Split(':')[1].Trim();
+                    file.mime = firstSplit[2].Split(':')[1].Trim();
+                    file.output = firstSplit[3].Split(':')[1].Trim();
+                    file.result = firstSplit[4].Split(':')[1].Trim();
+                    file.end = firstSplit[5].Split(':')[1].Trim();
+
+                    Globals.extractionAnalyse.files.Add(file);
+                }
+            }
+
+            Globals.extractionAnalyse.tools.Add(dcmTool);
 
         }
     }

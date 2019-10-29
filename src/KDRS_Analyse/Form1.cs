@@ -13,6 +13,7 @@ namespace KDRS_Analyse
     public partial class Form1 : Form
     {
 
+        
         string fileName = String.Empty;
         string outFolder = String.Empty;
         string outFileName = "extractionAnalyse.xml";
@@ -43,6 +44,8 @@ namespace KDRS_Analyse
 
                 if ("" != txtBoxOutFile.Text)
                     outFileName = txtBoxOutFile.Text;
+
+
 
                 ReadFile();
             }
@@ -76,5 +79,11 @@ namespace KDRS_Analyse
 
             // osv for resten
         }
+    }
+
+    public static class Globals
+    {
+        public static int toolCounter;
+        public static ExtractionAnalyse extractionAnalyse;
     }
 }
