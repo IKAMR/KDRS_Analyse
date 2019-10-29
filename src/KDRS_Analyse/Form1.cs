@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,8 @@ namespace KDRS_Analyse
 {
     public partial class Form1 : Form
     {
-
+        LogReader logReader = new LogReader();
+        XMLWriter writer = new XMLWriter();
         
         string fileName = String.Empty;
         string outFolder = String.Empty;
@@ -45,9 +47,10 @@ namespace KDRS_Analyse
                 if ("" != txtBoxOutFile.Text)
                     outFileName = txtBoxOutFile.Text;
 
-
+                string outFile = Path.Combine(outFolder, outFileName);
 
                 ReadFile();
+                writer.writeXml(outFile);
             }
         }
 
@@ -56,7 +59,7 @@ namespace KDRS_Analyse
             if (rBtnInfoXml.Checked)
                 ;// readInfoXml
             else if (rBtnDcmBlbRpt.Checked)
-                ;// readDcmBlbRpt
+                logReader.ReadDcmBlbRpt(fileName);// readDcmBlbRpt
             else if (rBtnDcmLog.Checked)
                 ; // readDcmLog
             else if (rBtnDrdFiles.Checked)

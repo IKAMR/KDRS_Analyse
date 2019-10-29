@@ -9,7 +9,7 @@ namespace KDRS_Analyse
 {
     class LogReader
     {
-        private void ReadDcmBlbRpt(string fileName)
+        public void ReadDcmBlbRpt(string fileName)
         {
             Globals.toolCounter++;
             Tool dcmTool = new Tool(Globals.toolCounter.ToString(), "101", "Decom", "1.3.0");
@@ -55,7 +55,7 @@ namespace KDRS_Analyse
             Globals.extractionAnalyse.tools.Add(dcmTool);
         }
 
-        private void ReadDcmLog(string fileName)
+        public void ReadDcmLog(string fileName)
         {
         }
 
