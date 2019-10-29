@@ -11,19 +11,6 @@ namespace KDRS_Analyse
     {
         private void ReadDcmBlbRpt(string fileName)
         {
-            string line;
-            using (StreamReader reader = new StreamReader(fileName))
-            {
-                while ((line = reader.ReadLine()) != null)
-                {
-
-
-                }
-            }
-        }
-
-        private void ReadDcmLog(string fileName)
-        {
             Globals.toolCounter++;
             Tool dcmTool = new Tool(Globals.toolCounter.ToString(), "101", "Decom", "1.3.0");
 
@@ -36,7 +23,7 @@ namespace KDRS_Analyse
                 {
                     if (lineCount == 0)
                     {
-                        string[] splitter = { "was"};
+                        string[] splitter = { "was" };
                         dcmTool.dcmTool.name = line.Split(splitter, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                         lineCount++;
                         break;
@@ -66,6 +53,10 @@ namespace KDRS_Analyse
             }
 
             Globals.extractionAnalyse.tools.Add(dcmTool);
+        }
+
+        private void ReadDcmLog(string fileName)
+        {
         }
 
         public string timeConv(string timeString)
