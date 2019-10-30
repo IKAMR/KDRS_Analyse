@@ -19,10 +19,20 @@ namespace KDRS_Analyse
         string fileName = String.Empty;
         string outFolder = String.Empty;
         string outFileName = "extractionAnalyse.xml";
+        string inRootFolder = String.Empty;
+        string outRootFolder = String.Empty;
 
         public Form1()
         {
             InitializeComponent();
+            Text = Globals.toolName + " " + Globals.toolVersion;
+
+            this.AllowDrop = true;
+            this.DragDrop += new DragEventHandler(Form1_DragDrop);
+            this.DragEnter += new DragEventHandler(Form1_DragEnter);
+
+            Globals.extractionAnalyse.files = new List<File>();
+
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -42,15 +52,25 @@ namespace KDRS_Analyse
                 MessageBox.Show("One file at the time");
             else
             {
-                outFolder = txtBoxOutFolder.Text;
+                outFolder = Path.GetDirectoryName(fileName);
+                if ("" != txtBoxOutFolder.Text)
+                    outFolder = txtBoxOutFolder.Text;
 
                 if ("" != txtBoxOutFile.Text)
                     outFileName = txtBoxOutFile.Text;
 
+                inRootFolder = txtBoxInRoot.Text;
+                outRootFolder = txtBoxOutRoot.Text;
+
                 string outFile = Path.Combine(outFolder, outFileName);
 
+                Console.WriteLine("File name: " + fileName);
+
+
                 ReadFile();
-                writer.writeXml(outFile);
+
+                Console.WriteLine("outFile: " + outFile);
+                writer.WriteXml(outFile);
             }
         }
 
@@ -59,7 +79,10 @@ namespace KDRS_Analyse
             if (rBtnInfoXml.Checked)
                 ;// readInfoXml
             else if (rBtnDcmBlbRpt.Checked)
-                logReader.ReadDcmBlbRpt(fileName);// readDcmBlbRpt
+            { 
+                Console.WriteLine("Dcm blobreport");
+                logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
+            }
             else if (rBtnDcmLog.Checked)
                 ; // readDcmLog
             else if (rBtnDrdFiles.Checked)
@@ -86,7 +109,10 @@ namespace KDRS_Analyse
 
     public static class Globals
     {
-        public static int toolCounter;
-        public static ExtractionAnalyse extractionAnalyse;
+        public static readonly String toolName = "KDRS Analyse";
+        public static readonly String toolVersion = "0.1";
+
+        public static int toolCounter = 0;
+        public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse();
     }
 }

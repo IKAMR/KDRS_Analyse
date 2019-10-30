@@ -11,11 +11,14 @@ namespace KDRS_Analyse
 {
     class XMLWriter
     {
-        public void writeXml(string fileName)
+        public void WriteXml(string fileName)
         {
+            Console.WriteLine("writing to: " + fileName);
             XmlSerializer ser = new XmlSerializer(typeof(ExtractionAnalyse));
+
             using (TextWriter writer = new StreamWriter(fileName))
             {
+                Console.WriteLine("serializing");
                 ser.Serialize(writer, Globals.extractionAnalyse);
             }
         }
@@ -23,6 +26,12 @@ namespace KDRS_Analyse
 
     public class ExtractionAnalyse
     {
+        public ExtractionAnalyse()
+        {
+            files = new List<File>();
+            tools = new List<Tool>();
+        }
+
         public List<Tool> tools { get; set; }
         public Info info { get; set; }
         public Agents agents { get; set; }
@@ -46,12 +55,12 @@ namespace KDRS_Analyse
 
     public class Tool
     {
-        public Tool(string no, string id, string name, string version)
+        public Tool()
         {
-            this.no = no;
-            this.id = id;
-            this.name = name;
-            this.version = version;
+   
+            dcmTool = new DcmTool();
+            files = new DcmFiles();
+            inputPath = new List<string>();
         }
 
         [XmlAttribute]
@@ -65,21 +74,44 @@ namespace KDRS_Analyse
 
         [XmlAttribute]
         public string version { get; set; }
-
-        [Optional]
         public string project { get; set; }
-
-        [Optional]
         public DcmTool dcmTool { get; set; }
-
-        [Optional]
         public DcmFiles files { get; set; }
 
         public List<string> inputPath { get; set; }
         public string outputPath { get; set; }
 
+        public class DcmFiles
+        {
+            [XmlAttribute]
+            public string success { get; set; }
 
+            [XmlAttribute]
+            public string failed { get; set; }
+
+            [XmlAttribute]
+            public string notConverted { get; set; }
+
+            [XmlAttribute]
+            public string idle { get; set; }
+
+            [XmlAttribute]
+            public string inProgress { get; set; }
+
+            [XmlText]
+            public int files { get; set; }
+        }
+
+        public class DcmTool
+        {
+            [XmlAttribute]
+            public string version { get; set; }
+
+            public string name { get; set; }
+        }
     }
+
+
 
     public class Info
     {
@@ -105,6 +137,11 @@ namespace KDRS_Analyse
 
     public class SystemInfo
     {
+        public SystemInfo()
+        {
+            name = new Id_name();
+        }
+
         public string id { get; set; }
         public Id_name name { get; set; }
         public string version { get; set; }
@@ -112,14 +149,15 @@ namespace KDRS_Analyse
         public string typeVersion { get; set; }
         public string vendor { get; set; }
         public string vendorOriginal { get; set; }
-    }
 
-    public class Id_name
-    {
-        [XmlAttribute]
-        public string id { get; set; }
+        public class Id_name
+        {
+            [XmlAttribute]
+            public string id { get; set; }
 
-        public string name { get; set; }
+            [XmlText]
+            public string name { get; set; }
+        }
     }
 
     public class ExtractorSoftware
@@ -138,42 +176,54 @@ namespace KDRS_Analyse
     */
     public class File
     {
+        public File()
+        {
+            result = new Result();
+        }
+
+        [XmlAttribute]
+        public string id { get; set; }
+
         public string mime { get; set; }
         public string ext { get; set; }
-        public string result { get; set; }
+        public Result result { get; set; }
         public string input { get; set; }
         public string output { get; set; }
         public string start { get; set; }
         public string end { get; set; }
+        public Warning warning { get; set; }
+        public FileError error { get; set; }
+
+        public class Result
+        {
+            [XmlAttribute]
+            public int tool { get; set; }
+
+            [XmlText]
+            public string result { get; set; }
+        }
+
+        public class Warning
+        {
+            [XmlAttribute]
+            public string id { get; set; }
+
+            [XmlText]
+            public string text { get; set; }
+        }
+
+        public class FileError
+        {
+            [XmlAttribute]
+            public string id { get; set; }
+
+            [XmlText]
+            public string text { get; set; }
+        }
 
     }
 
-    public class DcmTool
-    {
 
-        [XmlAttribute]
-        public string version { get; set; }
 
-        public string name { get; set; }
-    }
 
-    public class DcmFiles
-    {
-        [XmlAttribute]
-        public string success { get; set; }
-
-        [XmlAttribute]
-        public string failed { get; set; }
-
-        [XmlAttribute]
-        public string notConverted { get; set; }
-
-        [XmlAttribute]
-        public string idle { get; set; }
-
-        [XmlAttribute]
-        public string inProgress { get; set; }
-
-        public string files { get; set; }
-    }
 }

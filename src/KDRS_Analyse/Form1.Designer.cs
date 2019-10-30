@@ -45,6 +45,14 @@
             this.txtBoxInfoText = new System.Windows.Forms.TextBox();
             this.txtBoxOutFolder = new System.Windows.Forms.TextBox();
             this.txtBoxOutFile = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.txtBoxInRoot = new System.Windows.Forms.TextBox();
+            this.txtBoxOutRoot = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // rBtnInfoXml
@@ -54,13 +62,13 @@
             this.rBtnInfoXml.Name = "rBtnInfoXml";
             this.rBtnInfoXml.Size = new System.Drawing.Size(60, 17);
             this.rBtnInfoXml.TabIndex = 0;
-            this.rBtnInfoXml.TabStop = true;
             this.rBtnInfoXml.Text = "info.xml";
             this.rBtnInfoXml.UseVisualStyleBackColor = true;
             // 
             // rBtnDcmBlbRpt
             // 
             this.rBtnDcmBlbRpt.AutoSize = true;
+            this.rBtnDcmBlbRpt.Checked = true;
             this.rBtnDcmBlbRpt.Location = new System.Drawing.Point(12, 57);
             this.rBtnDcmBlbRpt.Name = "rBtnDcmBlbRpt";
             this.rBtnDcmBlbRpt.Size = new System.Drawing.Size(152, 17);
@@ -76,7 +84,6 @@
             this.rBtnDcmLog.Name = "rBtnDcmLog";
             this.rBtnDcmLog.Size = new System.Drawing.Size(92, 17);
             this.rBtnDcmLog.TabIndex = 2;
-            this.rBtnDcmLog.TabStop = true;
             this.rBtnDcmLog.Text = "Decom full log";
             this.rBtnDcmLog.UseVisualStyleBackColor = true;
             // 
@@ -87,7 +94,6 @@
             this.rBtnDrdFiles.Name = "rBtnDrdFiles";
             this.rBtnDrdFiles.Size = new System.Drawing.Size(81, 17);
             this.rBtnDrdFiles.TabIndex = 3;
-            this.rBtnDrdFiles.TabStop = true;
             this.rBtnDrdFiles.Text = "DROID files";
             this.rBtnDrdFiles.UseVisualStyleBackColor = true;
             // 
@@ -98,7 +104,6 @@
             this.rBtnIKAVALog.Name = "rBtnIKAVALog";
             this.rBtnIKAVALog.Size = new System.Drawing.Size(73, 17);
             this.rBtnIKAVALog.TabIndex = 4;
-            this.rBtnIKAVALog.TabStop = true;
             this.rBtnIKAVALog.Text = "IKAVA log";
             this.rBtnIKAVALog.UseVisualStyleBackColor = true;
             // 
@@ -109,7 +114,6 @@
             this.rBtnIKAVAConvFiles.Name = "rBtnIKAVAConvFiles";
             this.rBtnIKAVAConvFiles.Size = new System.Drawing.Size(128, 17);
             this.rBtnIKAVAConvFiles.TabIndex = 5;
-            this.rBtnIKAVAConvFiles.TabStop = true;
             this.rBtnIKAVAConvFiles.Text = "IKAVA converted files";
             this.rBtnIKAVAConvFiles.UseVisualStyleBackColor = true;
             // 
@@ -120,7 +124,6 @@
             this.rBtnIKAVANoConvFiles.Name = "rBtnIKAVANoConvFiles";
             this.rBtnIKAVANoConvFiles.Size = new System.Drawing.Size(146, 17);
             this.rBtnIKAVANoConvFiles.TabIndex = 6;
-            this.rBtnIKAVANoConvFiles.TabStop = true;
             this.rBtnIKAVANoConvFiles.Text = "IKAVA files not converted";
             this.rBtnIKAVANoConvFiles.UseVisualStyleBackColor = true;
             // 
@@ -131,7 +134,6 @@
             this.rBtnVera.Name = "rBtnVera";
             this.rBtnVera.Size = new System.Drawing.Size(67, 17);
             this.rBtnVera.TabIndex = 7;
-            this.rBtnVera.TabStop = true;
             this.rBtnVera.Text = "veraPDF";
             this.rBtnVera.UseVisualStyleBackColor = true;
             // 
@@ -142,7 +144,6 @@
             this.rBtnArk5Xml.Name = "rBtnArk5Xml";
             this.rBtnArk5Xml.Size = new System.Drawing.Size(86, 17);
             this.rBtnArk5Xml.TabIndex = 8;
-            this.rBtnArk5Xml.TabStop = true;
             this.rBtnArk5Xml.Text = "Arkade 5 xml";
             this.rBtnArk5Xml.UseVisualStyleBackColor = true;
             // 
@@ -153,14 +154,13 @@
             this.rBtnDcmN5val.Name = "rBtnDcmN5val";
             this.rBtnDcmN5val.Size = new System.Drawing.Size(142, 17);
             this.rBtnDcmN5val.TabIndex = 9;
-            this.rBtnDcmN5val.TabStop = true;
             this.rBtnDcmN5val.Text = "Documaster N5 validator";
             this.rBtnDcmN5val.UseVisualStyleBackColor = true;
             // 
             // rBtnProd
             // 
             this.rBtnProd.AutoSize = true;
-            this.rBtnProd.Location = new System.Drawing.Point(12, 292);
+            this.rBtnProd.Location = new System.Drawing.Point(3, 27);
             this.rBtnProd.Name = "rBtnProd";
             this.rBtnProd.Size = new System.Drawing.Size(76, 17);
             this.rBtnProd.TabIndex = 10;
@@ -171,7 +171,7 @@
             // rBtnArch
             // 
             this.rBtnArch.AutoSize = true;
-            this.rBtnArch.Location = new System.Drawing.Point(12, 315);
+            this.rBtnArch.Location = new System.Drawing.Point(3, 50);
             this.rBtnArch.Name = "rBtnArch";
             this.rBtnArch.Size = new System.Drawing.Size(63, 17);
             this.rBtnArch.TabIndex = 11;
@@ -191,7 +191,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 276);
+            this.label2.Location = new System.Drawing.Point(3, 11);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(46, 13);
             this.label2.TabIndex = 15;
@@ -210,30 +210,93 @@
             // 
             // txtBoxOutFolder
             // 
-            this.txtBoxOutFolder.Location = new System.Drawing.Point(15, 351);
+            this.txtBoxOutFolder.Location = new System.Drawing.Point(157, 427);
             this.txtBoxOutFolder.Name = "txtBoxOutFolder";
             this.txtBoxOutFolder.Size = new System.Drawing.Size(443, 20);
             this.txtBoxOutFolder.TabIndex = 17;
             // 
             // txtBoxOutFile
             // 
-            this.txtBoxOutFile.Location = new System.Drawing.Point(15, 377);
+            this.txtBoxOutFile.Location = new System.Drawing.Point(157, 453);
             this.txtBoxOutFile.Name = "txtBoxOutFile";
             this.txtBoxOutFile.Size = new System.Drawing.Size(443, 20);
             this.txtBoxOutFile.TabIndex = 18;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.rBtnProd);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.rBtnArch);
+            this.panel1.Location = new System.Drawing.Point(12, 265);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(188, 80);
+            this.panel1.TabIndex = 19;
+            // 
+            // txtBoxInRoot
+            // 
+            this.txtBoxInRoot.Location = new System.Drawing.Point(157, 375);
+            this.txtBoxInRoot.Name = "txtBoxInRoot";
+            this.txtBoxInRoot.Size = new System.Drawing.Size(443, 20);
+            this.txtBoxInRoot.TabIndex = 21;
+            // 
+            // txtBoxOutRoot
+            // 
+            this.txtBoxOutRoot.Location = new System.Drawing.Point(157, 401);
+            this.txtBoxOutRoot.Name = "txtBoxOutRoot";
+            this.txtBoxOutRoot.Size = new System.Drawing.Size(443, 20);
+            this.txtBoxOutRoot.TabIndex = 20;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(15, 375);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(81, 13);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "Input root folder";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 401);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(89, 13);
+            this.label4.TabIndex = 23;
+            this.label4.Text = "Output root folder";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(15, 430);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(73, 13);
+            this.label5.TabIndex = 24;
+            this.label5.Text = "Analyse folder";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(15, 453);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(86, 13);
+            this.label6.TabIndex = 25;
+            this.label6.Text = "Analyse filename";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 483);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.txtBoxInRoot);
+            this.Controls.Add(this.txtBoxOutRoot);
             this.Controls.Add(this.txtBoxOutFile);
             this.Controls.Add(this.txtBoxOutFolder);
             this.Controls.Add(this.txtBoxInfoText);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.rBtnArch);
-            this.Controls.Add(this.rBtnProd);
             this.Controls.Add(this.rBtnDcmN5val);
             this.Controls.Add(this.rBtnArk5Xml);
             this.Controls.Add(this.rBtnVera);
@@ -244,8 +307,11 @@
             this.Controls.Add(this.rBtnDcmLog);
             this.Controls.Add(this.rBtnDcmBlbRpt);
             this.Controls.Add(this.rBtnInfoXml);
+            this.Controls.Add(this.panel1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -270,6 +336,13 @@
         private System.Windows.Forms.TextBox txtBoxInfoText;
         private System.Windows.Forms.TextBox txtBoxOutFolder;
         private System.Windows.Forms.TextBox txtBoxOutFile;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox txtBoxInRoot;
+        private System.Windows.Forms.TextBox txtBoxOutRoot;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
     }
 }
 
