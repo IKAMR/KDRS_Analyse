@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace KDRS_Analyse
@@ -37,14 +33,7 @@ namespace KDRS_Analyse
         public Agents agents { get; set; }
         public SystemInfo system { get; set; }
         public List<File> files { get; set; }
-
     }
-    /*
-    public class Tools
-    {
-        public List<Tool> tool { get; set; }
-    }
-    */
 
     [AttributeUsage(AttributeTargets.Property,
     Inherited = false,
@@ -57,14 +46,11 @@ namespace KDRS_Analyse
     {
         public Tool()
         {
-   
-            dcmTool = new DcmTool();
-            files = new DcmFiles();
             inputPath = new List<string>();
         }
 
         [XmlAttribute]
-        public string no { get; set; }
+        public string toolNo { get; set; }
 
         [XmlAttribute]
         public string id { get; set; }
@@ -74,8 +60,18 @@ namespace KDRS_Analyse
 
         [XmlAttribute]
         public string version { get; set; }
+
+        [XmlAttribute]
+        public string role { get; set; }
+
+        [XmlAttribute]
+        public string subrole { get; set; }
+
         public string project { get; set; }
+
+        [Optional]
         public DcmTool dcmTool { get; set; }
+        [Optional]
         public DcmFiles files { get; set; }
 
         public List<string> inputPath { get; set; }
@@ -110,8 +106,6 @@ namespace KDRS_Analyse
             public string name { get; set; }
         }
     }
-
-
 
     public class Info
     {
@@ -168,27 +162,24 @@ namespace KDRS_Analyse
         public string typeVersion { get; set; }
         public string vendor { get; set; }
     }
-    /*
-    public class Files
-    {
-        public File[] file { get; set; }
-    }
-    */
+
     public class File
     {
         public File()
         {
             result = new Result();
+            inFile = new FileInfo();
+            outFile = new FileInfo();
+            warning = new Warning();
+            error = new FileError();
         }
 
         [XmlAttribute]
         public string id { get; set; }
-
-        public string mime { get; set; }
         public string ext { get; set; }
         public Result result { get; set; }
-        public string input { get; set; }
-        public string output { get; set; }
+        public FileInfo inFile { get; set; }
+        public FileInfo outFile { get; set; }
         public string start { get; set; }
         public string end { get; set; }
         public Warning warning { get; set; }
@@ -206,7 +197,16 @@ namespace KDRS_Analyse
         public class Warning
         {
             [XmlAttribute]
-            public string id { get; set; }
+            public string toolNo { get; set; }
+
+            [XmlAttribute]
+            public string element { get; set; }
+
+            [XmlAttribute]
+            public string value1 { get; set; }
+
+            [XmlAttribute]
+            public string value2 { get; set; }
 
             [XmlText]
             public string text { get; set; }
@@ -221,9 +221,21 @@ namespace KDRS_Analyse
             public string text { get; set; }
         }
 
+        public class FileInfo
+        {
+            [XmlAttribute]
+            public string mime { get; set; }
+            [XmlAttribute]
+            public string ext { get; set; }
+            [XmlAttribute]
+            public string puid { get; set; }
+            [XmlAttribute]
+            public string name { get; set; }
+            [XmlAttribute]
+            public string version { get; set; }
+
+            [XmlText]
+            public string path { get; set; }
+        }
     }
-
-
-
-
 }

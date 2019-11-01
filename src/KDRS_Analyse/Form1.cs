@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KDRS_Analyse
@@ -21,6 +16,7 @@ namespace KDRS_Analyse
         string outFileName = "extractionAnalyse.xml";
         string inRootFolder = String.Empty;
         string outRootFolder = String.Empty;
+        string outFile = String.Empty;
 
         public Form1()
         {
@@ -62,7 +58,7 @@ namespace KDRS_Analyse
                 inRootFolder = txtBoxInRoot.Text;
                 outRootFolder = txtBoxOutRoot.Text;
 
-                string outFile = Path.Combine(outFolder, outFileName);
+                outFile = Path.Combine(outFolder, outFileName);
 
                 Console.WriteLine("File name: " + fileName);
 
@@ -70,7 +66,7 @@ namespace KDRS_Analyse
                 ReadFile();
 
                 Console.WriteLine("outFile: " + outFile);
-                writer.WriteXml(outFile);
+                
             }
         }
 
@@ -87,10 +83,8 @@ namespace KDRS_Analyse
                 ; // readDcmLog
             else if (rBtnDrdFiles.Checked)
             {
-                if (rBtnArch.Checked)
-                    ; // readDrdFilesArch
-                else
-                    ; // readDrdFilesProd
+                Console.WriteLine("Droid files");
+                logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder);
             }
             else if (rBtnIKAVALog.Checked)
                 ; // readIKAVALog
@@ -104,6 +98,11 @@ namespace KDRS_Analyse
                 ; // readDcmN5Val
 
             // osv for resten
+        }
+
+        private void btnWriteXml_Click(object sender, EventArgs e)
+        {
+            writer.WriteXml(outFile);
         }
     }
 

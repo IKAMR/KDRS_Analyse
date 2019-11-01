@@ -52,6 +52,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.btnWriteXml = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -160,12 +161,13 @@
             // rBtnProd
             // 
             this.rBtnProd.AutoSize = true;
+            this.rBtnProd.Checked = true;
             this.rBtnProd.Location = new System.Drawing.Point(3, 27);
             this.rBtnProd.Name = "rBtnProd";
-            this.rBtnProd.Size = new System.Drawing.Size(76, 17);
+            this.rBtnProd.Size = new System.Drawing.Size(94, 17);
             this.rBtnProd.TabIndex = 10;
             this.rBtnProd.TabStop = true;
-            this.rBtnProd.Text = "Production";
+            this.rBtnProd.Text = "Production (In)";
             this.rBtnProd.UseVisualStyleBackColor = true;
             // 
             // rBtnArch
@@ -173,10 +175,9 @@
             this.rBtnArch.AutoSize = true;
             this.rBtnArch.Location = new System.Drawing.Point(3, 50);
             this.rBtnArch.Name = "rBtnArch";
-            this.rBtnArch.Size = new System.Drawing.Size(63, 17);
+            this.rBtnArch.Size = new System.Drawing.Size(89, 17);
             this.rBtnArch.TabIndex = 11;
-            this.rBtnArch.TabStop = true;
-            this.rBtnArch.Text = "Archival";
+            this.rBtnArch.Text = "Archival (Out)";
             this.rBtnArch.UseVisualStyleBackColor = true;
             // 
             // label1
@@ -210,16 +211,20 @@
             // 
             // txtBoxOutFolder
             // 
+            this.txtBoxOutFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBoxOutFolder.Location = new System.Drawing.Point(157, 427);
             this.txtBoxOutFolder.Name = "txtBoxOutFolder";
-            this.txtBoxOutFolder.Size = new System.Drawing.Size(443, 20);
+            this.txtBoxOutFolder.Size = new System.Drawing.Size(631, 20);
             this.txtBoxOutFolder.TabIndex = 17;
             // 
             // txtBoxOutFile
             // 
+            this.txtBoxOutFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBoxOutFile.Location = new System.Drawing.Point(157, 453);
             this.txtBoxOutFile.Name = "txtBoxOutFile";
-            this.txtBoxOutFile.Size = new System.Drawing.Size(443, 20);
+            this.txtBoxOutFile.Size = new System.Drawing.Size(631, 20);
             this.txtBoxOutFile.TabIndex = 18;
             // 
             // panel1
@@ -234,16 +239,20 @@
             // 
             // txtBoxInRoot
             // 
+            this.txtBoxInRoot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBoxInRoot.Location = new System.Drawing.Point(157, 375);
             this.txtBoxInRoot.Name = "txtBoxInRoot";
-            this.txtBoxInRoot.Size = new System.Drawing.Size(443, 20);
+            this.txtBoxInRoot.Size = new System.Drawing.Size(631, 20);
             this.txtBoxInRoot.TabIndex = 21;
             // 
             // txtBoxOutRoot
             // 
+            this.txtBoxOutRoot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBoxOutRoot.Location = new System.Drawing.Point(157, 401);
             this.txtBoxOutRoot.Name = "txtBoxOutRoot";
-            this.txtBoxOutRoot.Size = new System.Drawing.Size(443, 20);
+            this.txtBoxOutRoot.Size = new System.Drawing.Size(631, 20);
             this.txtBoxOutRoot.TabIndex = 20;
             // 
             // label3
@@ -282,11 +291,22 @@
             this.label6.TabIndex = 25;
             this.label6.Text = "Analyse filename";
             // 
+            // btnWriteXml
+            // 
+            this.btnWriteXml.Location = new System.Drawing.Point(295, 265);
+            this.btnWriteXml.Name = "btnWriteXml";
+            this.btnWriteXml.Size = new System.Drawing.Size(142, 80);
+            this.btnWriteXml.TabIndex = 26;
+            this.btnWriteXml.Text = "Create result file";
+            this.btnWriteXml.UseVisualStyleBackColor = true;
+            this.btnWriteXml.Click += new System.EventHandler(this.btnWriteXml_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 483);
+            this.Controls.Add(this.btnWriteXml);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -343,6 +363,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnWriteXml;
     }
 }
 
