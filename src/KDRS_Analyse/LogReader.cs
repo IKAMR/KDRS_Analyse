@@ -109,7 +109,7 @@ namespace KDRS_Analyse
 
                         file.result.result = firstSplit[4].Split(':')[1].Trim();
 
-                        file.result.tool = Globals.toolCounter;
+                        file.result.toolNo = Globals.toolCounter;
 
                         file.end = TimeConv(firstSplit[5].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim());
 
@@ -176,7 +176,11 @@ namespace KDRS_Analyse
 
                     //File droidFile = new File();
                     string filePath = split[3].Trim('"');
-                    string fileId = GetFileId(filePath, outRootFolder);
+                    string fileId;
+                    if (inFiles)
+                        fileId = GetFileId(filePath, inRootFolder);
+                    else 
+                        fileId = GetFileId(filePath, outRootFolder);
                     File droidFile = GetFile(fileId);
 
                     Console.WriteLine("File created");
@@ -228,7 +232,7 @@ namespace KDRS_Analyse
         public string TimeConv(string timeString)
         {
             DateTime parseDate = DateTime.ParseExact(timeString, "ddd MMM dd HH:mm:ss 'CET' yyyy", CultureInfo.InvariantCulture);
-            return parseDate.ToString("yyyy-MM-dd HH:mm:mm");
+            return parseDate.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public File GetFile(string fileId)

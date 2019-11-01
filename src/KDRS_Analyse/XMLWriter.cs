@@ -20,6 +20,7 @@ namespace KDRS_Analyse
         }
     }
 
+    [XmlType(TypeName = "extractionAnalyse")]
     public class ExtractionAnalyse
     {
         public ExtractionAnalyse()
@@ -42,6 +43,7 @@ namespace KDRS_Analyse
     {
     }
 
+    [XmlType(TypeName = "tool")]
     public class Tool
     {
         public Tool()
@@ -107,6 +109,7 @@ namespace KDRS_Analyse
         }
     }
 
+    [XmlType(TypeName = "info")]
     public class Info
     {
         public string deliveryspecification { get; set;}
@@ -119,6 +122,7 @@ namespace KDRS_Analyse
         public string sipDateTime { get; set; }
     }
 
+    [XmlType(TypeName = "agents")]
     public class Agents
     {
         public string archivist { get; set; }
@@ -129,6 +133,7 @@ namespace KDRS_Analyse
         public string preservation { get; set; }
     }
 
+    [XmlType(TypeName = "systemInfo")]
     public class SystemInfo
     {
         public SystemInfo()
@@ -154,6 +159,7 @@ namespace KDRS_Analyse
         }
     }
 
+    [XmlType(TypeName = "extractorSoftware")]
     public class ExtractorSoftware
     {
         public string name { get; set; }
@@ -163,6 +169,7 @@ namespace KDRS_Analyse
         public string vendor { get; set; }
     }
 
+    [XmlType(TypeName = "file")]
     public class File
     {
         public File()
@@ -176,19 +183,18 @@ namespace KDRS_Analyse
 
         [XmlAttribute]
         public string id { get; set; }
-        public string ext { get; set; }
         public Result result { get; set; }
-        public FileInfo inFile { get; set; }
-        public FileInfo outFile { get; set; }
         public string start { get; set; }
         public string end { get; set; }
+        public FileInfo inFile { get; set; }
+        public FileInfo outFile { get; set; }
         public Warning warning { get; set; }
         public FileError error { get; set; }
 
         public class Result
         {
             [XmlAttribute]
-            public int tool { get; set; }
+            public int toolNo { get; set; }
 
             [XmlText]
             public string result { get; set; }

@@ -10,7 +10,7 @@ namespace KDRS_Analyse
     {
         LogReader logReader = new LogReader();
         XMLWriter writer = new XMLWriter();
-        
+
         string fileName = String.Empty;
         string outFolder = String.Empty;
         string outFileName = "extractionAnalyse.xml";
@@ -62,11 +62,12 @@ namespace KDRS_Analyse
 
                 Console.WriteLine("File name: " + fileName);
 
+                txtBoxInfoText.AppendText(fileName + "\r\n");
 
                 ReadFile();
 
                 Console.WriteLine("outFile: " + outFile);
-                
+
             }
         }
 
@@ -75,7 +76,7 @@ namespace KDRS_Analyse
             if (rBtnInfoXml.Checked)
                 ;// readInfoXml
             else if (rBtnDcmBlbRpt.Checked)
-            { 
+            {
                 Console.WriteLine("Dcm blobreport");
                 logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
             }
@@ -103,6 +104,16 @@ namespace KDRS_Analyse
         private void btnWriteXml_Click(object sender, EventArgs e)
         {
             writer.WriteXml(outFile);
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            txtBoxInfoText.Clear();
+            fileName = String.Empty;
+            Globals.toolCounter = 0;
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
     }
 
