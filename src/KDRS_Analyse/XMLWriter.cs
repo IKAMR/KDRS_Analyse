@@ -48,7 +48,7 @@ namespace KDRS_Analyse
     {
         public Tool()
         {
-            inputPath = new List<string>();
+            this.inputPath = new List<string>();
         }
 
         [XmlAttribute]
@@ -71,11 +71,10 @@ namespace KDRS_Analyse
 
         public string project { get; set; }
 
-        [Optional]
         public DcmTool dcmTool { get; set; }
-        [Optional]
         public DcmFiles files { get; set; }
 
+        [XmlElement]
         public List<string> inputPath { get; set; }
         public string outputPath { get; set; }
 
@@ -189,6 +188,8 @@ namespace KDRS_Analyse
         public FileInfo inFile { get; set; }
         public FileInfo outFile { get; set; }
         public Warning warning { get; set; }
+
+        [XmlElement]
         public FileError error { get; set; }
 
         public class Result

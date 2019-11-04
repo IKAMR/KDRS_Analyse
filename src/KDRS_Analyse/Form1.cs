@@ -13,7 +13,7 @@ namespace KDRS_Analyse
 
         string fileName = String.Empty;
         string outFolder = String.Empty;
-        string outFileName = "extractionAnalyse.xml";
+        string outFileName = "analyse_v" + Globals.toolVersion;
         string inRootFolder = String.Empty;
         string outRootFolder = String.Empty;
         string outFile = String.Empty;
@@ -53,18 +53,24 @@ namespace KDRS_Analyse
                     outFolder = txtBoxOutFolder.Text;
 
                 if ("" != txtBoxOutFile.Text)
-                    outFileName = txtBoxOutFile.Text;
+                    outFileName = Path.GetFileNameWithoutExtension(txtBoxOutFile.Text);
 
                 inRootFolder = txtBoxInRoot.Text;
                 outRootFolder = txtBoxOutRoot.Text;
 
-                outFile = Path.Combine(outFolder, outFileName);
+                outFile = Path.Combine(outFolder, outFileName + "_"  + GetTimeStamp() +  ".xml");
 
                 Console.WriteLine("File name: " + fileName);
 
                 txtBoxInfoText.AppendText(fileName + "\r\n");
 
-                ReadFile();
+                try
+                {
+                    ReadFile();
+                }catch (Exception ex)
+                {
+                    txtBoxInfoText.AppendText(ex.Message);
+                }
 
                 Console.WriteLine("outFile: " + outFile);
 
@@ -103,7 +109,19 @@ namespace KDRS_Analyse
 
         private void btnWriteXml_Click(object sender, EventArgs e)
         {
-            writer.WriteXml(outFile);
+            try
+            {
+                writer.WriteXml(outFile);
+            }
+            catch (Exception ex)
+            {
+                txtBoxInfoText.AppendText(ex.Message);
+            }
+
+            txtBoxInfoText.AppendText("JOB COMPLETE! \r\n");
+            txtBoxInfoText.AppendText("Resultfile: " + outFile + "\r\n");
+
+
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -114,6 +132,11 @@ namespace KDRS_Analyse
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
+        }
+
+        public string GetTimeStamp()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd_HHmm");
         }
     }
 

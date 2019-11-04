@@ -259,8 +259,8 @@ namespace KDRS_Analyse
         {
             string fileId = filePath;
             string newFilePath = filePath;
-            Console.WriteLine("newFilePathFolder: " + new DirectoryInfo(Path.GetDirectoryName(newFilePath)).Name);
-            Console.WriteLine("File directory: " + Directory.GetParent(filePath).Name);
+            //Console.WriteLine("newFilePathFolder: " + new DirectoryInfo(Path.GetDirectoryName(newFilePath)).Name);
+            //Console.WriteLine("File directory: " + Directory.GetParent(filePath).Name);
 
             Console.WriteLine("Rootfolder: " + rootFolder);
             Console.WriteLine("filePath: " + filePath);
