@@ -9,6 +9,7 @@ namespace KDRS_Analyse
     public partial class Form1 : Form
     {
         LogReader logReader = new LogReader();
+        XMLReader xmlReader = new XMLReader();
         XMLWriter writer = new XMLWriter();
 
         string fileName = String.Empty;
@@ -58,16 +59,17 @@ namespace KDRS_Analyse
                 inRootFolder = txtBoxInRoot.Text;
                 outRootFolder = txtBoxOutRoot.Text;
 
-                outFile = Path.Combine(outFolder, outFileName + "_"  + GetTimeStamp() +  ".xml");
+                outFile = Path.Combine(outFolder, outFileName + "_" + GetTimeStamp() + ".xml");
 
                 Console.WriteLine("File name: " + fileName);
 
-                txtBoxInfoText.AppendText(fileName + "\r\n");
 
                 try
                 {
                     ReadFile();
-                }catch (Exception ex)
+                    txtBoxInfoText.AppendText("File has been read!\r\n");
+                }
+                catch (Exception ex)
                 {
                     txtBoxInfoText.AppendText(ex.Message);
                 }
@@ -80,10 +82,15 @@ namespace KDRS_Analyse
         private void ReadFile()
         {
             if (rBtnInfoXml.Checked)
-                ;// readInfoXml
+            {
+                txtBoxInfoText.AppendText("info.xml: " + fileName + "\r\n");
+                xmlReader.ReadInfoXml(fileName);// readInfoXml
+            }
             else if (rBtnDcmBlbRpt.Checked)
             {
                 Console.WriteLine("Dcm blobreport");
+                txtBoxInfoText.AppendText("Decom Blobs report: " + fileName + "\r\n");
+
                 logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
             }
             else if (rBtnDcmLog.Checked)
@@ -91,6 +98,7 @@ namespace KDRS_Analyse
             else if (rBtnDrdFiles.Checked)
             {
                 Console.WriteLine("Droid files");
+                txtBoxInfoText.AppendText("Droid files.csv: " + fileName + "\r\n");
                 logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder);
             }
             else if (rBtnIKAVALog.Checked)

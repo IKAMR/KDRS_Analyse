@@ -54,6 +54,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.btnWriteXml = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
+            this.txtBoxProgress = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -312,11 +313,20 @@
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
+            // txtBoxProgress
+            // 
+            this.txtBoxProgress.Location = new System.Drawing.Point(304, 172);
+            this.txtBoxProgress.Name = "txtBoxProgress";
+            this.txtBoxProgress.ReadOnly = true;
+            this.txtBoxProgress.Size = new System.Drawing.Size(133, 20);
+            this.txtBoxProgress.TabIndex = 28;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 483);
+            this.Controls.Add(this.txtBoxProgress);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnWriteXml);
             this.Controls.Add(this.label6);
@@ -377,6 +387,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnWriteXml;
         private System.Windows.Forms.Button btnReset;
+        private System.Windows.Forms.TextBox txtBoxProgress;
     }
 }
 
