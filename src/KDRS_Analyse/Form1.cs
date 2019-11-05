@@ -19,6 +19,8 @@ namespace KDRS_Analyse
         string outRootFolder = String.Empty;
         string outFile = String.Empty;
 
+        List<string> checkedButtons = new List<string>();
+
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +31,9 @@ namespace KDRS_Analyse
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
 
             Globals.extractionAnalyse.files = new List<File>();
+
+            checkedButtons.Add("Checked buttons:");
+
 
         }
 
@@ -85,13 +90,16 @@ namespace KDRS_Analyse
             {
                 txtBoxInfoText.AppendText("info.xml: " + fileName + "\r\n");
                 xmlReader.ReadInfoXml(fileName);// readInfoXml
+                checkedButtons.Add("X - Info xml");
             }
             else if (rBtnDcmBlbRpt.Checked)
             {
                 Console.WriteLine("Dcm blobreport");
                 txtBoxInfoText.AppendText("Decom Blobs report: " + fileName + "\r\n");
-
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
                 logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
+                checkedButtons.Add("X - Decom blob report");
+
             }
             else if (rBtnDcmLog.Checked)
                 ; // readDcmLog
@@ -99,7 +107,9 @@ namespace KDRS_Analyse
             {
                 Console.WriteLine("Droid files");
                 txtBoxInfoText.AppendText("Droid files.csv: " + fileName + "\r\n");
-                logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder);
+                logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder, chkBoxIncXsd.Checked);
+                checkedButtons.Add("X - Droid files");
+
             }
             else if (rBtnIKAVALog.Checked)
                 ; // readIKAVALog
@@ -146,7 +156,38 @@ namespace KDRS_Analyse
         {
             return DateTime.Now.ToString("yyyy-MM-dd_HHmm");
         }
+
+        private void reader_OnProgressUpdate(int count)
+        {
+            base.Invoke((System.Action)delegate
+            {
+                lblProgress.Text = count.ToString();
+            });
+        }
+
+        private void btnSaveLog_Click(object sender, EventArgs e)
+        {
+            string logFile = Path.Combine(outFolder, "analyse_log_" + DateTime.Now.ToString("yyyy-MM-dd-HHmm") + ".txt");
+
+            string inRoot = "In root folder: " + inRootFolder;
+            string outRoot = "Out root folder: " + outRootFolder;
+
+            string analyseFolder = "Analyse folder: " + outFolder;
+            string analyseFileName = "Analyse file name: " + outFileName;
+
+            string[] names = { inRoot, outRoot, analyseFolder, analyseFileName};
+
+            System.IO.File.WriteAllLines(logFile, names);
+            System.IO.File.AppendAllLines(logFile, checkedButtons);
+
+            System.IO.File.AppendAllText(logFile, txtBoxInfoText.Text);
+
+        }
     }
+
+    public static class UpdateStatus
+    {
+   }
 
     public static class Globals
     {
@@ -155,5 +196,7 @@ namespace KDRS_Analyse
 
         public static int toolCounter = 0;
         public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse();
+
+
     }
 }

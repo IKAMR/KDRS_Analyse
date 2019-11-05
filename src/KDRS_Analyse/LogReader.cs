@@ -7,6 +7,9 @@ namespace KDRS_Analyse
 {
     class LogReader
     {
+        public delegate void ProgressUpdate(int count);
+        public event ProgressUpdate OnProgressUpdate;
+
         // Reading Decom Blob report and assigning values to objects
         public void ReadDcmBlbRpt(string fileName, string inRootFolder, string outRootFolder)
         {
@@ -30,7 +33,7 @@ namespace KDRS_Analyse
             {
                 Console.WriteLine("Start read");
                 int lineCount = 0;
-
+                int fileCount = 0;
                 // Read all lines in file one at the time
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -87,6 +90,7 @@ namespace KDRS_Analyse
                         string fileId = GetFileId(inputPath, inRootFolder);
                         File file = GetFile(fileId);
                         Console.WriteLine("File created");
+                        fileCount++;
 
                         string[] timeSplit = { "time:", "date:" };
                         file.start = TimeConv(firstSplit[0].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim());
@@ -117,7 +121,7 @@ namespace KDRS_Analyse
                         Console.WriteLine("File added");
 
                         lineCount++;
-
+                        OnProgressUpdate?.Invoke(fileCount);
                     }
                     lineCount++;
                 }
@@ -139,7 +143,7 @@ namespace KDRS_Analyse
         {
         }
 
-        public void ReadDroidFiles(string fileName, bool inFiles, string inRootFolder, string outRootFolder)
+        public void ReadDroidFiles(string fileName, bool inFiles, string inRootFolder, string outRootFolder, bool incTableXml)
         {
             string isIn = "in";
             if (!inFiles)
@@ -162,6 +166,7 @@ namespace KDRS_Analyse
             using (var reader = new StreamReader(fileName))
             {
                 // Read all lines in file one at the time
+                int fileCount = 0;
 
                 string line = reader.ReadLine();
                 while ((line = reader.ReadLine()) != null)
@@ -181,7 +186,13 @@ namespace KDRS_Analyse
                         fileId = GetFileId(filePath, inRootFolder);
                     else 
                         fileId = GetFileId(filePath, outRootFolder);
+
+                    string readFileName = split[16].Trim('"');
+                    if (!incTableXml && readFileName.Contains("table") && (readFileName.Contains(".xml") || readFileName.Contains(".xsd")))
+                        continue;
+
                     File droidFile = GetFile(fileId);
+                    fileCount++;
 
                     Console.WriteLine("File created");
 
@@ -202,7 +213,7 @@ namespace KDRS_Analyse
                         else if (fileMime != readMime)
                             MimeWarning(droidFile, true, readMime, droidTool.toolNo);
 
-                        droidFile.inFile.name = split[16].Trim('"');
+                        droidFile.inFile.name = readFileName;
                         droidFile.inFile.version = split[17].Trim('"');
                     }
                     else
@@ -218,10 +229,10 @@ namespace KDRS_Analyse
                         else if (fileMime != readMime)
                             MimeWarning(droidFile, false, readMime, droidTool.toolNo);
 
-                        droidFile.outFile.name = split[16].Trim('"');
+                        droidFile.outFile.name = readFileName;
                         droidFile.outFile.version = split[17].Trim('"');
                     }
-
+                    OnProgressUpdate?.Invoke(fileCount);
                     Globals.extractionAnalyse.files.Add(droidFile);
                 }
             }

@@ -54,7 +54,10 @@
             this.label6 = new System.Windows.Forms.Label();
             this.btnWriteXml = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
-            this.txtBoxProgress = new System.Windows.Forms.TextBox();
+            this.lblProgress = new System.Windows.Forms.Label();
+            this.chkBoxIncXsd = new System.Windows.Forms.CheckBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btnSaveLog = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -295,7 +298,7 @@
             // 
             // btnWriteXml
             // 
-            this.btnWriteXml.Location = new System.Drawing.Point(295, 265);
+            this.btnWriteXml.Location = new System.Drawing.Point(646, 172);
             this.btnWriteXml.Name = "btnWriteXml";
             this.btnWriteXml.Size = new System.Drawing.Size(142, 80);
             this.btnWriteXml.TabIndex = 26;
@@ -305,28 +308,61 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(458, 265);
+            this.btnReset.Location = new System.Drawing.Point(646, 265);
             this.btnReset.Name = "btnReset";
-            this.btnReset.Size = new System.Drawing.Size(123, 44);
+            this.btnReset.Size = new System.Drawing.Size(142, 44);
             this.btnReset.TabIndex = 27;
             this.btnReset.Text = "Reset";
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
-            // txtBoxProgress
+            // lblProgress
             // 
-            this.txtBoxProgress.Location = new System.Drawing.Point(304, 172);
-            this.txtBoxProgress.Name = "txtBoxProgress";
-            this.txtBoxProgress.ReadOnly = true;
-            this.txtBoxProgress.Size = new System.Drawing.Size(133, 20);
-            this.txtBoxProgress.TabIndex = 28;
+            this.lblProgress.AutoSize = true;
+            this.lblProgress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblProgress.Location = new System.Drawing.Point(382, 172);
+            this.lblProgress.Name = "lblProgress";
+            this.lblProgress.Size = new System.Drawing.Size(2, 15);
+            this.lblProgress.TabIndex = 28;
+            // 
+            // chkBoxIncXsd
+            // 
+            this.chkBoxIncXsd.AutoSize = true;
+            this.chkBoxIncXsd.Location = new System.Drawing.Point(207, 265);
+            this.chkBoxIncXsd.Name = "chkBoxIncXsd";
+            this.chkBoxIncXsd.Size = new System.Drawing.Size(129, 17);
+            this.chkBoxIncXsd.TabIndex = 29;
+            this.chkBoxIncXsd.Text = "Include table.xsd/.xml";
+            this.chkBoxIncXsd.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(304, 173);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(72, 13);
+            this.label7.TabIndex = 30;
+            this.label7.Text = "Files handled:";
+            // 
+            // btnSaveLog
+            // 
+            this.btnSaveLog.Location = new System.Drawing.Point(646, 315);
+            this.btnSaveLog.Name = "btnSaveLog";
+            this.btnSaveLog.Size = new System.Drawing.Size(142, 23);
+            this.btnSaveLog.TabIndex = 31;
+            this.btnSaveLog.Text = "Save LOG";
+            this.btnSaveLog.UseVisualStyleBackColor = true;
+            this.btnSaveLog.Click += new System.EventHandler(this.btnSaveLog_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 483);
-            this.Controls.Add(this.txtBoxProgress);
+            this.Controls.Add(this.btnSaveLog);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.chkBoxIncXsd);
+            this.Controls.Add(this.lblProgress);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnWriteXml);
             this.Controls.Add(this.label6);
@@ -387,7 +423,10 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnWriteXml;
         private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.TextBox txtBoxProgress;
+        private System.Windows.Forms.Label lblProgress;
+        private System.Windows.Forms.CheckBox chkBoxIncXsd;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnSaveLog;
     }
 }
 

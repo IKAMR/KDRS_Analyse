@@ -10,6 +10,9 @@ namespace KDRS_Analyse
 {
     class XMLReader
     {
+        public delegate void ProgressUpdate(int count);
+        public event ProgressUpdate OnProgressUpdate;
+
         public void ReadInfoXml(string fileName)
         {
             XPathNavigator nav;
