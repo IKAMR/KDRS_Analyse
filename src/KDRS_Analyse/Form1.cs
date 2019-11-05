@@ -30,7 +30,7 @@ namespace KDRS_Analyse
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
 
-            Globals.extractionAnalyse.files = new List<File>();
+            Globals.extractionAnalyse.files = new List<AnalyseFile>();
 
             checkedButtons.Add("Checked buttons:");
 
@@ -102,7 +102,11 @@ namespace KDRS_Analyse
 
             }
             else if (rBtnDcmLog.Checked)
-                ; // readDcmLog
+            {
+                logReader.ReadDcmLog(fileName); // readDcmLog
+                txtBoxInfoText.AppendText("Decom log: " + fileName + "\r\n");
+                checkedButtons.Add("X - Decom log");
+            }
             else if (rBtnDrdFiles.Checked)
             {
                 Console.WriteLine("Droid files");

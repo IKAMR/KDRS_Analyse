@@ -16,15 +16,14 @@ namespace KDRS_Analyse
 
             Globals.toolCounter++;
             Console.WriteLine(Globals.toolCounter);
-            Tool dcmTool = new Tool
-            {
-                dcmTool = new Tool.DcmTool(),
-                files = new Tool.DcmFiles(),
-                toolNo = Globals.toolCounter.ToString(),
-                id = "101",
-                name = "Decom",
-                version = "1.3.0"
-            };
+            AnalyseTool dcmTool = GetTool("101");
+
+            dcmTool.dcmTool = new AnalyseTool.DcmTool();
+            dcmTool.files = new AnalyseTool.DcmFiles();
+            dcmTool.toolNo = Globals.toolCounter.ToString();
+            dcmTool.name = "Decom";
+            dcmTool.version = "1.3.0";
+            
 
             Console.WriteLine("Tool created");
 
@@ -88,7 +87,7 @@ namespace KDRS_Analyse
                         string inputPath = firstSplit[1].Split(':')[1].Trim();
 
                         string fileId = GetFileId(inputPath, inRootFolder);
-                        File file = GetFile(fileId);
+                        AnalyseFile file = GetFile(fileId);
                         Console.WriteLine("File created");
                         fileCount++;
 
@@ -141,6 +140,43 @@ namespace KDRS_Analyse
 
         public void ReadDcmLog(string fileName)
         {
+            Console.WriteLine("Reading decom log");
+
+            Globals.toolCounter++;
+            Console.WriteLine(Globals.toolCounter);
+            AnalyseTool dcmTool = GetTool("101");
+            dcmTool.database = new AnalyseTool.DcmDB();
+            dcmTool.dcmTool = new AnalyseTool.DcmTool();
+            dcmTool.toolNo = Globals.toolCounter.ToString();
+            dcmTool.name = "Decom";
+            dcmTool.version = "1.3.0";
+
+            Console.WriteLine("Reading file");
+
+            int lineCounter = 0;
+            foreach (string line in File.ReadLines(fileName))
+            {
+                if (!line.Contains("INFO") || !line.Contains("ERROR"))
+                    continue;
+                if (string.IsNullOrEmpty(line))
+                    continue;
+
+                string timeStamp = String.Empty;
+                string dbName = String.Empty;
+
+                if (line.Contains("Working with:")) {
+                    timeStamp = line.Substring(0, 19);
+
+                    string[] splitAt = { "Working with:" };
+                    dbName = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1];
+                }
+                Console.WriteLine("Time: " + timeStamp);
+                Console.WriteLine("DB name: " + dbName);
+                lineCounter++;
+
+                OnProgressUpdate?.Invoke(lineCounter);
+            }
+            Console.WriteLine("Line count: " + lineCounter);
         }
 
         public void ReadDroidFiles(string fileName, bool inFiles, string inRootFolder, string outRootFolder, bool incTableXml)
@@ -151,7 +187,7 @@ namespace KDRS_Analyse
 
             Globals.toolCounter++;
             Console.WriteLine(Globals.toolCounter);
-            Tool droidTool = new Tool
+            AnalyseTool droidTool = new AnalyseTool
             {
                 toolNo = Globals.toolCounter.ToString(),
                 id = "102",
@@ -191,12 +227,8 @@ namespace KDRS_Analyse
                     if (!incTableXml && readFileName.Contains("table") && (readFileName.Contains(".xml") || readFileName.Contains(".xsd")))
                         continue;
 
-                    File droidFile = GetFile(fileId);
+                    AnalyseFile droidFile = GetFile(fileId);
                     fileCount++;
-
-                    Console.WriteLine("File created");
-
-
 
                     droidFile.id = fileId;
 
@@ -246,9 +278,9 @@ namespace KDRS_Analyse
             return parseDate.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
-        public File GetFile(string fileId)
+        public AnalyseFile GetFile(string fileId)
         {
-            foreach (File file in Globals.extractionAnalyse.files)
+            foreach (AnalyseFile file in Globals.extractionAnalyse.files)
             {
                 if (file.id.Equals(fileId))
                     return file;
@@ -260,21 +292,25 @@ namespace KDRS_Analyse
                     return file;
                 else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
                     return file;
-
             }
-            return new File();
+            return new AnalyseFile();
+        }
 
+        public AnalyseTool GetTool(string toolId)
+        {
+            foreach (AnalyseTool tool in Globals.extractionAnalyse.tools)
+            {
+                if (tool.id.Equals(toolId))
+                    return tool;
+            }
+            return new AnalyseTool{
+                id = toolId };
         }
 
         public string GetFileId(string filePath, string rootFolder)
         {
             string fileId = filePath;
             string newFilePath = filePath;
-            //Console.WriteLine("newFilePathFolder: " + new DirectoryInfo(Path.GetDirectoryName(newFilePath)).Name);
-            //Console.WriteLine("File directory: " + Directory.GetParent(filePath).Name);
-
-            Console.WriteLine("Rootfolder: " + rootFolder);
-            Console.WriteLine("filePath: " + filePath);
 
             // Find common part of rootFolder and filePath
             string sequence = string.Empty;
@@ -317,7 +353,6 @@ namespace KDRS_Analyse
             sequence = sequenceBuilder.ToString();
 
             string[] splitWord = { sequence };
-            //string common = string.Concat(rootFolder.TakeWhile((c, i) => c == filePath[i]));
 
             Console.WriteLine("Common path: " + sequence);
 
@@ -326,9 +361,8 @@ namespace KDRS_Analyse
             return fileId;
         }
 
-        public void MimeWarning(File file, bool inFile, string mime, string toolNo)
+        public void MimeWarning(AnalyseFile file, bool inFile, string mime, string toolNo)
         {
-
             file.warning.toolNo = toolNo;
 
             if (inFile)

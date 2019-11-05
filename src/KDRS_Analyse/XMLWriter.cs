@@ -25,15 +25,15 @@ namespace KDRS_Analyse
     {
         public ExtractionAnalyse()
         {
-            files = new List<File>();
-            tools = new List<Tool>();
+            files = new List<AnalyseFile>();
+            tools = new List<AnalyseTool>();
         }
 
-        public List<Tool> tools { get; set; }
-        public Info info { get; set; }
+        public List<AnalyseTool> tools { get; set; }
+        public AnalyseInfo info { get; set; }
         public Agents agents { get; set; }
         public SystemInfo system { get; set; }
-        public List<File> files { get; set; }
+        public List<AnalyseFile> files { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Property,
@@ -44,9 +44,9 @@ namespace KDRS_Analyse
     }
 
     [XmlType(TypeName = "tool")]
-    public class Tool
+    public class AnalyseTool
     {
-        public Tool()
+        public AnalyseTool()
         {
             this.inputPath = new List<string>();
         }
@@ -73,6 +73,7 @@ namespace KDRS_Analyse
 
         public DcmTool dcmTool { get; set; }
         public DcmFiles files { get; set; }
+        public DcmDB database { get; set; }
 
         [XmlElement]
         public List<string> inputPath { get; set; }
@@ -106,10 +107,22 @@ namespace KDRS_Analyse
 
             public string name { get; set; }
         }
+
+        public class DcmDB
+        {
+            [XmlAttribute]
+            public string intBlob { get; set; }
+            [XmlAttribute]
+            public string extBlob { get; set; }
+            [XmlAttribute]
+            public string refXml { get; set; }
+            [XmlText]
+            public string db{ get; set; }
+        }
     }
 
     [XmlType(TypeName = "info")]
-    public class Info
+    public class AnalyseInfo
     {
         public string deliveryspecification { get; set;}
         public string submissionagreement { get; set; }
@@ -169,14 +182,14 @@ namespace KDRS_Analyse
     }
 
     [XmlType(TypeName = "file")]
-    public class File
+    public class AnalyseFile
     {
-        public File()
+        public AnalyseFile()
         {
             result = new Result();
             inFile = new FileInfo();
             outFile = new FileInfo();
-            warning = new Warning();
+            warning = new AnalyseWarning();
             error = new FileError();
         }
 
@@ -187,7 +200,7 @@ namespace KDRS_Analyse
         public string end { get; set; }
         public FileInfo inFile { get; set; }
         public FileInfo outFile { get; set; }
-        public Warning warning { get; set; }
+        public AnalyseWarning warning { get; set; }
 
         [XmlElement]
         public FileError error { get; set; }
@@ -201,7 +214,7 @@ namespace KDRS_Analyse
             public string result { get; set; }
         }
 
-        public class Warning
+        public class AnalyseWarning
         {
             [XmlAttribute]
             public string toolNo { get; set; }
