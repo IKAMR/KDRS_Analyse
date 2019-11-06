@@ -116,6 +116,8 @@ namespace KDRS_Analyse
             public string extBlob { get; set; }
             [XmlAttribute]
             public string refXml { get; set; }
+            [XmlAttribute]
+            public string extBlobMiss { get; set; }
             [XmlText]
             public string db{ get; set; }
         }

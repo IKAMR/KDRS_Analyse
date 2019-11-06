@@ -88,6 +88,8 @@ namespace KDRS_Analyse
         {
             if (rBtnInfoXml.Checked)
             {
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
                 txtBoxInfoText.AppendText("info.xml: " + fileName + "\r\n");
                 xmlReader.ReadInfoXml(fileName);// readInfoXml
                 checkedButtons.Add("X - Info xml");
@@ -103,12 +105,16 @@ namespace KDRS_Analyse
             }
             else if (rBtnDcmLog.Checked)
             {
-                logReader.ReadDcmLog(fileName); // readDcmLog
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
+                logReader.ReadDcmLog(fileName, inRootFolder, outRootFolder); // readDcmLog
                 txtBoxInfoText.AppendText("Decom log: " + fileName + "\r\n");
                 checkedButtons.Add("X - Decom log");
             }
             else if (rBtnDrdFiles.Checked)
             {
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
                 Console.WriteLine("Droid files");
                 txtBoxInfoText.AppendText("Droid files.csv: " + fileName + "\r\n");
                 logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder, chkBoxIncXsd.Checked);
