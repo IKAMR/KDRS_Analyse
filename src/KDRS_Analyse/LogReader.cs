@@ -229,7 +229,6 @@ namespace KDRS_Analyse
 
                 if (line.Contains(outRootFolder) && !String.IsNullOrEmpty(dbName))
                 {
-
                     dcmTool.database.db = dbName;
                     dcmTool.database.intBlob = intBlob;
                     dcmTool.database.extBlob = extBlob;
@@ -259,7 +258,7 @@ namespace KDRS_Analyse
                             string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
                             string readMime = readMimeLine.Split(splitMime, 3, StringSplitOptions.RemoveEmptyEntries)[2].Trim();
 
-                            string fileMime = file.outFile.mime;
+                            string fileMime = file.inFile.mime;
 
                             Console.WriteLine("Checking mime");
                             if (String.IsNullOrEmpty(fileMime))
