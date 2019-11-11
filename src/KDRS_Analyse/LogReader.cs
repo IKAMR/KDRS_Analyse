@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -111,13 +112,17 @@ namespace KDRS_Analyse
 
 
                         string[] outSplit = { "file:" };
-                        file.outFile.path = firstSplit[3].Split(outSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        if (String.IsNullOrEmpty(file.outFile.path))
+                            file.outFile.path = firstSplit[3].Split(outSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
-                        file.result.result = firstSplit[4].Split(':')[1].Trim();
+                        if (String.IsNullOrEmpty(file.result.result))
+                            file.result.result = firstSplit[4].Split(':')[1].Trim();
 
-                        file.result.toolNo = Globals.toolCounter;
+                        if (file.result.toolNo == 0)
+                            file.result.toolNo = Globals.toolCounter;
 
-                        file.end = TimeConv(firstSplit[5].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim());
+                        if (String.IsNullOrEmpty(file.end))
+                            file.end = TimeConv(firstSplit[5].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim());
 
                         if (newFile)
                             Globals.extractionAnalyse.files.Add(file);
@@ -144,6 +149,19 @@ namespace KDRS_Analyse
 
         public void ReadDcmLog(string fileName, string inRootFolder, string outRootFolder)
         {
+            string[] fileList;
+
+            fileList = Directory.GetFiles(Path.GetDirectoryName(fileName));
+            bool usingTempFile = false;
+            string tempFile = String.Empty;
+            foreach (string f in fileList)
+                if (f.Contains("decom_desktop.1.log"))
+                {
+                    tempFile = mergeDcmLogFiles(fileList, fileName);
+                    fileName = tempFile;
+                    usingTempFile = true;
+                    Console.WriteLine("Using tempfile");
+                }
             Console.WriteLine("Reading decom log");
 
             Globals.toolCounter++;
@@ -169,127 +187,158 @@ namespace KDRS_Analyse
             string readProject = String.Empty;
 
             AnalyseFile file;
-
-            string line;
-
-            while ((line = ReadSpecificLine(fileName, lineCounter)) != null)
+            using (StreamReader reader = new StreamReader(fileName))
             {
+                string line;
 
-                /* if (!line.Contains("INFO") && !line.Contains("ERROR") && !line.Contains("WARN"))
-                     continue;
-                 if (string.IsNullOrEmpty(line))
-                     continue;
-                     */
-
-
-                if (line.Contains("Working with:"))
+                while ((line = reader.ReadLine()) != null)
                 {
-                    startLine = lineCounter;
-                    timeStamp = line.Substring(0, 19);
-
-                    string[] splitAt = { "Working with:", "Total internal blobs found:", "Total external blobs found:",
-                        "Total referenced XML files found:", "Are external blobs missing:"};
-                    dbName = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-
-                    Console.WriteLine("Found: " + dbName + " at line " + startLine);
-
-
-                    line = ReadSpecificLine(fileName, (startLine + 1));
-                    intBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                    //lineCounter++;
-                    Console.WriteLine("Found: " + intBlob + " intblobs at line " + (startLine + 1));
-
-
-                    line = ReadSpecificLine(fileName, (startLine + 2));
-                    extBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                    //lineCounter++;
-                    Console.WriteLine("Found: " + extBlob + " extBlob at line " + (startLine + 2));
-
-                    line = ReadSpecificLine(fileName, (startLine + 3));
-                    refXml = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                    //lineCounter++;
-                    Console.WriteLine("Found: " + refXml + " refXml at line " + (startLine + 3));
-
-                    line = ReadSpecificLine(fileName, (startLine + 4));
-                    extBlobMiss = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-
-                    line = ReadSpecificLine(fileName, (startLine + 6));
-
-                    Console.WriteLine(line);
-                    string[] projSplit = { "User has started the conversion process for project with name" };
-                    if (line.Contains(projSplit[0]))
-                        readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-
-
-                    Console.WriteLine("Time: " + timeStamp);
-                    Console.WriteLine("DB name: " + dbName);
-
-                    //break;
-                }
-
-                if (line.Contains(outRootFolder) && !String.IsNullOrEmpty(dbName))
-                {
-                    dcmTool.database.db = dbName;
-                    dcmTool.database.intBlob = intBlob;
-                    dcmTool.database.extBlob = extBlob;
-                    dcmTool.database.refXml = refXml;
-                    dcmTool.database.extBlobMiss = extBlobMiss;
-
-
-                    lineCounter = (startLine + 5);
-
-                    while ((line = ReadSpecificLine(fileName, lineCounter)) != null && !line.Contains("Working with:"))
+                    lineCounter++;
+                    if (line.Contains("Working with:"))
                     {
+                        startLine = lineCounter;
+                        timeStamp = line.Substring(0, 19);
+                        Console.WriteLine("Startline: " + startLine);
 
-                        if (line.Contains("Starting conversion of blob"))
-                        {
-                            string[] split = { "Starting conversion of blob:", "and current conversion status is:" };
-                            string filePath = line.Split(split, 3, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        string[] splitAt = { "Working with:", "Total internal blobs found:", "Total external blobs found:",
+                        "Total referenced XML files found:", "Are external blobs missing:"};
+                        dbName = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
-                            string fileId = GetFileId(filePath, inRootFolder);
+                        Console.WriteLine("Found: " + dbName + " at line " + startLine);
 
-                            file = GetFile(fileId);
-                            Console.WriteLine("FileId aquired");
-
-                            if (String.IsNullOrEmpty(file.id))
-                                file.id = fileId;
-
-                            string[] splitMime = { "The detected MIME type of blob:" , "is"};
-                            string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
-                            string readMime = readMimeLine.Split(splitMime, 3, StringSplitOptions.RemoveEmptyEntries)[2].Trim();
-
-                            string fileMime = file.inFile.mime;
-
-                            Console.WriteLine("Checking mime");
-                            if (String.IsNullOrEmpty(fileMime))
-                                file.inFile.mime = readMime;
-                            else if (fileMime != readMime)
-                                MimeWarning(file, true, readMime, dcmTool.toolNo);
-
-                            Console.WriteLine("Checking project");
-                            if (!String.IsNullOrEmpty(dcmTool.project) && dcmTool.project != readProject)
-                            {
-                                Console.WriteLine("Project warning");
-                                ProjectWarning(file, dcmTool.project, readProject, dcmTool.toolNo);
-                            }
-                            else
-                                dcmTool.project = readProject;
-
-                            if (newFile)
-                                Globals.extractionAnalyse.files.Add(file);
-                        }
+                        line = reader.ReadLine();
                         lineCounter++;
-                        Console.WriteLine("Line count: " + lineCounter);
+                        intBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        //lineCounter++;
+                        Console.WriteLine("Found: " + intBlob + " intblobs at line " + (startLine + 1));
 
+                        line = reader.ReadLine();
+                        lineCounter++;
+
+                        extBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        //lineCounter++;
+                        Console.WriteLine("Found: " + extBlob + " extBlob at line " + (startLine + 2));
+
+                        line = reader.ReadLine();
+                        lineCounter++;
+
+                        refXml = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        //lineCounter++;
+                        Console.WriteLine("Found: " + refXml + " refXml at line " + (startLine + 3));
+
+                        line = reader.ReadLine();
+                        lineCounter++;
+
+                        extBlobMiss = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        /*
+                        reader.ReadLine();
+
+                        line = reader.ReadLine();
+
+                        Console.WriteLine(line);
+                        string[] projSplit = { "User has started the conversion process for project with name" };
+                        if (line.Contains(projSplit[0]))
+                            readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                            */
+                        Console.WriteLine("Time: " + timeStamp);
+                        Console.WriteLine("DB name: " + dbName);
+
+                        //break;
                     }
-                    Console.WriteLine("Detected");
-                    break;
+
+                    if (line.Contains(outRootFolder) && !String.IsNullOrEmpty(dbName))
+                    {
+                        Console.WriteLine("Detected");
+
+                        dcmTool.database.db = dbName;
+                        dcmTool.database.intBlob = intBlob;
+                        dcmTool.database.extBlob = extBlob;
+                        dcmTool.database.refXml = refXml;
+                        dcmTool.database.extBlobMiss = extBlobMiss;
+
+                        int restartLine = (startLine + 5);
+                        Console.WriteLine("Going back to line : " + restartLine);
+                        // Start from beginning and skip to position af lineCounter
+                        reader.DiscardBufferedData();
+                        reader.BaseStream.Seek(0, SeekOrigin.Begin);
+                        lineCounter = 0;
+                        for (int i = 1; i < restartLine; i++)
+                        {
+                            reader.ReadLine();
+                            lineCounter++;
+                            if (reader.EndOfStream)
+                            {
+                                Console.WriteLine($"End of file.  The file only contains {i} lines.");
+                                break;
+                            }
+                        }
+
+                        string[] projSplit = { "User has started the conversion process for project with name" };
+                        if (line.Contains(projSplit[0]))
+                            readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+
+                        while ((line = reader.ReadLine()) != null && !line.Contains("Working with:"))
+                        {
+                            lineCounter++;
+                            Console.WriteLine("Reading over");
+                            if (line.Contains("Starting conversion of blob"))
+                            {
+                                Console.WriteLine("Found 'Starting conversion of blob' at line: " + lineCounter );
+                                string[] split = { "Starting conversion of blob:", "and current conversion status is:" };
+                                string filePath = line.Split(split, 3, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+
+                                string fileId = GetFileId(filePath, inRootFolder);
+
+                                file = GetFile(fileId);
+                                Console.WriteLine("FileId aquired");
+
+                                if (String.IsNullOrEmpty(file.id))
+                                    file.id = fileId;
+
+                                string[] splitMime = { "The detected MIME type of blob:", "is" };
+                                string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
+                                string readMime = readMimeLine.Split(splitMime, 3, StringSplitOptions.RemoveEmptyEntries)[2].Trim();
+
+                                string fileMime = file.inFile.mime;
+
+                                Console.WriteLine("Checking mime");
+                                if (String.IsNullOrEmpty(fileMime))
+                                    file.inFile.mime = readMime;
+                                else if (fileMime != readMime)
+                                    MimeWarning(file, true, readMime, dcmTool.toolNo);
+
+                                Console.WriteLine("Checking project");
+
+
+                                if (String.IsNullOrEmpty(dcmTool.project))
+                                {
+                                    Console.WriteLine("New project");
+                                    dcmTool.project = readProject;
+                                }
+                                else if (dcmTool.project != readProject)
+                                {
+                                    Console.WriteLine("Project warning");
+                                    ProjectWarning(file, dcmTool.project, readProject, dcmTool.toolNo);
+                                }
+
+                                if (file.result.toolNo == 0)
+                                    file.result.toolNo = Globals.toolCounter;
+
+
+                                if (newFile)
+                                {
+                                    Globals.extractionAnalyse.files.Add(file);
+                                    Console.WriteLine("File added");
+                                }
+                            }
+                            Console.WriteLine("Line count: " + lineCounter);
+                            OnProgressUpdate?.Invoke(lineCounter);
+                        }
+                        break;
+                    }
+                    Console.WriteLine("Line count: " + lineCounter);
+                    OnProgressUpdate?.Invoke(lineCounter);
                 }
-                lineCounter++;
-
-                Console.WriteLine("Line count: " + lineCounter);
-                OnProgressUpdate?.Invoke(lineCounter);
-
             }
             Console.WriteLine("Line count: " + lineCounter);
 
@@ -298,7 +347,45 @@ namespace KDRS_Analyse
 
             Globals.extractionAnalyse.tools.Add(dcmTool);
             Console.WriteLine("Tool added");
+
+            if (usingTempFile && File.Exists(tempFile))
+                File.Delete(tempFile);
         }
+
+        public string mergeDcmLogFiles(string[] fileList, string fileName)
+        {
+            //string[] fileList;
+            string folder = Path.GetDirectoryName(fileName);
+
+            List<string> logList = new List<string>();
+
+            int fileNumber = 1;
+
+            foreach (string f in fileList)
+            {
+                if (f.Contains("decom_desktop." + fileNumber + ".log"))
+                {
+                    logList.Add(f);
+                }
+                else if (f.Contains("decom_desktop.log"))
+                {
+                    logList.Add(f);
+                }
+            }
+            string tempFile = Path.Combine(folder, "tempLogFile.log");
+            using (var outputStream = File.Create(tempFile))
+            {
+                foreach (var file in logList)
+                {
+                    using (var inputStream = File.OpenRead(file))
+                        inputStream.CopyTo(outputStream);
+                }
+            }
+            return tempFile;
+        }
+
+
+
 
         public void ReadDroidFiles(string fileName, bool inFiles, string inRootFolder, string outRootFolder, bool incTableXml)
         {
