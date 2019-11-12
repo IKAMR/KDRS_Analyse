@@ -308,8 +308,6 @@ namespace KDRS_Analyse
                                     MimeWarning(file, true, readMime, dcmTool.toolNo);
 
                                 Console.WriteLine("Checking project");
-
-
                                 if (String.IsNullOrEmpty(dcmTool.project))
                                 {
                                     Console.WriteLine("New project");
@@ -323,7 +321,6 @@ namespace KDRS_Analyse
 
                                 if (file.result.toolNo == 0)
                                     file.result.toolNo = Globals.toolCounter;
-
 
                                 if (newFile)
                                 {

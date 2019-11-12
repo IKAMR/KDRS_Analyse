@@ -43,6 +43,66 @@ namespace KDRS_Analyse
     {
     }
 
+    [XmlType(TypeName = "info")]
+    public class AnalyseInfo
+    {
+        public string deliveryspecification { get; set; }
+        public string submissionagreement { get; set; }
+        public string startdate { get; set; }
+        public string enddate { get; set; }
+        public string ipType { get; set; }
+        public string ipUuid { get; set; }
+        public string extractionDateTime { get; set; }
+        public string sipDateTime { get; set; }
+    }
+
+    [XmlType(TypeName = "agents")]
+    public class Agents
+    {
+        public string archivist { get; set; }
+        public string ipowner { get; set; }
+        public string producer { get; set; }
+        public string creator { get; set; }
+        public string submitter { get; set; }
+        public string preservation { get; set; }
+    }
+
+    [XmlType(TypeName = "systemInfo")]
+    public class SystemInfo
+    {
+        public SystemInfo()
+        {
+            name = new Id_name();
+        }
+
+        public string id { get; set; }
+        public Id_name name { get; set; }
+        public string version { get; set; }
+        public string type { get; set; }
+        public string typeVersion { get; set; }
+        public string vendor { get; set; }
+        public string vendorOriginal { get; set; }
+
+        public class Id_name
+        {
+            [XmlAttribute]
+            public string id { get; set; }
+
+            [XmlText]
+            public string name { get; set; }
+        }
+    }
+
+    [XmlType(TypeName = "extractorSoftware")]
+    public class ExtractorSoftware
+    {
+        public string name { get; set; }
+        public string version { get; set; }
+        public string type { get; set; }
+        public string typeVersion { get; set; }
+        public string vendor { get; set; }
+    }
+
     [XmlType(TypeName = "tool")]
     public class AnalyseTool
     {
@@ -123,65 +183,7 @@ namespace KDRS_Analyse
         }
     }
 
-    [XmlType(TypeName = "info")]
-    public class AnalyseInfo
-    {
-        public string deliveryspecification { get; set;}
-        public string submissionagreement { get; set; }
-        public string startdate { get; set; }
-        public string enddate { get; set; }
-        public string ipType { get; set; }
-        public string ipUuid { get; set; }
-        public string extractionDateTime { get; set; }
-        public string sipDateTime { get; set; }
-    }
 
-    [XmlType(TypeName = "agents")]
-    public class Agents
-    {
-        public string archivist { get; set; }
-        public string ipowner { get; set; }
-        public string producer { get; set; }
-        public string creator { get; set; }
-        public string submitter { get; set; }
-        public string preservation { get; set; }
-    }
-
-    [XmlType(TypeName = "systemInfo")]
-    public class SystemInfo
-    {
-        public SystemInfo()
-        {
-            name = new Id_name();
-        }
-
-        public string id { get; set; }
-        public Id_name name { get; set; }
-        public string version { get; set; }
-        public string type { get; set; }
-        public string typeVersion { get; set; }
-        public string vendor { get; set; }
-        public string vendorOriginal { get; set; }
-
-        public class Id_name
-        {
-            [XmlAttribute]
-            public string id { get; set; }
-
-            [XmlText]
-            public string name { get; set; }
-        }
-    }
-
-    [XmlType(TypeName = "extractorSoftware")]
-    public class ExtractorSoftware
-    {
-        public string name { get; set; }
-        public string version { get; set; }
-        public string type { get; set; }
-        public string typeVersion { get; set; }
-        public string vendor { get; set; }
-    }
 
     [XmlType(TypeName = "file")]
     public class AnalyseFile

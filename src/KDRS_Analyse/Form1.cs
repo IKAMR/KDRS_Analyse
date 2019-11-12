@@ -68,7 +68,6 @@ namespace KDRS_Analyse
 
                 Console.WriteLine("File name: " + fileName);
 
-
                 try
                 {
                     ReadFile();
