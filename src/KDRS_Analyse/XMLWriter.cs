@@ -29,10 +29,10 @@ namespace KDRS_Analyse
             tools = new List<AnalyseTool>();
         }
 
-        public List<AnalyseTool> tools { get; set; }
         public AnalyseInfo info { get; set; }
         public Agents agents { get; set; }
         public SystemInfo system { get; set; }
+        public List<AnalyseTool> tools { get; set; }
         public List<AnalyseFile> files { get; set; }
     }
 

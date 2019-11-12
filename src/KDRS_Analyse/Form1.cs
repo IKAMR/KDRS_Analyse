@@ -171,6 +171,7 @@ namespace KDRS_Analyse
             base.Invoke((System.Action)delegate
             {
                 lblProgress.Text = count.ToString();
+                lblProgress.Refresh();
             });
         }
 

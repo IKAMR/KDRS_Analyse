@@ -27,7 +27,6 @@ namespace KDRS_Analyse
             dcmTool.name = "Decom";
             dcmTool.version = "1.3.0";
 
-
             Console.WriteLine("Tool created");
 
             string line;
@@ -85,9 +84,11 @@ namespace KDRS_Analyse
                         }
 
                         string[] firstSplit = line.Split(',');
-                        //File file = new File();
+                        string[] inputSplit = { "input file:", "input file content type:", "conversion output file:", "conversion status:", "conversion end date:" };
 
-                        string inputPath = firstSplit[1].Split(':')[1].Trim();
+                        string inputPath = firstSplit[1].Split(inputSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        Console.WriteLine("input path: " + inputPath);
+                        Console.WriteLine("In root folder: " + inRootFolder);
 
                         string fileId = GetFileId(inputPath, inRootFolder);
                         AnalyseFile file = GetFile(fileId);
@@ -95,13 +96,16 @@ namespace KDRS_Analyse
                         fileCount++;
 
                         string[] timeSplit = { "time:", "date:" };
-                        file.start = TimeConv(firstSplit[0].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim());
+                        string startTime = firstSplit[0].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        Console.WriteLine("Start time: " + startTime);
+
+                        file.start = TimeConv(startTime);
 
                         file.inFile.path = inputPath;
                         if (String.IsNullOrEmpty(file.id))
                             file.id = fileId;
 
-                        string readMime = firstSplit[2].Split(':')[1].Trim();
+                        string readMime = firstSplit[2].Split(inputSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                         string fileMime = file.inFile.mime;
 
                         if (String.IsNullOrEmpty(fileMime))
@@ -109,11 +113,9 @@ namespace KDRS_Analyse
                         else if (fileMime != readMime)
                             MimeWarning(file, true, readMime, dcmTool.toolNo);
 
-
-
                         string[] outSplit = { "file:" };
                         if (String.IsNullOrEmpty(file.outFile.path))
-                            file.outFile.path = firstSplit[3].Split(outSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                            file.outFile.path = firstSplit[3].Split(inputSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
                         if (String.IsNullOrEmpty(file.result.result))
                             file.result.result = firstSplit[4].Split(':')[1].Trim();
@@ -121,8 +123,11 @@ namespace KDRS_Analyse
                         if (file.result.toolNo == 0)
                             file.result.toolNo = Globals.toolCounter;
 
+                        string endDate = firstSplit[5].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        Console.WriteLine("End time: " + endDate);
+
                         if (String.IsNullOrEmpty(file.end))
-                            file.end = TimeConv(firstSplit[5].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim());
+                            file.end = TimeConv(endDate);
 
                         if (newFile)
                             Globals.extractionAnalyse.files.Add(file);
@@ -132,6 +137,7 @@ namespace KDRS_Analyse
                         OnProgressUpdate?.Invoke(fileCount);
                     }
                     lineCount++;
+                    OnProgressUpdate?.Invoke(fileCount);
                 }
             }
 
@@ -144,7 +150,6 @@ namespace KDRS_Analyse
 
             Globals.extractionAnalyse.tools.Add(dcmTool);
             Console.WriteLine("Tool added");
-
         }
 
         public void ReadDcmLog(string fileName, string inRootFolder, string outRootFolder)
@@ -166,7 +171,7 @@ namespace KDRS_Analyse
 
             Globals.toolCounter++;
             Console.WriteLine(Globals.toolCounter);
-            AnalyseTool dcmTool =new AnalyseTool();
+            AnalyseTool dcmTool = new AnalyseTool();
             dcmTool.database = new AnalyseTool.DcmDB();
             dcmTool.dcmTool = new AnalyseTool.DcmTool();
             dcmTool.toolNo = Globals.toolCounter.ToString();
@@ -283,7 +288,7 @@ namespace KDRS_Analyse
                             Console.WriteLine("Reading over");
                             if (line.Contains("Starting conversion of blob"))
                             {
-                                Console.WriteLine("Found 'Starting conversion of blob' at line: " + lineCounter );
+                                Console.WriteLine("Found 'Starting conversion of blob' at line: " + lineCounter);
                                 string[] split = { "Starting conversion of blob:", "and current conversion status is:" };
                                 string filePath = line.Split(split, 3, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
@@ -481,12 +486,20 @@ namespace KDRS_Analyse
 
         public string TimeConv(string timeString)
         {
-            DateTime parseDate = DateTime.ParseExact(timeString, "ddd MMM dd HH:mm:ss 'CET' yyyy", CultureInfo.InvariantCulture);
+            DateTime parseDate = new DateTime();
+
+            if (timeString.Contains("CET"))
+                parseDate = DateTime.ParseExact(timeString, "ddd MMM dd HH:mm:ss 'CET' yyyy", CultureInfo.InvariantCulture);
+            else if (timeString.Contains("CEST"))
+                parseDate = DateTime.ParseExact(timeString, "ddd MMM dd HH:mm:ss 'CEST' yyyy", CultureInfo.InvariantCulture);
+
             return parseDate.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public AnalyseFile GetFile(string fileId)
         {
+            Console.WriteLine("Get file");
+
             newFile = false;
             foreach (AnalyseFile file in Globals.extractionAnalyse.files)
             {
@@ -521,6 +534,8 @@ namespace KDRS_Analyse
 
         public string GetFileId(string filePath, string rootFolder)
         {
+            Console.WriteLine("Get file ID");
+
             string fileId = filePath;
             string newFilePath = filePath;
 
