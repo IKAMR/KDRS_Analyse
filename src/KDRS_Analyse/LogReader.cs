@@ -11,7 +11,7 @@ namespace KDRS_Analyse
         public delegate void ProgressUpdate(int count);
         public event ProgressUpdate OnProgressUpdate;
 
-        public bool newFile;
+        public bool newFile = false;
 
         // Reading Decom Blob report and assigning values to objects
         public void ReadDcmBlbRpt(string fileName, string inRootFolder, string outRootFolder)
@@ -103,8 +103,10 @@ namespace KDRS_Analyse
 
                         file.inFile.path = inputPath;
                         if (String.IsNullOrEmpty(file.id))
+                        {
+                            newFile = true;
                             file.id = fileId;
-
+                        }
                         string readMime = firstSplit[2].Split(inputSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                         string fileMime = file.inFile.mime;
 
@@ -162,7 +164,7 @@ namespace KDRS_Analyse
             foreach (string f in fileList)
                 if (f.Contains("decom_desktop.1.log"))
                 {
-                    tempFile = mergeDcmLogFiles(fileList, fileName);
+                    tempFile = MergeDcmLogFiles(fileList, fileName);
                     fileName = tempFile;
                     usingTempFile = true;
                     Console.WriteLine("Using tempfile");
@@ -298,7 +300,10 @@ namespace KDRS_Analyse
                                 Console.WriteLine("FileId aquired");
 
                                 if (String.IsNullOrEmpty(file.id))
+                                {
+                                    newFile = true;
                                     file.id = fileId;
+                                }
 
                                 string[] splitMime = { "The detected MIME type of blob:", "is" };
                                 string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
@@ -354,7 +359,7 @@ namespace KDRS_Analyse
                 File.Delete(tempFile);
         }
 
-        public string mergeDcmLogFiles(string[] fileList, string fileName)
+        public string MergeDcmLogFiles(string[] fileList, string fileName)
         {
             //string[] fileList;
             string folder = Path.GetDirectoryName(fileName);
@@ -386,9 +391,6 @@ namespace KDRS_Analyse
             return tempFile;
         }
 
-
-
-
         public void ReadDroidFiles(string fileName, bool inFiles, string inRootFolder, string outRootFolder, bool incTableXml)
         {
             string isIn = "in";
@@ -400,7 +402,7 @@ namespace KDRS_Analyse
             AnalyseTool droidTool = new AnalyseTool
             {
                 toolNo = Globals.toolCounter.ToString(),
-                id = "102",
+                toolId = "102",
                 name = "Droid",
                 version = "6.4",
                 role = "filetype",
@@ -441,7 +443,10 @@ namespace KDRS_Analyse
                     fileCount++;
 
                     if (String.IsNullOrEmpty(droidFile.id))
+                    {
+                        newFile = true;
                         droidFile.id = fileId;
+                    }
 
                     if (inFiles)
                     {
@@ -496,11 +501,11 @@ namespace KDRS_Analyse
             return parseDate.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
-        public AnalyseFile GetFile(string fileId)
+        public static AnalyseFile GetFile(string fileId)
         {
             Console.WriteLine("Get file");
 
-            newFile = false;
+            //newFile = false;
             foreach (AnalyseFile file in Globals.extractionAnalyse.files)
             {
                 if (file.id.Equals(fileId))
@@ -515,7 +520,7 @@ namespace KDRS_Analyse
                     return file;
             }
 
-            newFile = true;
+            //newFile = true;
             return new AnalyseFile();
         }
 
@@ -523,16 +528,16 @@ namespace KDRS_Analyse
         {
             foreach (AnalyseTool tool in Globals.extractionAnalyse.tools)
             {
-                if (tool.id.Equals(toolId))
+                if (tool.toolId.Equals(toolId))
                     return tool;
             }
             return new AnalyseTool
             {
-                id = toolId
+                toolId = toolId
             };
         }
 
-        public string GetFileId(string filePath, string rootFolder)
+        public static string GetFileId(string filePath, string rootFolder)
         {
             Console.WriteLine("Get file ID");
 

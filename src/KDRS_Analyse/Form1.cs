@@ -125,7 +125,15 @@ namespace KDRS_Analyse
             else if (rBtnIKAVANoConvFiles.Checked)
                 ; // readIKAVANoConvFiles
             else if (rBtnVera.Checked)
-                ; // readVera
+            {
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
+                Console.WriteLine("veraPDF results");
+                txtBoxInfoText.AppendText("veraPDF XML: " + fileName + "\r\n");
+                xmlReader.ReadVeraPdf(fileName, outRootFolder, inRootFolder);
+                checkedButtons.Add("X - veraPDF");
+            }
+                 // readVera
             else if (rBtnArk5Xml.Checked)
                 ; // readArk5Xml
             else if (rBtnDcmN5val.Checked)
