@@ -19,15 +19,12 @@ namespace KDRS_Analyse
         {
             XPathNavigator nav;
             XPathDocument xDoc;
-            XPathNodeIterator nodeIter;
 
             xDoc = new XPathDocument(fileName);
 
             nav = xDoc.CreateNavigator();
 
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(nav.NameTable);
-            // var nameSpace = nav.GetNamespace(nav.SelectSingleNode("arkiv").NamespaceURI);
-            //nsmgr.AddNamespace("a", nameSpace);
 
             nsmgr.AddNamespace("mets", "http://www.loc.gov/METS/");
             nsmgr.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -52,14 +49,11 @@ namespace KDRS_Analyse
             node = nav.SelectSingleNode("//mets:agent[@ROLE = 'PRESERVATION' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
             readAgents.preservation = node.InnerXml;
 
-           // Console.WriteLine("ipowner: " + node.InnerXml);
-
             Globals.extractionAnalyse.agents = readAgents;
         }
 
         public void ReadVeraPdf(string fileName, string outRootFolder, string inRootFolder)
         {
-
             Globals.toolCounter++;
             Console.WriteLine(Globals.toolCounter);
             AnalyseTool veraTool = new AnalyseTool();
@@ -85,7 +79,6 @@ namespace KDRS_Analyse
 
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(nav.NameTable);
             nsmgr.AddNamespace("s", "");
-            //nsmgr.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
             veraTool.version = nav.SelectSingleNode("//report/buildInformation/releaseDetails[@id='gui']/@version").ToString();
 
@@ -96,7 +89,6 @@ namespace KDRS_Analyse
             while (nodeIter.MoveNext())
             {
                 AnalyseTool.VeraRelease detail = new AnalyseTool.VeraRelease();
-               //string id = nodeIter.Current.GetAttribute("id", nsmgr.DefaultNamespace);
                 detail.id = nodeIter.Current.GetAttribute("id", nsmgr.DefaultNamespace);
                 detail.version = nodeIter.Current.GetAttribute("version", nsmgr.DefaultNamespace);
                 detail.buildDate = nodeIter.Current.GetAttribute("buildDate", nsmgr.DefaultNamespace);
@@ -104,38 +96,54 @@ namespace KDRS_Analyse
                 veraTool.buildInformation.Add(detail);
             }
 
-            nodeIter = nav.SelectSingleNode("//report/batchSummary", nsmgr).SelectChildren(XPathNodeType.All);
+            AnalyseTool.VeraSummary summary = new AnalyseTool.VeraSummary();
+            summary.totalJobs = nav.SelectSingleNode("//report/batchSummary/@totalJobs").ToString();
+            summary.failedToParse = nav.SelectSingleNode("//report/batchSummary/@failedToParse").ToString();
+            summary.encrypted = nav.SelectSingleNode("//report/batchSummary/@encrypted").ToString();
 
-            Console.WriteLine("Biuldinfomations: " + nodeIter.Count);
-/*
-            while (nodeIter.MoveNext())
-            {
-                AnalyseTool.VeraSummary summary = new AnalyseTool.VeraSummary();
-                //string id = nodeIter.Current.GetAttribute("id", nsmgr.DefaultNamespace);
-                summary.id = nodeIter.Current.GetAttribute("id", nsmgr.DefaultNamespace);
-                summary.version = nodeIter.Current.GetAttribute("version", nsmgr.DefaultNamespace);
-                summary.buildDate = nodeIter.Current.GetAttribute("buildDate", nsmgr.DefaultNamespace);
+            Console.WriteLine("Val report");
+            summary.validationReports = new AnalyseTool.VeraSummary.VeraValReport();
+            summary.validationReports.compliant = nav.SelectSingleNode("//report/batchSummary/validationReports/@compliant").ToString();
+            summary.validationReports.nonCompliant = nav.SelectSingleNode("//report/batchSummary/validationReports/@nonCompliant").ToString();
+            summary.validationReports.failedJobs = nav.SelectSingleNode("//report/batchSummary/validationReports/@failedJobs").ToString();
+            summary.validationReports.total = nav.SelectSingleNode("//report/batchSummary/validationReports").Value;
 
-                veraTool.buildInformation.Add(detail);
-            }*/
+            Console.WriteLine("feature report");
+            summary.featureReports = new AnalyseTool.VeraSummary.FeatureReports();
+            summary.featureReports.failedJobs= nav.SelectSingleNode("//report/batchSummary/featureReports/@failedJobs").ToString();
+            summary.featureReports.total= nav.SelectSingleNode("//report/batchSummary/featureReports").Value;
+
+            Console.WriteLine("repair report");
+            summary.repairReports = new AnalyseTool.VeraSummary.ReparirReports();
+            summary.repairReports.failedJobs = nav.SelectSingleNode("//report/batchSummary/repairReports/@failedJobs").ToString();
+            summary.repairReports.total = nav.SelectSingleNode("//report/batchSummary/repairReports").Value;
+
+            summary.duration = new AnalyseTool.VeraSummary.VeraDuration();
+            summary.duration.start = nav.SelectSingleNode("//report/batchSummary/duration/@start").ToString();
+            summary.duration.finish = nav.SelectSingleNode("//report/batchSummary/duration/@finish").ToString();
+            summary.duration.total = nav.SelectSingleNode("//report/batchSummary/duration").Value;
+
+            veraTool.batchSummary = summary;
 
             veraTool.outputPath = outRootFolder;
 
             Globals.extractionAnalyse.tools.Add(veraTool);
             Console.WriteLine("Tool added");
 
-
+            
             nodeIter = nav.Select("//report/jobs/job", nsmgr);
 
             Console.WriteLine("File count: " + nodeIter.Count);
 
             XPathExpression getProfileName = nav.Compile("descendant::validationReport/profileName");
 
+            int fileCount = 0;
+
             while (nodeIter.MoveNext())
             {
                 string name = nodeIter.Current.SelectSingleNode("descendant::item/name").Value;
-
-                string fileId = LogReader.GetFileId(fileName, inRootFolder);
+                Console.WriteLine("Filename: " + name);
+                string fileId = LogReader.GetFileId(name, outRootFolder);
                 Console.WriteLine("ID: " + fileId);
 
                 AnalyseFile veraFile = LogReader.GetFile(fileId);
@@ -144,18 +152,39 @@ namespace KDRS_Analyse
                 {
                     newFile = true;
                     veraFile.id = fileId;
+                    Console.WriteLine("New file");
                 }
 
+                veraFile.valid = new AnalyseFile.Valid();
 
+                veraFile.valid.toolId = veraTool.toolId;
+                string isCompliant = nodeIter.Current.SelectSingleNode("descendant::validationReport/@isCompliant").Value;
+                veraFile.valid.isValid = isCompliant;
+                Console.WriteLine("Is compliant: " + isCompliant);
+                
+                veraFile.valid.passedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedRules").Value;
+                veraFile.valid.failedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedRules").Value;
+                veraFile.valid.passedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedChecks").Value;
+                veraFile.valid.failedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedChecks").Value;
+                
                 string profName = nodeIter.Current.SelectSingleNode("descendant::validationReport/@profileName").Value;
                 Console.WriteLine("profileName: " + profName);
 
-                string isCompliant = nodeIter.Current.SelectSingleNode("descendant::validationReport/@isCompliant").Value;
+                string profile = profName.Split(' ')[0];
+                string pdfAtype = "";
+                if (profile.Contains("PDF"))
+                {
+                    veraFile.valid.type = profile.Split('-')[0];
+                    pdfAtype = profile.Split('-')[1];
+                }
 
                 Console.WriteLine("isCompliant: " + isCompliant);
-
+                
                 if (newFile)
                     Globals.extractionAnalyse.files.Add(veraFile);
+                fileCount++;
+                OnProgressUpdate?.Invoke(fileCount);
+
             }
 
         }

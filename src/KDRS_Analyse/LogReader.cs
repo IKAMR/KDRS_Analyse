@@ -512,11 +512,19 @@ namespace KDRS_Analyse
                     return file;
                 else if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
                     return file;
+                else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
+                    return file;
                 else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
+                    return file;
+                else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
                     return file;
                 else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
                     return file;
                 else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
+                    return file;
+                else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
+                    return file;
+                else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
                     return file;
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace KDRS_Analyse
@@ -15,7 +16,13 @@ namespace KDRS_Analyse
             using (TextWriter writer = new StreamWriter(fileName))
             {
                 Console.WriteLine("serializing");
-                ser.Serialize(writer, Globals.extractionAnalyse);
+                try
+                {
+                    ser.Serialize(writer, Globals.extractionAnalyse);
+                }catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
     }
@@ -154,8 +161,29 @@ namespace KDRS_Analyse
             public string idle { get; set; }
             [XmlAttribute]
             public string inProgress { get; set; }
+            [XmlIgnore]
+            public int? files { get; set; }
             [XmlText]
-            public int files { get; set; }
+            public string StringFiles
+            {
+                get
+                {
+                    if (files == null)
+                        return null;
+                    return XmlConvert.ToString(files.Value);
+                }
+                set
+                {
+                    if (files == null)
+                    {
+                        this.files = null;
+                        return;
+                    }
+                    this.files = XmlConvert.ToInt32(value);
+                }
+            }
+
+
         }
 
         public class DcmTool
@@ -198,7 +226,9 @@ namespace KDRS_Analyse
             [XmlAttribute]
             public string encrypted { get; set; }
             public VeraValReport validationReports { get; set; }
-            public VeraReports reports { get; set; }
+            public FeatureReports featureReports { get; set; }
+            public ReparirReports repairReports { get; set; }
+            public VeraDuration duration { get; set; }
 
             public class VeraValReport
             {
@@ -212,7 +242,15 @@ namespace KDRS_Analyse
                 public string total { get; set; }
             }
 
-            public class VeraReports
+            public class FeatureReports
+            {
+                [XmlAttribute]
+                public string failedJobs { get; set; }
+                [XmlText]
+                public string total { get; set; }
+            }
+
+            public class ReparirReports
             {
                 [XmlAttribute]
                 public string failedJobs { get; set; }
@@ -256,21 +294,24 @@ namespace KDRS_Analyse
         public string end { get; set; }
         public FileInfo inFile { get; set; }
         public FileInfo outFile { get; set; }
-        public AnalyseWarning warning { get; set; }
+        public Valid valid { get; set; }
 
-        [XmlElement]
+        public AnalyseWarning warning { get; set; }
         public FileError error { get; set; }
 
         public class Result
         {
-            [XmlAttribute]
+            [XmlIgnore]
             public int toolNo { get; set; }
+
             [XmlText]
             public string result { get; set; }
         }
 
         public class AnalyseWarning
         {
+            [XmlAttribute]
+            public string toolId { get; set; }
             [XmlAttribute]
             public string toolNo { get; set; }
             [XmlAttribute]
@@ -305,6 +346,24 @@ namespace KDRS_Analyse
             public string version { get; set; }
             [XmlText]
             public string path { get; set; }
+        }
+
+        public class Valid
+        {
+            [XmlAttribute]
+            public string toolId { get; set; }
+            [XmlAttribute]
+            public string type { get; set; }
+            [XmlAttribute]
+            public string passedRules { get; set; }
+            [XmlAttribute]
+            public string failedRules { get; set; }
+            [XmlAttribute]
+            public string passedChecks { get; set; }
+            [XmlAttribute]
+            public string failedChecks { get; set; }
+            [XmlText]
+            public string isValid { get; set; }
         }
     }
 }

@@ -126,7 +126,7 @@ namespace KDRS_Analyse
                 ; // readIKAVANoConvFiles
             else if (rBtnVera.Checked)
             {
-                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+                xmlReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 Console.WriteLine("veraPDF results");
                 txtBoxInfoText.AppendText("veraPDF XML: " + fileName + "\r\n");
