@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace KDRS_Analyse
@@ -15,26 +16,34 @@ namespace KDRS_Analyse
             using (TextWriter writer = new StreamWriter(fileName))
             {
                 Console.WriteLine("serializing");
-                ser.Serialize(writer, Globals.extractionAnalyse);
+                try
+                {
+                    ser.Serialize(writer, Globals.extractionAnalyse);
+                }catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
     }
+    //***************************************************************
 
     [XmlType(TypeName = "extractionAnalyse")]
     public class ExtractionAnalyse
     {
         public ExtractionAnalyse()
         {
-            files = new List<File>();
-            tools = new List<Tool>();
+            files = new List<AnalyseFile>();
+            tools = new List<AnalyseTool>();
         }
 
-        public List<Tool> tools { get; set; }
-        public Info info { get; set; }
+        public AnalyseInfo info { get; set; }
         public Agents agents { get; set; }
         public SystemInfo system { get; set; }
-        public List<File> files { get; set; }
+        public List<AnalyseTool> tools { get; set; }
+        public List<AnalyseFile> files { get; set; }
     }
+    //***************************************************************
 
     [AttributeUsage(AttributeTargets.Property,
     Inherited = false,
@@ -42,76 +51,12 @@ namespace KDRS_Analyse
     internal sealed class OptionalAttribute : Attribute
     {
     }
-
-    [XmlType(TypeName = "tool")]
-    public class Tool
-    {
-        public Tool()
-        {
-            this.inputPath = new List<string>();
-        }
-
-        [XmlAttribute]
-        public string toolNo { get; set; }
-
-        [XmlAttribute]
-        public string id { get; set; }
-
-        [XmlAttribute]
-        public string name { get; set; }
-
-        [XmlAttribute]
-        public string version { get; set; }
-
-        [XmlAttribute]
-        public string role { get; set; }
-
-        [XmlAttribute]
-        public string subrole { get; set; }
-
-        public string project { get; set; }
-
-        public DcmTool dcmTool { get; set; }
-        public DcmFiles files { get; set; }
-
-        [XmlElement]
-        public List<string> inputPath { get; set; }
-        public string outputPath { get; set; }
-
-        public class DcmFiles
-        {
-            [XmlAttribute]
-            public string success { get; set; }
-
-            [XmlAttribute]
-            public string failed { get; set; }
-
-            [XmlAttribute]
-            public string notConverted { get; set; }
-
-            [XmlAttribute]
-            public string idle { get; set; }
-
-            [XmlAttribute]
-            public string inProgress { get; set; }
-
-            [XmlText]
-            public int files { get; set; }
-        }
-
-        public class DcmTool
-        {
-            [XmlAttribute]
-            public string version { get; set; }
-
-            public string name { get; set; }
-        }
-    }
+    //***************************************************************
 
     [XmlType(TypeName = "info")]
-    public class Info
+    public class AnalyseInfo
     {
-        public string deliveryspecification { get; set;}
+        public string deliveryspecification { get; set; }
         public string submissionagreement { get; set; }
         public string startdate { get; set; }
         public string enddate { get; set; }
@@ -120,6 +65,7 @@ namespace KDRS_Analyse
         public string extractionDateTime { get; set; }
         public string sipDateTime { get; set; }
     }
+    //***************************************************************
 
     [XmlType(TypeName = "agents")]
     public class Agents
@@ -131,6 +77,7 @@ namespace KDRS_Analyse
         public string submitter { get; set; }
         public string preservation { get; set; }
     }
+    //***************************************************************
 
     [XmlType(TypeName = "systemInfo")]
     public class SystemInfo
@@ -152,11 +99,11 @@ namespace KDRS_Analyse
         {
             [XmlAttribute]
             public string id { get; set; }
-
             [XmlText]
             public string name { get; set; }
         }
     }
+    //***************************************************************
 
     [XmlType(TypeName = "extractorSoftware")]
     public class ExtractorSoftware
@@ -167,16 +114,176 @@ namespace KDRS_Analyse
         public string typeVersion { get; set; }
         public string vendor { get; set; }
     }
+    //***************************************************************
+
+    [XmlType(TypeName = "tool")]
+    public class AnalyseTool
+    {
+        public AnalyseTool()
+        {
+            this.inputPath = new List<string>();
+        }
+
+        [XmlAttribute]
+        public string toolNo { get; set; }
+        [XmlAttribute]
+        public string toolId { get; set; }
+        [XmlAttribute]
+        public string name { get; set; }
+        [XmlAttribute]
+        public string version { get; set; }
+        [XmlAttribute]
+        public string role { get; set; }
+        [XmlAttribute]
+        public string subrole { get; set; }
+        public string project { get; set; }
+
+        public DcmTool dcmTool { get; set; }
+        public DcmFiles files { get; set; }
+        public DcmDB database { get; set; }
+
+        public List<VeraRelease> buildInformation { get; set; }
+        public VeraSummary batchSummary { get; set; }
+
+        [XmlElement]
+        public List<string> inputPath { get; set; }
+        public string outputPath { get; set; }
+
+        public class DcmFiles
+        {
+            [XmlAttribute]
+            public string success { get; set; }
+            [XmlAttribute]
+            public string failed { get; set; }
+            [XmlAttribute]
+            public string notConverted { get; set; }
+            [XmlAttribute]
+            public string idle { get; set; }
+            [XmlAttribute]
+            public string inProgress { get; set; }
+            [XmlIgnore]
+            public int? files { get; set; }
+            [XmlText]
+            public string StringFiles
+            {
+                get
+                {
+                    if (files == null)
+                        return null;
+                    return XmlConvert.ToString(files.Value);
+                }
+                set
+                {
+                    if (files == null)
+                    {
+                        this.files = null;
+                        return;
+                    }
+                    this.files = XmlConvert.ToInt32(value);
+                }
+            }
+
+
+        }
+
+        public class DcmTool
+        {
+            [XmlAttribute]
+            public string version { get; set; }
+            public string name { get; set; }
+        }
+
+        public class DcmDB
+        {
+            [XmlAttribute]
+            public string intBlob { get; set; }
+            [XmlAttribute]
+            public string extBlob { get; set; }
+            [XmlAttribute]
+            public string refXml { get; set; }
+            [XmlAttribute]
+            public string extBlobMiss { get; set; }
+            [XmlText]
+            public string db{ get; set; }
+        }
+
+        public class VeraRelease
+        {
+            [XmlAttribute]
+            public string id { get; set; }
+            [XmlAttribute]
+            public string version { get; set; }
+            [XmlAttribute]
+            public string buildDate { get; set; }
+        }
+
+        public class VeraSummary
+        {
+            [XmlAttribute]
+            public string totalJobs { get; set; }
+            [XmlAttribute]
+            public string failedToParse { get; set; }
+            [XmlAttribute]
+            public string encrypted { get; set; }
+            public VeraValReport validationReports { get; set; }
+            public FeatureReports featureReports { get; set; }
+            public ReparirReports repairReports { get; set; }
+            public VeraDuration duration { get; set; }
+
+            public class VeraValReport
+            {
+                [XmlAttribute]
+                public string compliant { get; set; }
+                [XmlAttribute]
+                public string nonCompliant { get; set; }
+                [XmlAttribute]
+                public string failedJobs { get; set; }
+                [XmlText]
+                public string total { get; set; }
+            }
+
+            public class FeatureReports
+            {
+                [XmlAttribute]
+                public string failedJobs { get; set; }
+                [XmlText]
+                public string total { get; set; }
+            }
+
+            public class ReparirReports
+            {
+                [XmlAttribute]
+                public string failedJobs { get; set; }
+                [XmlText]
+                public string total { get; set; }
+            }
+
+            public class VeraDuration
+            {
+                [XmlAttribute]
+                public string start { get; set; }
+                [XmlAttribute]
+                public string finish { get; set; }
+                [XmlText]
+                public string total { get; set; }
+            }
+
+        }
+
+
+    }
+    //***************************************************************
+
 
     [XmlType(TypeName = "file")]
-    public class File
+    public class AnalyseFile
     {
-        public File()
+        public AnalyseFile()
         {
             result = new Result();
             inFile = new FileInfo();
             outFile = new FileInfo();
-            warning = new Warning();
+            warning = new AnalyseWarning();
             error = new FileError();
         }
 
@@ -187,9 +294,9 @@ namespace KDRS_Analyse
         public string end { get; set; }
         public FileInfo inFile { get; set; }
         public FileInfo outFile { get; set; }
-        public Warning warning { get; set; }
+        public Valid valid { get; set; }
 
-        [XmlElement]
+        public AnalyseWarning warning { get; set; }
         public FileError error { get; set; }
 
         public class Result
@@ -201,20 +308,18 @@ namespace KDRS_Analyse
             public string result { get; set; }
         }
 
-        public class Warning
+        public class AnalyseWarning
         {
             [XmlAttribute]
+            public string toolId { get; set; }
+            [XmlAttribute]
             public string toolNo { get; set; }
-
             [XmlAttribute]
             public string element { get; set; }
-
             [XmlAttribute]
             public string value1 { get; set; }
-
             [XmlAttribute]
             public string value2 { get; set; }
-
             [XmlText]
             public string text { get; set; }
         }
@@ -223,7 +328,6 @@ namespace KDRS_Analyse
         {
             [XmlAttribute]
             public string id { get; set; }
-
             [XmlText]
             public string text { get; set; }
         }
@@ -240,9 +344,26 @@ namespace KDRS_Analyse
             public string name { get; set; }
             [XmlAttribute]
             public string version { get; set; }
-
             [XmlText]
             public string path { get; set; }
+        }
+
+        public class Valid
+        {
+            [XmlAttribute]
+            public string toolId { get; set; }
+            [XmlAttribute]
+            public string type { get; set; }
+            [XmlAttribute]
+            public string passedRules { get; set; }
+            [XmlAttribute]
+            public string failedRules { get; set; }
+            [XmlAttribute]
+            public string passedChecks { get; set; }
+            [XmlAttribute]
+            public string failedChecks { get; set; }
+            [XmlText]
+            public string isValid { get; set; }
         }
     }
 }

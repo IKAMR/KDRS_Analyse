@@ -423,10 +423,10 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnWriteXml;
         private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.Label lblProgress;
         private System.Windows.Forms.CheckBox chkBoxIncXsd;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnSaveLog;
+        private System.Windows.Forms.Label lblProgress;
     }
 }
 

@@ -30,7 +30,7 @@ namespace KDRS_Analyse
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
 
-            Globals.extractionAnalyse.files = new List<File>();
+            Globals.extractionAnalyse.files = new List<AnalyseFile>();
 
             checkedButtons.Add("Checked buttons:");
 
@@ -68,7 +68,6 @@ namespace KDRS_Analyse
 
                 Console.WriteLine("File name: " + fileName);
 
-
                 try
                 {
                     ReadFile();
@@ -88,6 +87,8 @@ namespace KDRS_Analyse
         {
             if (rBtnInfoXml.Checked)
             {
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
                 txtBoxInfoText.AppendText("info.xml: " + fileName + "\r\n");
                 xmlReader.ReadInfoXml(fileName);// readInfoXml
                 checkedButtons.Add("X - Info xml");
@@ -102,9 +103,17 @@ namespace KDRS_Analyse
 
             }
             else if (rBtnDcmLog.Checked)
-                ; // readDcmLog
+            {
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
+                logReader.ReadDcmLog(fileName, inRootFolder, outRootFolder); // readDcmLog
+                txtBoxInfoText.AppendText("Decom log: " + fileName + "\r\n");
+                checkedButtons.Add("X - Decom log");
+            }
             else if (rBtnDrdFiles.Checked)
             {
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
                 Console.WriteLine("Droid files");
                 txtBoxInfoText.AppendText("Droid files.csv: " + fileName + "\r\n");
                 logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder, chkBoxIncXsd.Checked);
@@ -116,7 +125,15 @@ namespace KDRS_Analyse
             else if (rBtnIKAVANoConvFiles.Checked)
                 ; // readIKAVANoConvFiles
             else if (rBtnVera.Checked)
-                ; // readVera
+            {
+                xmlReader.OnProgressUpdate += reader_OnProgressUpdate;
+
+                Console.WriteLine("veraPDF results");
+                txtBoxInfoText.AppendText("veraPDF XML: " + fileName + "\r\n");
+                xmlReader.ReadVeraPdf(fileName, outRootFolder, inRootFolder);
+                checkedButtons.Add("X - veraPDF");
+            }
+                 // readVera
             else if (rBtnArk5Xml.Checked)
                 ; // readArk5Xml
             else if (rBtnDcmN5val.Checked)
@@ -162,6 +179,7 @@ namespace KDRS_Analyse
             base.Invoke((System.Action)delegate
             {
                 lblProgress.Text = count.ToString();
+                lblProgress.Refresh();
             });
         }
 
@@ -192,7 +210,7 @@ namespace KDRS_Analyse
     public static class Globals
     {
         public static readonly String toolName = "KDRS Analyse";
-        public static readonly String toolVersion = "0.1";
+        public static readonly String toolVersion = "0.2";
 
         public static int toolCounter = 0;
         public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse();
