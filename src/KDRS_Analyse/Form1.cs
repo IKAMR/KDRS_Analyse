@@ -210,7 +210,7 @@ namespace KDRS_Analyse
     public static class Globals
     {
         public static readonly String toolName = "KDRS Analyse";
-        public static readonly String toolVersion = "0.1";
+        public static readonly String toolVersion = "0.2";
 
         public static int toolCounter = 0;
         public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse();
