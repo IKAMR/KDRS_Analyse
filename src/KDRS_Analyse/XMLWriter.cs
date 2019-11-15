@@ -301,7 +301,7 @@ namespace KDRS_Analyse
 
         public class Result
         {
-            [XmlIgnore]
+            [XmlAttribute]
             public int toolNo { get; set; }
 
             [XmlText]
