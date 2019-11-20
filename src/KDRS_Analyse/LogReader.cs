@@ -504,32 +504,38 @@ namespace KDRS_Analyse
         public static AnalyseFile GetFile(string fileId)
         {
             Console.WriteLine("Get file");
-
-            //newFile = false;
-            foreach (AnalyseFile file in Globals.extractionAnalyse.files)
+            try
             {
-                if (file.id.Equals(fileId))
-                    return file;
-                else if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
-                    return file;
-                else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
-                    return file;
-                else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
-                    return file;
-                else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
-                    return file;
-                else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
-                    return file;
-                else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
-                    return file;
-                else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
-                    return file;
-                else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
-                    return file;
-            }
+                //newFile = false;
+                foreach (AnalyseFile file in Globals.extractionAnalyse.files)
+                {
+                    if (file.id.Equals(fileId))
+                        return file;
+                    else if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
+                        return file;
+                    else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
+                        return file;
+                    else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
+                        return file;
+                    else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
+                        return file;
+                    else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
+                        return file;
+                    else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
+                        return file;
+                    else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
+                        return file;
+                    else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
+                        return file;
+                }
 
-            //newFile = true;
-            return new AnalyseFile();
+                //newFile = true;
+                return new AnalyseFile();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public AnalyseTool GetTool(string toolId)

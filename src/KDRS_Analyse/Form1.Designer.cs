@@ -36,7 +36,7 @@
             this.rBtnIKAVAConvFiles = new System.Windows.Forms.RadioButton();
             this.rBtnIKAVANoConvFiles = new System.Windows.Forms.RadioButton();
             this.rBtnVera = new System.Windows.Forms.RadioButton();
-            this.rBtnArk5Xml = new System.Windows.Forms.RadioButton();
+            this.rBtnKOSTVal = new System.Windows.Forms.RadioButton();
             this.rBtnDcmN5val = new System.Windows.Forms.RadioButton();
             this.rBtnProd = new System.Windows.Forms.RadioButton();
             this.rBtnArch = new System.Windows.Forms.RadioButton();
@@ -143,15 +143,15 @@
             this.rBtnVera.Text = "veraPDF";
             this.rBtnVera.UseVisualStyleBackColor = true;
             // 
-            // rBtnArk5Xml
+            // rBtnKOSTVal
             // 
-            this.rBtnArk5Xml.AutoSize = true;
-            this.rBtnArk5Xml.Location = new System.Drawing.Point(12, 218);
-            this.rBtnArk5Xml.Name = "rBtnArk5Xml";
-            this.rBtnArk5Xml.Size = new System.Drawing.Size(86, 17);
-            this.rBtnArk5Xml.TabIndex = 8;
-            this.rBtnArk5Xml.Text = "Arkade 5 xml";
-            this.rBtnArk5Xml.UseVisualStyleBackColor = true;
+            this.rBtnKOSTVal.AutoSize = true;
+            this.rBtnKOSTVal.Location = new System.Drawing.Point(12, 218);
+            this.rBtnKOSTVal.Name = "rBtnKOSTVal";
+            this.rBtnKOSTVal.Size = new System.Drawing.Size(72, 17);
+            this.rBtnKOSTVal.TabIndex = 8;
+            this.rBtnKOSTVal.Text = "KOST-Val";
+            this.rBtnKOSTVal.UseVisualStyleBackColor = true;
             // 
             // rBtnDcmN5val
             // 
@@ -376,7 +376,7 @@
             this.Controls.Add(this.txtBoxInfoText);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.rBtnDcmN5val);
-            this.Controls.Add(this.rBtnArk5Xml);
+            this.Controls.Add(this.rBtnKOSTVal);
             this.Controls.Add(this.rBtnVera);
             this.Controls.Add(this.rBtnIKAVANoConvFiles);
             this.Controls.Add(this.rBtnIKAVAConvFiles);
@@ -405,7 +405,7 @@
         private System.Windows.Forms.RadioButton rBtnIKAVAConvFiles;
         private System.Windows.Forms.RadioButton rBtnIKAVANoConvFiles;
         private System.Windows.Forms.RadioButton rBtnVera;
-        private System.Windows.Forms.RadioButton rBtnArk5Xml;
+        private System.Windows.Forms.RadioButton rBtnKOSTVal;
         private System.Windows.Forms.RadioButton rBtnDcmN5val;
         private System.Windows.Forms.RadioButton rBtnProd;
         private System.Windows.Forms.RadioButton rBtnArch;

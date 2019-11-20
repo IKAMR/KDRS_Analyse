@@ -145,6 +145,9 @@ namespace KDRS_Analyse
         public List<VeraRelease> buildInformation { get; set; }
         public VeraSummary batchSummary { get; set; }
 
+        public KOSTValToolInfo KOSTValInfo { get; set; }
+        public KostValSummary KOSTValSummary { get; set; }
+
         [XmlElement]
         public List<string> inputPath { get; set; }
         public string outputPath { get; set; }
@@ -270,6 +273,21 @@ namespace KDRS_Analyse
 
         }
 
+        public class KOSTValToolInfo
+        {
+            public string Start { get; set; }
+            public string End { get; set; }
+            public string FormatValOn{ get; set; }
+            public string Info { get; set; }
+            public string configuration { get; set; }
+
+        }
+
+        public class KostValSummary
+        {
+            public string Summary { get; set; }
+            public string Info { get; set; }
+        }
 
     }
     //***************************************************************
@@ -364,6 +382,14 @@ namespace KDRS_Analyse
             public string failedChecks { get; set; }
             [XmlText]
             public string isValid { get; set; }
+
+            public List<KostError> error { get; set; }
+
+            public class KostError
+            {
+                public string modul { get; set; }
+                public string message { get; set; }
+            }
         }
     }
 }

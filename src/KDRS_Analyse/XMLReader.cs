@@ -61,7 +61,7 @@ namespace KDRS_Analyse
             veraTool.buildInformation = new List<AnalyseTool.VeraRelease>();
 
             veraTool.batchSummary = new AnalyseTool.VeraSummary();
-            veraTool.files = new AnalyseTool.DcmFiles();
+            //veraTool.files = new AnalyseTool.DcmFiles();
             veraTool.toolNo = Globals.toolCounter.ToString();
             veraTool.toolId = "103";
             veraTool.name = "veraPDF";
@@ -83,8 +83,6 @@ namespace KDRS_Analyse
             veraTool.version = nav.SelectSingleNode("//report/buildInformation/releaseDetails[@id='gui']/@version").ToString();
 
             nodeIter = nav.Select("//report/buildInformation/releaseDetails ", nsmgr);
-
-            Console.WriteLine("Biuldinfomations: " + nodeIter.Count);
 
             while (nodeIter.MoveNext())
             {
@@ -128,12 +126,8 @@ namespace KDRS_Analyse
             veraTool.outputPath = outRootFolder;
 
             Globals.extractionAnalyse.tools.Add(veraTool);
-            Console.WriteLine("Tool added");
-
             
             nodeIter = nav.Select("//report/jobs/job", nsmgr);
-
-            Console.WriteLine("File count: " + nodeIter.Count);
 
             XPathExpression getProfileName = nav.Compile("descendant::validationReport/profileName");
 
@@ -142,9 +136,7 @@ namespace KDRS_Analyse
             while (nodeIter.MoveNext())
             {
                 string name = nodeIter.Current.SelectSingleNode("descendant::item/name").Value;
-                Console.WriteLine("Filename: " + name);
                 string fileId = LogReader.GetFileId(name, outRootFolder);
-                Console.WriteLine("ID: " + fileId);
 
                 AnalyseFile veraFile = LogReader.GetFile(fileId);
 
@@ -152,7 +144,6 @@ namespace KDRS_Analyse
                 {
                     newFile = true;
                     veraFile.id = fileId;
-                    Console.WriteLine("New file");
                 }
 
                 veraFile.valid = new AnalyseFile.Valid();
@@ -168,7 +159,6 @@ namespace KDRS_Analyse
                 veraFile.valid.failedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedChecks").Value;
                 
                 string profName = nodeIter.Current.SelectSingleNode("descendant::validationReport/@profileName").Value;
-                Console.WriteLine("profileName: " + profName);
 
                 string profile = profName.Split(' ')[0];
                 string pdfAtype = "";
@@ -178,8 +168,6 @@ namespace KDRS_Analyse
                     pdfAtype = profile.Split('-')[1];
                 }
 
-                Console.WriteLine("isCompliant: " + isCompliant);
-                
                 if (newFile)
                     Globals.extractionAnalyse.files.Add(veraFile);
                 fileCount++;
@@ -187,6 +175,128 @@ namespace KDRS_Analyse
 
             }
 
+        }
+
+        public void ReadKostVal(string fileName, string outRootFolder)
+        {
+            Globals.toolCounter++;
+            Console.WriteLine(Globals.toolCounter);
+            AnalyseTool kostValTool = new AnalyseTool();
+
+
+            kostValTool.toolNo = Globals.toolCounter.ToString();
+            kostValTool.toolId = "104";
+            kostValTool.name = "KOST-Val";
+            kostValTool.version = "";
+
+            Console.WriteLine("Tool created");
+
+            XPathNavigator nav;
+            XPathDocument xDoc;
+            XPathNodeIterator nodeIter;
+
+            xDoc = new XPathDocument(fileName);
+
+            nav = xDoc.CreateNavigator();
+
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(nav.NameTable);
+            nsmgr.AddNamespace("s", "");
+
+            kostValTool.outputPath = outRootFolder;
+
+            kostValTool.KOSTValInfo = new AnalyseTool.KOSTValToolInfo();
+
+            kostValTool.KOSTValInfo.Start = nav.SelectSingleNode("//KOSTValLog/Infos/Start").Value;
+            kostValTool.KOSTValInfo.End = nav.SelectSingleNode("//KOSTValLog/Infos/End").Value;
+
+            kostValTool.KOSTValInfo.FormatValOn = nav.SelectSingleNode("//KOSTValLog/Infos/FormatValOn").Value;
+            kostValTool.KOSTValInfo.Info = nav.SelectSingleNode("//KOSTValLog/Infos/Info").Value;
+            kostValTool.KOSTValInfo.configuration = nav.SelectSingleNode("//KOSTValLog/configuration").Value;
+
+            kostValTool.KOSTValSummary = new AnalyseTool.KostValSummary();
+
+            kostValTool.KOSTValSummary.Summary = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Summary").Value;
+            string notValFiles = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Info/Message").Value;
+            kostValTool.KOSTValSummary.Info = notValFiles;
+
+
+            nodeIter = nav.Select("//KOSTValLog/Format/Validation", nsmgr);
+
+            int fileCount = 0;
+
+            while (nodeIter.MoveNext())
+            {
+                string name = nodeIter.Current.SelectSingleNode("descendant::ValFile").Value;
+                string fileId = LogReader.GetFileId(name, outRootFolder);
+                Console.WriteLine("File ID: " + fileId);
+
+                AnalyseFile kostValFile = LogReader.GetFile(fileId);
+
+                if (String.IsNullOrEmpty(kostValFile.id))
+                {
+                    newFile = true;
+                    kostValFile.id = fileId;
+                }
+                
+                kostValFile.valid = new AnalyseFile.Valid();
+
+
+                kostValFile.valid.toolId = kostValTool.toolId;
+
+                string isCompliant = "";
+                XPathNavigator valid = nodeIter.Current.SelectSingleNode("descendant::Valid");
+                if (valid != null)
+                    isCompliant = valid.Value;
+                else if((valid = nodeIter.Current.SelectSingleNode("descendant::Invalid")) != null)
+                {
+                    isCompliant = valid.Value;
+                    Console.WriteLine("Error found");
+                    kostValFile.valid.error = new List<AnalyseFile.Valid.KostError>();
+
+                    XPathNodeIterator errorNav = nodeIter.Current.Select("descendant::Error");
+
+                    while (errorNav.MoveNext())
+                    {
+                        AnalyseFile.Valid.KostError error = new AnalyseFile.Valid.KostError
+                        {
+                            modul = errorNav.Current.SelectSingleNode("descendant::Modul").Value,
+                            message = errorNav.Current.SelectSingleNode("descendant::Message").Value
+                        };
+
+                        kostValFile.valid.error.Add(error);
+                    }
+                }
+
+                Console.WriteLine("Is compliant: " + isCompliant);
+
+                if (String.IsNullOrEmpty(isCompliant))
+                {
+                    isCompliant = nodeIter.Current.SelectSingleNode("descendant::Invalid").Value;
+                }
+                kostValFile.valid.isValid = isCompliant;
+                
+                if (isCompliant.Equals("invalid"))
+                {
+                    
+                }
+            
+                string valType = nodeIter.Current.SelectSingleNode("descendant::ValType").Value;
+                kostValFile.valid.type = valType.Split(':').ToString().Trim();
+         
+                if (valType.Contains("PDF"))
+                {
+                    string pdfAtype = nodeIter.Current.SelectSingleNode("descendant::FormatVL").Value;
+                    
+                }
+
+                if (newFile)
+                    Globals.extractionAnalyse.files.Add(kostValFile);
+                fileCount++;
+                OnProgressUpdate?.Invoke(fileCount);
+            }
+
+            Globals.extractionAnalyse.tools.Add(kostValTool);
+            Console.WriteLine("Tool added");
         }
     }
 }

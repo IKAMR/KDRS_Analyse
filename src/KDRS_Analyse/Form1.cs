@@ -134,8 +134,16 @@ namespace KDRS_Analyse
                 checkedButtons.Add("X - veraPDF");
             }
                  // readVera
-            else if (rBtnArk5Xml.Checked)
-                ; // readArk5Xml
+            else if (rBtnKOSTVal.Checked)
+            {
+                xmlReader.OnProgressUpdate += reader_OnProgressUpdate;
+                Console.WriteLine("KOST-Val results");
+                txtBoxInfoText.AppendText("KOST-Val: " + fileName + "\r\n");
+
+                xmlReader.ReadKostVal(fileName, outRootFolder); // readArk5Xml
+                checkedButtons.Add("X - KOST-Val");
+
+            }
             else if (rBtnDcmN5val.Checked)
                 ; // readDcmN5Val
 
