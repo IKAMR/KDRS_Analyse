@@ -265,7 +265,7 @@ namespace KDRS_Analyse
 
                         int restartLine = (startLine + 5);
                         Console.WriteLine("Going back to line : " + restartLine);
-                        // Start from beginning and skip to position af lineCounter
+                        // Start from beginning and skip to position of lineCounter
                         reader.DiscardBufferedData();
                         reader.BaseStream.Seek(0, SeekOrigin.Begin);
                         lineCounter = 0;
@@ -305,8 +305,16 @@ namespace KDRS_Analyse
                                     file.id = fileId;
                                 }
 
+                                reader.ReadLine();
+                                lineCounter++;
+
+                                reader.ReadLine();
+                                lineCounter++;
+
                                 string[] splitMime = { "The detected MIME type of blob:", "is" };
-                                string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
+
+                                //string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
+                                string readMimeLine = reader.ReadLine();
                                 string readMime = readMimeLine.Split(splitMime, 3, StringSplitOptions.RemoveEmptyEntries)[2].Trim();
 
                                 string fileMime = file.inFile.mime;
@@ -513,24 +521,27 @@ namespace KDRS_Analyse
                 //newFile = false;
                 foreach (AnalyseFile file in Globals.extractionAnalyse.files)
                 {
-                    if (file.id.Equals(fileId))
-                        return file;
-                    else if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
-                        return file;
-                    else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
-                        return file;
-                    else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
-                        return file;
-                    else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
-                        return file;
-                    else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
-                        return file;
-                    else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
-                        return file;
-                    else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
-                        return file;
-                    else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
-                        return file;
+                    if (file.id.Contains(fileId) || fileId.Contains(file.id))
+                    {
+                        if (file.id.Equals(fileId))
+                            return file;
+                        else if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
+                            return file;
+                        else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
+                            return file;
+                        else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
+                            return file;
+                        else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
+                            return file;
+                        else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
+                            return file;
+                        else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
+                            return file;
+                        else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
+                            return file;
+                        else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
+                            return file;
+                    }
                 }
 
                 //newFile = true;

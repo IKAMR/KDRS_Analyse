@@ -348,6 +348,8 @@ namespace KDRS_Analyse
             public string id { get; set; }
             [XmlText]
             public string text { get; set; }
+
+            public List<KostError> error { get; set; }
         }
 
         public class FileInfo
@@ -383,13 +385,14 @@ namespace KDRS_Analyse
             [XmlText]
             public string isValid { get; set; }
 
-            public List<KostError> error { get; set; }
+           // public KostError error { get; set; }
 
-            public class KostError
-            {
-                public string modul { get; set; }
-                public string message { get; set; }
-            }
+
+        }
+        public class KostError
+        {
+            public string modul { get; set; }
+            public string message { get; set; }
         }
     }
 }

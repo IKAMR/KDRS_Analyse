@@ -251,19 +251,19 @@ namespace KDRS_Analyse
                 {
                     isCompliant = valid.Value;
                     Console.WriteLine("Error found");
-                    kostValFile.valid.error = new List<AnalyseFile.Valid.KostError>();
+                    kostValFile.error.error = new List<AnalyseFile.KostError>();
 
                     XPathNodeIterator errorNav = nodeIter.Current.Select("descendant::Error");
 
                     while (errorNav.MoveNext())
                     {
-                        AnalyseFile.Valid.KostError error = new AnalyseFile.Valid.KostError
+                        AnalyseFile.KostError error = new AnalyseFile.KostError
                         {
                             modul = errorNav.Current.SelectSingleNode("descendant::Modul").Value,
                             message = errorNav.Current.SelectSingleNode("descendant::Message").Value
                         };
 
-                        kostValFile.valid.error.Add(error);
+                        kostValFile.error.error.Add(error);
                     }
                 }
 
@@ -281,7 +281,7 @@ namespace KDRS_Analyse
                 }
             
                 string valType = nodeIter.Current.SelectSingleNode("descendant::ValType").Value;
-                kostValFile.valid.type = valType.Split(':').ToString().Trim();
+                kostValFile.valid.type = valType.Split(':')[1].ToString().Trim();
          
                 if (valType.Contains("PDF"))
                 {
