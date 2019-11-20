@@ -429,6 +429,10 @@ namespace KDRS_Analyse
 
                     //File droidFile = new File();
                     string filePath = split[3].Trim('"');
+
+                    if (String.IsNullOrEmpty(filePath))
+                        continue;
+
                     string fileId;
                     if (inFiles)
                         fileId = GetFileId(filePath, inRootFolder);
