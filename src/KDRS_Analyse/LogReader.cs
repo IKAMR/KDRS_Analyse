@@ -26,6 +26,9 @@ namespace KDRS_Analyse
             dcmTool.toolNo = Globals.toolCounter.ToString();
             dcmTool.name = "Decom";
             dcmTool.version = "1.3.0";
+            dcmTool.toolId = "101";
+            dcmTool.role = "transform";
+            dcmTool.subrole = "project";
 
             Console.WriteLine("Tool created");
 
@@ -179,6 +182,9 @@ namespace KDRS_Analyse
             dcmTool.toolNo = Globals.toolCounter.ToString();
             dcmTool.name = "Decom";
             dcmTool.version = "1.3.0";
+            dcmTool.toolId = "101";
+            dcmTool.role = "transform";
+            dcmTool.subrole = "log";
 
             Console.WriteLine("Reading file");
 

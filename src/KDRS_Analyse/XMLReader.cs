@@ -15,6 +15,7 @@ namespace KDRS_Analyse
 
         public bool newFile = false;
 
+        //------------------------------------------------------------------------------------
         public void ReadInfoXml(string fileName)
         {
             XPathNavigator nav;
@@ -28,9 +29,37 @@ namespace KDRS_Analyse
 
             nsmgr.AddNamespace("mets", "http://www.loc.gov/METS/");
             nsmgr.AddNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+
+            AnalyseInfo info = new AnalyseInfo();
+
+            XPathNavigator node = nav.SelectSingleNode("//mets:mets/@OBJID", nsmgr);
+
+            string uuid = node.InnerXml;
+            info.ipUuid = uuid.Split(':')[1];
+
+            node = nav.SelectSingleNode("//mets:mets/@LABEL", nsmgr);
+            info.deliveryspecification = node.InnerXml;
+
+            node = nav.SelectSingleNode("//mets:mets/@TYPE", nsmgr);
+            info.ipType = node.InnerXml;
+
+            node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='DELIVERYSPECIFICATION']", nsmgr);
+            info.extractionDateTime = node.InnerXml;
+
+            node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='SUBMISSIONAGREEMENT']", nsmgr);
+            info.submissionagreement = node.InnerXml;
+
+            node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='STARTDATE']", nsmgr);
+            info.startdate = node.InnerXml;
+
+            node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='ENDDATE']", nsmgr);
+            info.enddate = node.InnerXml;
+
+            Globals.extractionAnalyse.info = info;
+
             Agents readAgents = new Agents();
 
-            XPathNavigator node = nav.SelectSingleNode("//mets:agent[@ROLE = 'ARCHIVIST' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'ARCHIVIST' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
 
             readAgents.archivist = node.InnerXml;
 
@@ -53,11 +82,12 @@ namespace KDRS_Analyse
 
 
         }
+        //------------------------------------------------------------------------------------
 
         public void ReadVeraPdf(string fileName, string outRootFolder, string inRootFolder)
         {
             Globals.toolCounter++;
-            Console.WriteLine(Globals.toolCounter);
+           // Console.WriteLine(Globals.toolCounter);
             AnalyseTool veraTool = new AnalyseTool();
 
             veraTool.buildInformation = new List<AnalyseTool.VeraRelease>();
@@ -69,7 +99,7 @@ namespace KDRS_Analyse
             veraTool.name = "veraPDF";
             veraTool.version = "";
 
-            Console.WriteLine("Tool created");
+          //  Console.WriteLine("Tool created");
 
             XPathNavigator nav;
             XPathDocument xDoc;
@@ -101,19 +131,19 @@ namespace KDRS_Analyse
             summary.failedToParse = nav.SelectSingleNode("//report/batchSummary/@failedToParse").ToString();
             summary.encrypted = nav.SelectSingleNode("//report/batchSummary/@encrypted").ToString();
 
-            Console.WriteLine("Val report");
+           // Console.WriteLine("Val report");
             summary.validationReports = new AnalyseTool.VeraSummary.VeraValReport();
             summary.validationReports.compliant = nav.SelectSingleNode("//report/batchSummary/validationReports/@compliant").ToString();
             summary.validationReports.nonCompliant = nav.SelectSingleNode("//report/batchSummary/validationReports/@nonCompliant").ToString();
             summary.validationReports.failedJobs = nav.SelectSingleNode("//report/batchSummary/validationReports/@failedJobs").ToString();
             summary.validationReports.total = nav.SelectSingleNode("//report/batchSummary/validationReports").Value;
 
-            Console.WriteLine("feature report");
+            //Console.WriteLine("feature report");
             summary.featureReports = new AnalyseTool.VeraSummary.FeatureReports();
             summary.featureReports.failedJobs= nav.SelectSingleNode("//report/batchSummary/featureReports/@failedJobs").ToString();
             summary.featureReports.total= nav.SelectSingleNode("//report/batchSummary/featureReports").Value;
 
-            Console.WriteLine("repair report");
+           // Console.WriteLine("repair report");
             summary.repairReports = new AnalyseTool.VeraSummary.ReparirReports();
             summary.repairReports.failedJobs = nav.SelectSingleNode("//report/batchSummary/repairReports/@failedJobs").ToString();
             summary.repairReports.total = nav.SelectSingleNode("//report/batchSummary/repairReports").Value;
@@ -153,7 +183,7 @@ namespace KDRS_Analyse
                 fileValid.toolId = veraTool.toolId;
                 string isCompliant = nodeIter.Current.SelectSingleNode("descendant::validationReport/@isCompliant").Value;
                 fileValid.isValid = isCompliant;
-                Console.WriteLine("Is compliant: " + isCompliant);
+               // Console.WriteLine("Is compliant: " + isCompliant);
 
                 fileValid.passedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedRules").Value;
                 fileValid.failedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedRules").Value;
@@ -180,11 +210,12 @@ namespace KDRS_Analyse
             }
 
         }
+        //------------------------------------------------------------------------------------
 
         public void ReadKostVal(string fileName, string outRootFolder)
         {
             Globals.toolCounter++;
-            Console.WriteLine(Globals.toolCounter);
+           // Console.WriteLine(Globals.toolCounter);
             AnalyseTool kostValTool = new AnalyseTool();
 
 
@@ -193,7 +224,7 @@ namespace KDRS_Analyse
             kostValTool.name = "KOST-Val";
             kostValTool.version = "";
 
-            Console.WriteLine("Tool created");
+          //  Console.WriteLine("Tool created");
 
             XPathNavigator nav;
             XPathDocument xDoc;
@@ -219,7 +250,15 @@ namespace KDRS_Analyse
 
             kostValTool.KOSTValSummary = new AnalyseTool.KostValSummary();
 
-            kostValTool.KOSTValSummary.Summary = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Summary").Value;
+            string kostSummary = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Summary").Value;
+            kostValTool.KOSTValSummary.Summary = kostSummary;
+
+            string[] summarySplit = { "From the", "files", "valid,", "invalid and", "("};
+            kostValTool.KOSTValSummary.totalFiles = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+            kostValTool.KOSTValSummary.valid = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+            kostValTool.KOSTValSummary.invalid = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[3].Trim();
+            kostValTool.KOSTValSummary.notValidated = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[5].Trim();
+
             string notValFiles = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Info/Message").Value;
             kostValTool.KOSTValSummary.Info = notValFiles;
 
@@ -232,7 +271,7 @@ namespace KDRS_Analyse
             {
                 string name = nodeIter.Current.SelectSingleNode("descendant::ValFile").Value;
                 string fileId = LogReader.GetFileId(name, outRootFolder);
-                Console.WriteLine("File ID: " + fileId);
+                //Console.WriteLine("File ID: " + fileId);
 
                 AnalyseFile kostValFile = LogReader.GetFile(fileId);
 
@@ -255,7 +294,7 @@ namespace KDRS_Analyse
                 else if((valid = nodeIter.Current.SelectSingleNode("descendant::Invalid")) != null)
                 {
                     isCompliant = valid.Value;
-                    Console.WriteLine("Error found");
+                   // Console.WriteLine("Error found");
                     kostValFile.error.error = new List<AnalyseFile.KostError>();
 
                     XPathNodeIterator errorNav = nodeIter.Current.Select("descendant::Error");
@@ -272,7 +311,7 @@ namespace KDRS_Analyse
                     }
                 }
 
-                Console.WriteLine("Is compliant: " + isCompliant);
+                //Console.WriteLine("Is compliant: " + isCompliant);
 
                 if (String.IsNullOrEmpty(isCompliant))
                 {
@@ -303,7 +342,7 @@ namespace KDRS_Analyse
             }
 
             Globals.extractionAnalyse.tools.Add(kostValTool);
-            Console.WriteLine("Tool added");
+           // Console.WriteLine("Tool added");
         }
     }
 }

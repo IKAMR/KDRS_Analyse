@@ -293,6 +293,15 @@ namespace KDRS_Analyse
         {
             public string Summary { get; set; }
             public string Info { get; set; }
+
+            [XmlAttribute]
+            public string valid { get; set; }
+            [XmlAttribute]
+            public string invalid { get; set; }
+            [XmlAttribute]
+            public string notValidated { get; set; }
+            [XmlAttribute]
+            public string totalFiles { get; set; }
         }
 
     }
