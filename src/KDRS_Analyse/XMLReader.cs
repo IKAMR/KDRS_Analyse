@@ -50,6 +50,8 @@ namespace KDRS_Analyse
             readAgents.preservation = node.InnerXml;
 
             Globals.extractionAnalyse.agents = readAgents;
+
+
         }
 
         public void ReadVeraPdf(string fileName, string outRootFolder, string inRootFolder)
@@ -146,17 +148,17 @@ namespace KDRS_Analyse
                     veraFile.id = fileId;
                 }
 
-                veraFile.valid = new AnalyseFile.Valid();
+                AnalyseFile.Valid fileValid = new AnalyseFile.Valid();
 
-                veraFile.valid.toolId = veraTool.toolId;
+                fileValid.toolId = veraTool.toolId;
                 string isCompliant = nodeIter.Current.SelectSingleNode("descendant::validationReport/@isCompliant").Value;
-                veraFile.valid.isValid = isCompliant;
+                fileValid.isValid = isCompliant;
                 Console.WriteLine("Is compliant: " + isCompliant);
-                
-                veraFile.valid.passedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedRules").Value;
-                veraFile.valid.failedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedRules").Value;
-                veraFile.valid.passedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedChecks").Value;
-                veraFile.valid.failedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedChecks").Value;
+
+                fileValid.passedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedRules").Value;
+                fileValid.failedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedRules").Value;
+                fileValid.passedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedChecks").Value;
+                fileValid.failedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedChecks").Value;
                 
                 string profName = nodeIter.Current.SelectSingleNode("descendant::validationReport/@profileName").Value;
 
@@ -164,9 +166,11 @@ namespace KDRS_Analyse
                 string pdfAtype = "";
                 if (profile.Contains("PDF"))
                 {
-                    veraFile.valid.type = profile.Split('-')[0];
+                    fileValid.type = profile.Split('-')[0];
                     pdfAtype = profile.Split('-')[1];
                 }
+
+                veraFile.valid.Add(fileValid);
 
                 if (newFile)
                     Globals.extractionAnalyse.files.Add(veraFile);
@@ -238,10 +242,11 @@ namespace KDRS_Analyse
                     kostValFile.id = fileId;
                 }
                 
-                kostValFile.valid = new AnalyseFile.Valid();
+               // kostValFile.valid = new List<AnalyseFile.Valid>();
 
+                AnalyseFile.Valid fileValid = new AnalyseFile.Valid();
 
-                kostValFile.valid.toolId = kostValTool.toolId;
+                fileValid.toolId = kostValTool.toolId;
 
                 string isCompliant = "";
                 XPathNavigator valid = nodeIter.Current.SelectSingleNode("descendant::Valid");
@@ -273,7 +278,7 @@ namespace KDRS_Analyse
                 {
                     isCompliant = nodeIter.Current.SelectSingleNode("descendant::Invalid").Value;
                 }
-                kostValFile.valid.isValid = isCompliant;
+                fileValid.isValid = isCompliant;
                 
                 if (isCompliant.Equals("invalid"))
                 {
@@ -281,13 +286,15 @@ namespace KDRS_Analyse
                 }
             
                 string valType = nodeIter.Current.SelectSingleNode("descendant::ValType").Value;
-                kostValFile.valid.type = valType.Split(':')[1].ToString().Trim();
+                fileValid.type = valType.Split(':')[1].ToString().Trim();
          
                 if (valType.Contains("PDF"))
                 {
                     string pdfAtype = nodeIter.Current.SelectSingleNode("descendant::FormatVL").Value;
                     
                 }
+
+                kostValFile.valid.Add(fileValid);
 
                 if (newFile)
                     Globals.extractionAnalyse.files.Add(kostValFile);

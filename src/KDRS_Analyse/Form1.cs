@@ -19,6 +19,8 @@ namespace KDRS_Analyse
         string outRootFolder = String.Empty;
         string outFile = String.Empty;
 
+        int fileCount;
+
         List<string> checkedButtons = new List<string>();
 
         public Form1()
@@ -34,7 +36,7 @@ namespace KDRS_Analyse
 
             checkedButtons.Add("Checked buttons:");
 
-
+            fileCount = 0;
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -48,6 +50,11 @@ namespace KDRS_Analyse
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            fileCount = 0;
+
+            lblProgress.Text = "";
+            lblProgress.Refresh();
 
             fileName = files[0];
             if (files.Count() > 1)
@@ -71,7 +78,10 @@ namespace KDRS_Analyse
                 try
                 {
                     ReadFile();
-                    txtBoxInfoText.AppendText("File has been read!\r\n");
+                    if (fileCount > 0)
+                        txtBoxInfoText.AppendText("File has been read with " + fileCount + " files!\r\n");
+                    else 
+                        txtBoxInfoText.AppendText("File has been read!\r\n");
                 }
                 catch (Exception ex)
                 {
@@ -186,7 +196,8 @@ namespace KDRS_Analyse
         {
             base.Invoke((System.Action)delegate
             {
-                lblProgress.Text = count.ToString();
+                fileCount = count;
+                lblProgress.Text = fileCount.ToString();
                 lblProgress.Refresh();
             });
         }
@@ -195,13 +206,15 @@ namespace KDRS_Analyse
         {
             string logFile = Path.Combine(outFolder, "analyse_log_" + DateTime.Now.ToString("yyyy-MM-dd-HHmm") + ".txt");
 
+            string progInfo = Globals.toolName + " v" + Globals.toolVersion;
+
             string inRoot = "In root folder: " + inRootFolder;
             string outRoot = "Out root folder: " + outRootFolder;
 
             string analyseFolder = "Analyse folder: " + outFolder;
             string analyseFileName = "Analyse file name: " + outFileName;
 
-            string[] names = { inRoot, outRoot, analyseFolder, analyseFileName};
+            string[] names = { progInfo, inRoot, outRoot, analyseFolder, analyseFileName};
 
             System.IO.File.WriteAllLines(logFile, names);
             System.IO.File.AppendAllLines(logFile, checkedButtons);
@@ -221,7 +234,11 @@ namespace KDRS_Analyse
         public static readonly String toolVersion = "0.2";
 
         public static int toolCounter = 0;
-        public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse();
+        public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse
+        {
+            name = toolName,
+            version = toolVersion
+        };
 
 
     }

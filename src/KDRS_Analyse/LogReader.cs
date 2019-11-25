@@ -12,7 +12,7 @@ namespace KDRS_Analyse
         public event ProgressUpdate OnProgressUpdate;
 
         public bool newFile = false;
-
+        //------------------------------------------------------------------------------------
         // Reading Decom Blob report and assigning values to objects
         public void ReadDcmBlbRpt(string fileName, string inRootFolder, string outRootFolder)
         {
@@ -153,7 +153,7 @@ namespace KDRS_Analyse
             Globals.extractionAnalyse.tools.Add(dcmTool);
             Console.WriteLine("Tool added");
         }
-
+        //------------------------------------------------------------------------------------
         public void ReadDcmLog(string fileName, string inRootFolder, string outRootFolder)
         {
             string[] fileList;
@@ -315,7 +315,14 @@ namespace KDRS_Analyse
 
                                 //string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
                                 string readMimeLine = reader.ReadLine();
-                                string readMime = readMimeLine.Split(splitMime, 3, StringSplitOptions.RemoveEmptyEntries)[2].Trim();
+                                lineCounter++;
+
+                                string[] errorSplit = { "BLOBConversionProcess:151 -", " - " };
+                                string readMime = "";
+                                if (CheckLine(readMimeLine))
+                                    readMime = readMimeLine.Split(splitMime, 3, StringSplitOptions.RemoveEmptyEntries)[2].Trim();
+                                else
+                                    file.error.text = readMimeLine.Split(errorSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
                                 string fileMime = file.inFile.mime;
 
@@ -366,7 +373,7 @@ namespace KDRS_Analyse
             if (usingTempFile && File.Exists(tempFile))
                 File.Delete(tempFile);
         }
-
+        //------------------------------------------------------------------------------------
         public string MergeDcmLogFiles(string[] fileList, string fileName)
         {
             //string[] fileList;
@@ -398,7 +405,7 @@ namespace KDRS_Analyse
             }
             return tempFile;
         }
-
+        //------------------------------------------------------------------------------------
         public void ReadDroidFiles(string fileName, bool inFiles, string inRootFolder, string outRootFolder, bool incTableXml)
         {
             string isIn = "in";
@@ -500,7 +507,7 @@ namespace KDRS_Analyse
             Globals.extractionAnalyse.tools.Add(droidTool);
             Console.WriteLine("Tool added");
         }
-
+        //------------------------------------------------------------------------------------
         public string TimeConv(string timeString)
         {
             DateTime parseDate = new DateTime();
@@ -512,7 +519,7 @@ namespace KDRS_Analyse
 
             return parseDate.ToString("yyyy-MM-dd HH:mm:ss");
         }
-
+        //------------------------------------------------------------------------------------
         public static AnalyseFile GetFile(string fileId)
         {
             Console.WriteLine("Get file");
@@ -552,7 +559,7 @@ namespace KDRS_Analyse
                 throw ex;
             }
         }
-
+        //------------------------------------------------------------------------------------
         public AnalyseTool GetTool(string toolId)
         {
             foreach (AnalyseTool tool in Globals.extractionAnalyse.tools)
@@ -565,7 +572,7 @@ namespace KDRS_Analyse
                 toolId = toolId
             };
         }
-
+        //------------------------------------------------------------------------------------
         public static string GetFileId(string filePath, string rootFolder)
         {
             Console.WriteLine("Get file ID");
@@ -621,7 +628,7 @@ namespace KDRS_Analyse
 
             return fileId;
         }
-
+        //------------------------------------------------------------------------------------
         public void MimeWarning(AnalyseFile file, bool inFile, string mime, string toolNo)
         {
             file.warning.toolNo = toolNo;
@@ -634,7 +641,7 @@ namespace KDRS_Analyse
             file.warning.value2 = mime;
             file.warning.text = "MIME mismatch";
         }
-
+        //------------------------------------------------------------------------------------
         public void ProjectWarning(AnalyseFile file, string refProject, string project, string toolNo)
         {
             file.warning.toolNo = toolNo;
@@ -644,7 +651,15 @@ namespace KDRS_Analyse
             file.warning.value2 = project;
             file.warning.text = "PROJECT mismatch";
         }
-
+        //------------------------------------------------------------------------------------
+        public bool CheckLine(string line)
+        {
+            if (line.Contains("INFO  com.documaster.decom.views.blobconversion.BLOBConversionProcess"))
+                return true;
+            Console.WriteLine("Error found");
+            return false;
+        }
+        //------------------------------------------------------------------------------------
         static string ReadSpecificLine(string filePath, int lineNumber)
         {
             string content = String.Empty;

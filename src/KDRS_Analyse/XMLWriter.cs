@@ -42,6 +42,12 @@ namespace KDRS_Analyse
         public SystemInfo system { get; set; }
         public List<AnalyseTool> tools { get; set; }
         public List<AnalyseFile> files { get; set; }
+
+        [XmlAttribute]
+        public string name { get; set; }
+        [XmlAttribute]
+        public string version { get; set; }
+
     }
     //***************************************************************
 
@@ -303,6 +309,7 @@ namespace KDRS_Analyse
             outFile = new FileInfo();
             warning = new AnalyseWarning();
             error = new FileError();
+            valid = new List<Valid>();
         }
 
         [XmlAttribute]
@@ -312,7 +319,7 @@ namespace KDRS_Analyse
         public string end { get; set; }
         public FileInfo inFile { get; set; }
         public FileInfo outFile { get; set; }
-        public Valid valid { get; set; }
+        public List<Valid> valid { get; set; }
 
         public AnalyseWarning warning { get; set; }
         public FileError error { get; set; }
