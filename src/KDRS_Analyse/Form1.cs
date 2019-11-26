@@ -100,25 +100,29 @@ namespace KDRS_Analyse
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 txtBoxInfoText.AppendText("info.xml: " + fileName + "\r\n");
-                xmlReader.ReadInfoXml(fileName);// readInfoXml
                 checkedButtons.Add("X - Info xml");
+
+                xmlReader.ReadInfoXml(fileName);// readInfoXml
             }
             else if (rBtnDcmBlbRpt.Checked)
             {
+                logReader.OnProgressUpdate += reader_OnProgressUpdate;
+
                 Console.WriteLine("Dcm blobreport");
                 txtBoxInfoText.AppendText("Decom Blobs report: " + fileName + "\r\n");
-                logReader.OnProgressUpdate += reader_OnProgressUpdate;
-                logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
                 checkedButtons.Add("X - Decom blob report");
+
+                logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
 
             }
             else if (rBtnDcmLog.Checked)
             {
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
-                logReader.ReadDcmLog(fileName, inRootFolder, outRootFolder); // readDcmLog
                 txtBoxInfoText.AppendText("Decom log: " + fileName + "\r\n");
                 checkedButtons.Add("X - Decom log");
+
+                logReader.ReadDcmLog(fileName, inRootFolder, outRootFolder); // readDcmLog
             }
             else if (rBtnDrdFiles.Checked)
             {
@@ -126,8 +130,9 @@ namespace KDRS_Analyse
 
                 Console.WriteLine("Droid files");
                 txtBoxInfoText.AppendText("Droid files.csv: " + fileName + "\r\n");
-                logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder, chkBoxIncXsd.Checked);
                 checkedButtons.Add("X - Droid files");
+
+                logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder, chkBoxIncXsd.Checked);
 
             }
             else if (rBtnIKAVALog.Checked)

@@ -38,22 +38,22 @@ namespace KDRS_Analyse
             info.ipUuid = uuid.Split(':')[1];
 
             node = nav.SelectSingleNode("//mets:mets/@LABEL", nsmgr);
-            info.deliveryspecification = node.InnerXml;
+            info.deliveryspecification = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:mets/@TYPE", nsmgr);
-            info.ipType = node.InnerXml;
+            info.ipType = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='DELIVERYSPECIFICATION']", nsmgr);
-            info.extractionDateTime = node.InnerXml;
+            info.extractionDateTime = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='SUBMISSIONAGREEMENT']", nsmgr);
-            info.submissionagreement = node.InnerXml;
+            info.submissionagreement = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='STARTDATE']", nsmgr);
-            info.startdate = node.InnerXml;
+            info.startdate = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='ENDDATE']", nsmgr);
-            info.enddate = node.InnerXml;
+            info.enddate = GetInnerXml(node);
 
             Globals.extractionAnalyse.info = info;
 
@@ -61,27 +61,66 @@ namespace KDRS_Analyse
 
             node = nav.SelectSingleNode("//mets:agent[@ROLE = 'ARCHIVIST' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
 
-            readAgents.archivist = node.InnerXml;
+            readAgents.archivist = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:agent[@ROLE = 'IPOWNER' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
-            readAgents.ipowner = node.InnerXml;
+            readAgents.ipowner = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:agent[@OTHERROLE = 'PRODUCER' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
-            readAgents.producer = node.InnerXml;
+            readAgents.producer = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:agent[@ROLE = 'CREATOR' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
-            readAgents.creator = node.InnerXml;
+            readAgents.creator = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:agent[@OTHERROLE = 'SUBMITTER' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
-            readAgents.submitter = node.InnerXml;
+            readAgents.submitter = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:agent[@ROLE = 'PRESERVATION' and @TYPE = 'ORGANIZATION']/mets:name", nsmgr);
-            readAgents.preservation = node.InnerXml;
+            readAgents.preservation = GetInnerXml(node);
 
             Globals.extractionAnalyse.agents = readAgents;
 
+            SystemInfo system = new SystemInfo();
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'ARCHIVIST' and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:name", nsmgr);
+            system.name.name = GetInnerXml(node);
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'ARCHIVIST' and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:note", nsmgr);
+            system.version = GetInnerXml(node);
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'ARCHIVIST' and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:note[2]", nsmgr);
+            system.type = GetInnerXml(node);
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'ARCHIVIST' and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:note[3]", nsmgr);
+            system.typeVersion = GetInnerXml(node);
+
+            Globals.extractionAnalyse.system = system;
+
+            ExtractorSoftware extractorInfo = new ExtractorSoftware();
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'OTHER' and @OTHERROLE='PRODUCER'  and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:name", nsmgr);
+            extractorInfo.name = GetInnerXml(node);
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'OTHER' and @OTHERROLE='PRODUCER'  and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:note", nsmgr);
+            extractorInfo.version = GetInnerXml(node);
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'OTHER' and @OTHERROLE='PRODUCER'  and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:note[2]", nsmgr);
+            extractorInfo.type = GetInnerXml(node);
+
+            node = nav.SelectSingleNode("//mets:agent[@ROLE = 'OTHER' and @OTHERROLE='PRODUCER'  and @TYPE = 'OTHER' and @OTHERTYPE = 'SOFTWARE']/mets:note[3]", nsmgr);
+            extractorInfo.typeVersion = GetInnerXml(node);
+
+            Globals.extractionAnalyse.extractorSoftware = extractorInfo;
 
         }
+        //------------------------------------------------------------------------------------
+        public string GetInnerXml(XPathNavigator node)
+        {
+            if (node != null)
+                return node.InnerXml;
+            return null;
+        }
+
         //------------------------------------------------------------------------------------
 
         public void ReadVeraPdf(string fileName, string outRootFolder, string inRootFolder)

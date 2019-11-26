@@ -321,7 +321,11 @@ namespace KDRS_Analyse
 
                                 //string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
                                 string readMimeLine = reader.ReadLine();
-                                lineCounter++;
+                                while (!readMimeLine.Contains(splitMime[0]) && readMimeLine != null)
+                                {
+                                    readMimeLine = reader.ReadLine();
+                                    lineCounter++;
+                                }
 
                                 string[] errorSplit = { "BLOBConversionProcess:151 -", " - " };
                                 string readMime = "";

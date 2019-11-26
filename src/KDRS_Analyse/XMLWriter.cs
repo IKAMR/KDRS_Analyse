@@ -40,7 +40,12 @@ namespace KDRS_Analyse
         public AnalyseInfo info { get; set; }
         public Agents agents { get; set; }
         public SystemInfo system { get; set; }
+        public ExtractorSoftware extractorSoftware { get; set; }
+
+        [XmlElement("tools")]
         public List<AnalyseTool> tools { get; set; }
+
+        [XmlElement("files")]
         public List<AnalyseFile> files { get; set; }
 
         [XmlAttribute]
@@ -332,7 +337,10 @@ namespace KDRS_Analyse
         [XmlElement("valid")]
         public List<Valid> valid { get; set; }
 
+        [XmlElement("warning")]
         public AnalyseWarning warning { get; set; }
+
+        [XmlElement("error")]
         public FileError error { get; set; }
 
         public class Result
