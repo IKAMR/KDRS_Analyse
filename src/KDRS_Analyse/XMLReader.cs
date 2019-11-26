@@ -263,7 +263,7 @@ namespace KDRS_Analyse
             kostValTool.name = "KOST-Val";
             kostValTool.version = "";
 
-          //  Console.WriteLine("Tool created");
+            Console.WriteLine("Tool created");
 
             XPathNavigator nav;
             XPathDocument xDoc;
@@ -288,19 +288,28 @@ namespace KDRS_Analyse
             kostValTool.KOSTValInfo.configuration = nav.SelectSingleNode("//KOSTValLog/configuration").Value;
 
             kostValTool.KOSTValSummary = new AnalyseTool.KostValSummary();
+            Console.WriteLine("New summary");
+            XPathNavigator node = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Summary");
 
-            string kostSummary = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Summary").Value;
+            string kostSummary = GetInnerXml(node);
+
             kostValTool.KOSTValSummary.Summary = kostSummary;
 
-            string[] summarySplit = { "From the", "files", "valid,", "invalid and", "("};
-            kostValTool.KOSTValSummary.totalFiles = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
-            kostValTool.KOSTValSummary.valid = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-            kostValTool.KOSTValSummary.invalid = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[3].Trim();
-            kostValTool.KOSTValSummary.notValidated = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[5].Trim();
+            if (!String.IsNullOrEmpty(kostSummary))
+            {
+                string[] summarySplit = { "From the", "files", "valid,", "invalid and", "(" };
+                kostValTool.KOSTValSummary.totalFiles = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+                kostValTool.KOSTValSummary.valid = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                kostValTool.KOSTValSummary.invalid = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[3].Trim();
+                kostValTool.KOSTValSummary.notValidated = kostSummary.Split(summarySplit, 7, StringSplitOptions.RemoveEmptyEntries)[5].Trim();
+            }
 
-            string notValFiles = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Info/Message").Value;
+            Console.WriteLine("Get message");
+            node = nav.SelectSingleNode("//KOSTValLog/Format/Infos/Info/Message");
+            string notValFiles = GetInnerXml(node);
             kostValTool.KOSTValSummary.Info = notValFiles;
 
+            Console.WriteLine("Selecting files");
 
             nodeIter = nav.Select("//KOSTValLog/Format/Validation", nsmgr);
 
@@ -310,7 +319,7 @@ namespace KDRS_Analyse
             {
                 string name = nodeIter.Current.SelectSingleNode("descendant::ValFile").Value;
                 string fileId = LogReader.GetFileId(name, outRootFolder);
-                //Console.WriteLine("File ID: " + fileId);
+                Console.WriteLine("File ID: " + fileId);
 
                 AnalyseFile kostValFile = LogReader.GetFile(fileId);
 
@@ -329,11 +338,11 @@ namespace KDRS_Analyse
                 string isCompliant = "";
                 XPathNavigator valid = nodeIter.Current.SelectSingleNode("descendant::Valid");
                 if (valid != null)
-                    isCompliant = valid.Value;
+                    isCompliant = "true";
                 else if((valid = nodeIter.Current.SelectSingleNode("descendant::Invalid")) != null)
                 {
-                    isCompliant = valid.Value;
-                   // Console.WriteLine("Error found");
+                    isCompliant = "false";
+                    Console.WriteLine("Error found");
                     kostValFile.error.error = new List<AnalyseFile.KostError>();
 
                     XPathNodeIterator errorNav = nodeIter.Current.Select("descendant::Error");
@@ -350,7 +359,7 @@ namespace KDRS_Analyse
                     }
                 }
 
-                //Console.WriteLine("Is compliant: " + isCompliant);
+                Console.WriteLine("Is compliant: " + isCompliant);
 
                 if (String.IsNullOrEmpty(isCompliant))
                 {
