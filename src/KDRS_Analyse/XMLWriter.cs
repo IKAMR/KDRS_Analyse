@@ -328,6 +328,8 @@ namespace KDRS_Analyse
         public string end { get; set; }
         public FileInfo inFile { get; set; }
         public FileInfo outFile { get; set; }
+
+        [XmlElement("valid")]
         public List<Valid> valid { get; set; }
 
         public AnalyseWarning warning { get; set; }
@@ -365,6 +367,7 @@ namespace KDRS_Analyse
             [XmlText]
             public string text { get; set; }
 
+            [XmlElement("error")]
             public List<KostError> error { get; set; }
         }
 
@@ -401,7 +404,8 @@ namespace KDRS_Analyse
             [XmlText]
             public string isValid { get; set; }
 
-           // public KostError error { get; set; }
+
+            public KostError error { get; set; }
 
 
         }
