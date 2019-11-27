@@ -32,11 +32,13 @@ namespace KDRS_Analyse
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
 
-            Globals.extractionAnalyse.files = new List<AnalyseFile>();
 
             checkedButtons.Add("Checked buttons:");
 
             fileCount = 0;
+
+            FillDict("pdf-to-puid.ini", Globals.puIdDict);
+
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -106,6 +108,8 @@ namespace KDRS_Analyse
             }
             else if (rBtnDcmBlbRpt.Checked)
             {
+                InitFiles();
+
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 Console.WriteLine("Dcm blobreport");
@@ -117,6 +121,8 @@ namespace KDRS_Analyse
             }
             else if (rBtnDcmLog.Checked)
             {
+                InitFiles();
+
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 txtBoxInfoText.AppendText("Decom log: " + fileName + "\r\n");
@@ -126,6 +132,8 @@ namespace KDRS_Analyse
             }
             else if (rBtnDrdFiles.Checked)
             {
+                InitFiles();
+
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 Console.WriteLine("Droid files");
@@ -141,6 +149,8 @@ namespace KDRS_Analyse
                 ; // readIKAVANoConvFiles
             else if (rBtnVera.Checked)
             {
+                InitFiles();
+
                 xmlReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 Console.WriteLine("veraPDF results");
@@ -151,6 +161,7 @@ namespace KDRS_Analyse
                  // readVera
             else if (rBtnKOSTVal.Checked)
             {
+                InitFiles();
                 xmlReader.OnProgressUpdate += reader_OnProgressUpdate;
                 Console.WriteLine("KOST-Val results");
                 txtBoxInfoText.AppendText("KOST-Val: " + fileName + "\r\n");
@@ -227,6 +238,42 @@ namespace KDRS_Analyse
             System.IO.File.AppendAllText(logFile, txtBoxInfoText.Text);
 
         }
+
+        private void FillDict(string file, Dictionary<string, string> dict)
+        {
+            dict.Clear();
+
+            string[] keyPair = null;
+
+            if (File.Exists(file))
+            {
+                using (StreamReader sr = new StreamReader(file))
+                {
+                    string line = "";
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line.StartsWith(";") || String.IsNullOrEmpty(line) || line.StartsWith("["))
+                            continue;
+                        keyPair = line.Split('=');
+                        
+                        Console.WriteLine(keyPair[0] + " " + keyPair[1]);
+                        dict.Add(keyPair[0], keyPair[1]);
+
+                    }
+                }
+            }
+
+        }
+
+        private void InitFiles()
+        {
+            if (Globals.extractionAnalyse.files == null)
+            {
+                Globals.extractionAnalyse.files = new FilesWrapper();
+                Globals.extractionAnalyse.files.files = new List<AnalyseFile>();
+            }
+
+        }
     }
 
     public static class UpdateStatus
@@ -245,6 +292,7 @@ namespace KDRS_Analyse
             version = toolVersion
         };
 
+        public static Dictionary<string, string> puIdDict = new Dictionary<string, string>();
 
     }
 }

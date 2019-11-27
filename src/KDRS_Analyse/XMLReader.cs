@@ -235,19 +235,24 @@ namespace KDRS_Analyse
                 string pdfAtype = "";
                 if (profile.Contains("PDF"))
                 {
-                    fileValid.type = profile.Split('-')[0];
+                    string fileType = profile.Split('-')[0];
+                    Console.WriteLine("PRofile: " + profile.ToLower());
+                    fileValid.type = fileType;
+                    if (Globals.puIdDict.ContainsKey(profile.ToLower()))
+                        fileValid.puid = Globals.puIdDict[profile.ToLower()];
+
+
+
                     pdfAtype = profile.Split('-')[1];
                 }
 
                 veraFile.valid.Add(fileValid);
 
                 if (newFile)
-                    Globals.extractionAnalyse.files.Add(veraFile);
+                    Globals.extractionAnalyse.files.files.Add(veraFile);
                 fileCount++;
                 OnProgressUpdate?.Invoke(fileCount);
-
             }
-
         }
         //------------------------------------------------------------------------------------
 
@@ -343,20 +348,23 @@ namespace KDRS_Analyse
                 {
                     isCompliant = "false";
                     Console.WriteLine("Error found");
-                    kostValFile.error.error = new List<AnalyseFile.KostError>();
+                    AnalyseFile.FileError error = new AnalyseFile.FileError();
+                    error.id = kostValTool.toolId;
+                    error.kostErrors = new List<AnalyseFile.KostError>();
 
                     XPathNodeIterator errorNav = nodeIter.Current.Select("descendant::Error");
 
                     while (errorNav.MoveNext())
                     {
-                        AnalyseFile.KostError error = new AnalyseFile.KostError
+                        AnalyseFile.KostError kostError = new AnalyseFile.KostError
                         {
                             modul = errorNav.Current.SelectSingleNode("descendant::Modul").Value,
                             message = errorNav.Current.SelectSingleNode("descendant::Message").Value
                         };
 
-                        kostValFile.error.error.Add(error);
+                        error.kostErrors.Add(kostError);
                     }
+                    kostValFile.errors.Add(error);
                 }
 
                 Console.WriteLine("Is compliant: " + isCompliant);
@@ -367,24 +375,23 @@ namespace KDRS_Analyse
                 }
                 fileValid.isValid = isCompliant;
                 
-                if (isCompliant.Equals("invalid"))
-                {
-                    
-                }
-            
                 string valType = nodeIter.Current.SelectSingleNode("descendant::ValType").Value;
                 fileValid.type = valType.Split(':')[1].ToString().Trim();
          
                 if (valType.Contains("PDF"))
                 {
                     string pdfAtype = nodeIter.Current.SelectSingleNode("descendant::FormatVL").Value;
-                    
+
+                    string fileType = "PDF/A" + pdfAtype;
+
+                    if (Globals.puIdDict.ContainsKey(fileType.ToLower()))
+                        fileValid.puid = Globals.puIdDict[fileType.ToLower()];
                 }
 
                 kostValFile.valid.Add(fileValid);
 
                 if (newFile)
-                    Globals.extractionAnalyse.files.Add(kostValFile);
+                    Globals.extractionAnalyse.files.files.Add(kostValFile);
                 fileCount++;
                 OnProgressUpdate?.Invoke(fileCount);
             }

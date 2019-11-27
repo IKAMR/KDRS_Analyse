@@ -135,7 +135,7 @@ namespace KDRS_Analyse
                             file.end = TimeConv(endDate);
 
                         if (newFile)
-                            Globals.extractionAnalyse.files.Add(file);
+                            Globals.extractionAnalyse.files.files.Add(file);
                         //Console.WriteLine("File added");
 
                         lineCount++;
@@ -222,21 +222,18 @@ namespace KDRS_Analyse
                         line = reader.ReadLine();
                         lineCounter++;
                         intBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        //lineCounter++;
                         Console.WriteLine("Found: " + intBlob + " intblobs at line " + (startLine + 1));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         extBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        //lineCounter++;
                         Console.WriteLine("Found: " + extBlob + " extBlob at line " + (startLine + 2));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         refXml = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        //lineCounter++;
                         Console.WriteLine("Found: " + refXml + " refXml at line " + (startLine + 3));
 
                         line = reader.ReadLine();
@@ -332,15 +329,18 @@ namespace KDRS_Analyse
                                 if (CheckLine(readMimeLine))
                                     readMime = readMimeLine.Split(splitMime, 3, StringSplitOptions.RemoveEmptyEntries)[2].Trim();
                                 else
-                                    file.error.text = readMimeLine.Split(errorSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-
+                                {
+                                    AnalyseFile.FileError error = new AnalyseFile.FileError();
+                                    error.text = readMimeLine.Split(errorSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                                    file.errors.Add(error);
+                                }
                                 string fileMime = file.inFile.mime;
 
                                 Console.WriteLine("Checking mime");
                                 if (String.IsNullOrEmpty(fileMime))
                                     file.inFile.mime = readMime;
                                 else if (fileMime != readMime)
-                                    MimeWarning(file, true, readMime, dcmTool.toolNo);
+                                    MimeWarning(file, true, readMime, dcmTool.toolId);
 
                                 Console.WriteLine("Checking project");
                                 if (String.IsNullOrEmpty(dcmTool.project))
@@ -351,7 +351,7 @@ namespace KDRS_Analyse
                                 else if (dcmTool.project != readProject)
                                 {
                                     Console.WriteLine("Project warning");
-                                    ProjectWarning(file, dcmTool.project, readProject, dcmTool.toolNo);
+                                    ProjectWarning(file, dcmTool.project, readProject, dcmTool.toolId);
                                 }
 
                                 if (file.result.toolNo == 0)
@@ -359,7 +359,7 @@ namespace KDRS_Analyse
 
                                 if (newFile)
                                 {
-                                    Globals.extractionAnalyse.files.Add(file);
+                                    Globals.extractionAnalyse.files.files.Add(file);
                                     Console.WriteLine("File added");
                                 }
                             }
@@ -488,7 +488,7 @@ namespace KDRS_Analyse
                         if (String.IsNullOrEmpty(fileMime))
                             droidFile.inFile.mime = readMime;
                         else if (fileMime != readMime)
-                            MimeWarning(droidFile, true, readMime, droidTool.toolNo);
+                            MimeWarning(droidFile, true, readMime, droidTool.toolId);
 
                         droidFile.inFile.name = readFileName;
                         droidFile.inFile.version = split[17].Trim('"');
@@ -504,14 +504,14 @@ namespace KDRS_Analyse
                         if (String.IsNullOrEmpty(fileMime))
                             droidFile.outFile.mime = readMime;
                         else if (fileMime != readMime)
-                            MimeWarning(droidFile, false, readMime, droidTool.toolNo);
+                            MimeWarning(droidFile, false, readMime, droidTool.toolId);
 
                         droidFile.outFile.name = readFileName;
                         droidFile.outFile.version = split[17].Trim('"');
                     }
                     OnProgressUpdate?.Invoke(fileCount);
                     if (newFile)
-                        Globals.extractionAnalyse.files.Add(droidFile);
+                        Globals.extractionAnalyse.files.files.Add(droidFile);
                 }
             }
             Globals.extractionAnalyse.tools.Add(droidTool);
@@ -530,13 +530,14 @@ namespace KDRS_Analyse
             return parseDate.ToString("yyyy-MM-dd HH:mm:ss");
         }
         //------------------------------------------------------------------------------------
+        // Searches filst of file objects and returns object with same fileId as input. If no file exist with fileId -> creates new file object.
         public static AnalyseFile GetFile(string fileId)
         {
             Console.WriteLine("Get file");
             try
             {
                 //newFile = false;
-                foreach (AnalyseFile file in Globals.extractionAnalyse.files)
+                foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
                 {
                     if (file.id.Contains(fileId) || fileId.Contains(file.id))
                     {
@@ -583,6 +584,7 @@ namespace KDRS_Analyse
             };
         }
         //------------------------------------------------------------------------------------
+        // Finds common part of path between filePath and input root path. Returns unique file path.
         public static string GetFileId(string filePath, string rootFolder)
         {
             Console.WriteLine("Get file ID");
@@ -639,27 +641,34 @@ namespace KDRS_Analyse
             return fileId;
         }
         //------------------------------------------------------------------------------------
-        public void MimeWarning(AnalyseFile file, bool inFile, string mime, string toolNo)
+        public void MimeWarning(AnalyseFile file, bool inFile, string mime, string toolID)
         {
-            file.warning.toolNo = toolNo;
+            AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning();
+            warning.toolId = toolID;
 
             if (inFile)
             {
-                file.warning.element = "inFile";
-                file.warning.value1 = file.inFile.mime;
+                warning.element = "inFile";
+                warning.value1 = file.inFile.mime;
             }
-            file.warning.value2 = mime;
-            file.warning.text = "MIME mismatch";
+            warning.value2 = mime;
+            warning.text = "MIME mismatch";
+
+            file.warning.Add(warning);
         }
         //------------------------------------------------------------------------------------
-        public void ProjectWarning(AnalyseFile file, string refProject, string project, string toolNo)
+        public void ProjectWarning(AnalyseFile file, string refProject, string project, string toolID)
         {
-            file.warning.toolNo = toolNo;
-            file.warning.element = "project";
-            file.warning.value1 = refProject;
+            AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning();
 
-            file.warning.value2 = project;
-            file.warning.text = "PROJECT mismatch";
+            warning.toolId = toolID;
+            warning.element = "project";
+            warning.value1 = refProject;
+
+            warning.value2 = project;
+            warning.text = "PROJECT mismatch";
+
+            file.warning.Add(warning);
         }
         //------------------------------------------------------------------------------------
         public bool CheckLine(string line)
@@ -689,14 +698,12 @@ namespace KDRS_Analyse
                     }
                     content = file.ReadLine();
                 }
-
             }
             catch (IOException e)
             {
                 Console.WriteLine("There was an error reading the file: ");
                 Console.WriteLine(e.Message);
             }
-
             return content;
         }
     }

@@ -33,8 +33,11 @@ namespace KDRS_Analyse
     {
         public ExtractionAnalyse()
         {
-            files = new List<AnalyseFile>();
+            
+            //files = new List<AnalyseFile>();
             tools = new List<AnalyseTool>();
+            files = null;
+
         }
 
         public AnalyseInfo info { get; set; }
@@ -46,13 +49,19 @@ namespace KDRS_Analyse
         public List<AnalyseTool> tools { get; set; }
 
         [XmlElement("files")]
-        public List<AnalyseFile> files { get; set; }
+        public FilesWrapper files { get; set; }
 
         [XmlAttribute]
         public string name { get; set; }
         [XmlAttribute]
         public string version { get; set; }
 
+    }
+
+    public class FilesWrapper
+    {
+        [XmlElement("file")]
+        public List<AnalyseFile> files { get; set; }
     }
     //***************************************************************
 
@@ -321,8 +330,8 @@ namespace KDRS_Analyse
             result = new Result();
             inFile = new FileInfo();
             outFile = new FileInfo();
-            warning = new AnalyseWarning();
-            error = new FileError();
+            warning = new List<AnalyseWarning>();
+            errors = new List<FileError>();
             valid = new List<Valid>();
         }
 
@@ -338,10 +347,10 @@ namespace KDRS_Analyse
         public List<Valid> valid { get; set; }
 
         [XmlElement("warning")]
-        public AnalyseWarning warning { get; set; }
+        public List<AnalyseWarning> warning { get; set; }
 
         [XmlElement("error")]
-        public FileError error { get; set; }
+        public List<FileError> errors { get; set; }
 
         public class Result
         {
@@ -376,7 +385,7 @@ namespace KDRS_Analyse
             public string text { get; set; }
 
             [XmlElement("error")]
-            public List<KostError> error { get; set; }
+            public List<KostError> kostErrors { get; set; }
         }
 
         public class FileInfo
@@ -399,6 +408,8 @@ namespace KDRS_Analyse
         {
             [XmlAttribute]
             public string toolId { get; set; }
+            [XmlAttribute]
+            public string puid { get; set; }
             [XmlAttribute]
             public string type { get; set; }
             [XmlAttribute]
