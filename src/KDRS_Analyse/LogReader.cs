@@ -11,6 +11,9 @@ namespace KDRS_Analyse
         public delegate void ProgressUpdate(int count);
         public event ProgressUpdate OnProgressUpdate;
 
+        public Dictionary<string, int> seqCount = new Dictionary<string, int>();
+
+
         public bool newFile = false;
         //------------------------------------------------------------------------------------
         // Reading Decom Blob report and assigning values to objects
@@ -202,14 +205,18 @@ namespace KDRS_Analyse
             string extBlobMiss = String.Empty;
             string readProject = String.Empty;
 
+
             AnalyseFile file;
             using (StreamReader reader = new StreamReader(fileName))
             {
                 string line;
+                string sequence = String.Empty;
 
                 while ((line = reader.ReadLine()) != null)
                 {
                     lineCounter++;
+
+                    // Extract project relevant information
                     if (line.Contains("Working with:"))
                     {
                         startLine = lineCounter;
@@ -220,45 +227,35 @@ namespace KDRS_Analyse
                         "Total referenced XML files found:", "Are external blobs missing:"};
                         dbName = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
-                        Console.WriteLine("Found: " + dbName + " at line " + startLine);
+                        //Console.WriteLine("Found: " + dbName + " at line " + startLine);
 
                         line = reader.ReadLine();
                         lineCounter++;
                         intBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        Console.WriteLine("Found: " + intBlob + " intblobs at line " + (startLine + 1));
+                        //Console.WriteLine("Found: " + intBlob + " intblobs at line " + (startLine + 1));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         extBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        Console.WriteLine("Found: " + extBlob + " extBlob at line " + (startLine + 2));
+                        //Console.WriteLine("Found: " + extBlob + " extBlob at line " + (startLine + 2));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         refXml = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        Console.WriteLine("Found: " + refXml + " refXml at line " + (startLine + 3));
+                        //Console.WriteLine("Found: " + refXml + " refXml at line " + (startLine + 3));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         extBlobMiss = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        /*
-                        reader.ReadLine();
 
-                        line = reader.ReadLine();
-
-                        Console.WriteLine(line);
-                        string[] projSplit = { "User has started the conversion process for project with name" };
-                        if (line.Contains(projSplit[0]))
-                            readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                            */
-                        Console.WriteLine("Time: " + timeStamp);
-                        Console.WriteLine("DB name: " + dbName);
-
-                        //break;
+                        //Console.WriteLine("Time: " + timeStamp);
+                       //Console.WriteLine("DB name: " + dbName);
                     }
 
+                    // Find confirmation of correct folder
                     if (line.Contains(outRootFolder) && !String.IsNullOrEmpty(dbName))
                     {
                         Console.WriteLine("Detected");
@@ -290,12 +287,29 @@ namespace KDRS_Analyse
                         if (line.Contains(projSplit[0]))
                             readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
+
+                        // Extract file relevant information
                         while ((line = reader.ReadLine()) != null && !line.Contains("Working with:"))
                         {
                             lineCounter++;
+                            sequence = AddSequence(sequence, line);
+                            //Console.WriteLine("Sequence: " + sequence);
+
                             Console.WriteLine("Reading over");
+
+                            // Start of blob conversion
                             if (line.Contains("Starting conversion of blob"))
                             {
+                                Console.WriteLine("Sequence: " + sequence);
+
+                                if (String.IsNullOrEmpty(sequence))
+                                    sequence = "126";
+                                else
+                                    UpdateSeqCount(sequence);
+
+                                // if (String.IsNullOrEmpty(sequence))
+                                sequence = "126";
+
                                 Console.WriteLine("Found 'Starting conversion of blob' at line: " + lineCounter);
                                 string[] split = { "Starting conversion of blob:", "and current conversion status is:" };
                                 string filePath = line.Split(split, 3, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
@@ -303,7 +317,7 @@ namespace KDRS_Analyse
                                 string fileId = GetFileId(filePath, inRootFolder);
 
                                 file = GetFile(fileId);
-                                Console.WriteLine("FileId aquired");
+                                //Console.WriteLine("FileId aquired");
 
                                 if (String.IsNullOrEmpty(file.id))
                                 {
@@ -311,19 +325,28 @@ namespace KDRS_Analyse
                                     file.id = fileId;
                                 }
 
-                                reader.ReadLine();
+                                line = reader.ReadLine();
+                                sequence = AddSequence(sequence, line);
+                               // Console.WriteLine("Sequence: " + sequence);
+
                                 lineCounter++;
 
-                                reader.ReadLine();
+                                line = reader.ReadLine();
+                                sequence = AddSequence(sequence, line);
+                                //Console.WriteLine("Sequence: " + sequence);
+
                                 lineCounter++;
 
                                 string[] splitMime = { "The detected MIME type of blob:", "is" };
 
                                 //string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
                                 string readMimeLine = reader.ReadLine();
+                                sequence = AddSequence(sequence, readMimeLine);
                                 while (!readMimeLine.Contains(splitMime[0]) && readMimeLine != null)
                                 {
                                     readMimeLine = reader.ReadLine();
+                                    sequence = AddSequence(sequence, readMimeLine);
+
                                     lineCounter++;
                                 }
 
@@ -359,21 +382,25 @@ namespace KDRS_Analyse
 
                                 if (String.IsNullOrEmpty(file.result.toolId))
                                     file.result.toolId = dcmTool.toolId;
-
                                 if (newFile)
                                 {
                                     Globals.extractionAnalyse.files.files.Add(file);
                                     Console.WriteLine("File added");
                                 }
+
+
                             }
                             Console.WriteLine("Line count: " + lineCounter);
                             OnProgressUpdate?.Invoke(lineCounter);
                         }
+                        UpdateSeqCount(sequence);
+
                         break;
                     }
                     Console.WriteLine("Line count: " + lineCounter);
                     OnProgressUpdate?.Invoke(lineCounter);
                 }
+
             }
             Console.WriteLine("Line count: " + lineCounter);
 
@@ -385,6 +412,12 @@ namespace KDRS_Analyse
 
             if (usingTempFile && File.Exists(tempFile))
                 File.Delete(tempFile);
+
+
+            foreach(var entry in seqCount)
+            {
+                Console.WriteLine(entry.Value + ", " + entry.Key);
+            }
         }
         //------------------------------------------------------------------------------------
         public string MergeDcmLogFiles(string[] fileList, string fileName)
@@ -708,6 +741,47 @@ namespace KDRS_Analyse
                 Console.WriteLine(e.Message);
             }
             return content;
+        }
+        //------------------------------------------------------------------------------------
+        private string AddSequence(string sequence, string line)
+        {
+            string[] splitArray = { "BLOBConversionProcess:", " - " };
+            if (!line.Contains("BLOBConversionProcess:126"))
+            {
+                if (!line.Contains("BLOBConversionProcess") || (!line.Contains("INFO") && !line.Contains("ERROR") && !line.Contains("WARN")) || String.IsNullOrEmpty(sequence))
+                    return sequence;
+                else
+                    return sequence = sequence + "-" + line.Split(splitArray, 3, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+            }
+            return sequence;
+        }
+
+        private void UpdateSeqCount(string sequence)
+        {
+            if (seqCount.ContainsKey(sequence))
+            {
+                try
+                {
+                    seqCount[sequence]++;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Unable to add sequence value");
+                    Console.WriteLine(sequence);
+                }
+            }
+            else
+            {
+                try
+                {
+                    seqCount.Add(sequence, 1);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Unable to add sequence");
+                    Console.WriteLine(sequence);
+                }
+            }
         }
     }
 }
