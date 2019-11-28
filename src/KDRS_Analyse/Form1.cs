@@ -26,6 +26,10 @@ namespace KDRS_Analyse
         public Form1()
         {
             InitializeComponent();
+
+            Globals.extractionAnalyse.tools = new ToolsWrapper();
+            Globals.extractionAnalyse.tools.tools = new List<AnalyseTool>();
+
             Text = Globals.toolName + " " + Globals.toolVersion;
 
             this.AllowDrop = true;
@@ -38,7 +42,6 @@ namespace KDRS_Analyse
             fileCount = 0;
 
             FillDict("pdf-to-puid.ini", Globals.puIdDict);
-
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -91,7 +94,6 @@ namespace KDRS_Analyse
                 }
 
                 Console.WriteLine("outFile: " + outFile);
-
             }
         }
 
@@ -189,8 +191,6 @@ namespace KDRS_Analyse
 
             txtBoxInfoText.AppendText("JOB COMPLETE! \r\n");
             txtBoxInfoText.AppendText("Resultfile: " + outFile + "\r\n");
-
-
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -262,7 +262,6 @@ namespace KDRS_Analyse
                     }
                 }
             }
-
         }
 
         private void InitFiles()
@@ -272,7 +271,6 @@ namespace KDRS_Analyse
                 Globals.extractionAnalyse.files = new FilesWrapper();
                 Globals.extractionAnalyse.files.files = new List<AnalyseFile>();
             }
-
         }
     }
 

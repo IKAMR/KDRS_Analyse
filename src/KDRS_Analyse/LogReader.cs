@@ -102,9 +102,9 @@ namespace KDRS_Analyse
                         string startTime = firstSplit[0].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                         Console.WriteLine("Start time: " + startTime);
 
-                        file.start = TimeConv(startTime);
+                        file.result.start = TimeConv(startTime);
 
-                        file.inFile.path = inputPath;
+                        file.inFile.path = GetFileId(inputPath, inRootFolder);
                         if (String.IsNullOrEmpty(file.id))
                         {
                             newFile = true;
@@ -120,19 +120,22 @@ namespace KDRS_Analyse
 
                         string[] outSplit = { "file:" };
                         if (String.IsNullOrEmpty(file.outFile.path))
-                            file.outFile.path = firstSplit[3].Split(inputSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                        {
+                            string outFilePath = firstSplit[3].Split(inputSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                            file.outFile.path = GetFileId(outFilePath, outRootFolder);
+                        }
 
                         if (String.IsNullOrEmpty(file.result.result))
                             file.result.result = firstSplit[4].Split(':')[1].Trim();
 
-                        if (file.result.toolNo == 0)
-                            file.result.toolNo = Globals.toolCounter;
+                        if (String.IsNullOrEmpty(file.result.toolId))
+                            file.result.toolId = dcmTool.toolId;
 
                         string endDate = firstSplit[5].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                         Console.WriteLine("End time: " + endDate);
 
-                        if (String.IsNullOrEmpty(file.end))
-                            file.end = TimeConv(endDate);
+                        if (String.IsNullOrEmpty(file.result.end))
+                            file.result.end = TimeConv(endDate);
 
                         if (newFile)
                             Globals.extractionAnalyse.files.files.Add(file);
@@ -153,7 +156,7 @@ namespace KDRS_Analyse
             dcmTool.inputPath.Add(inRootFolder);
             dcmTool.outputPath = outRootFolder;
 
-            Globals.extractionAnalyse.tools.Add(dcmTool);
+            Globals.extractionAnalyse.tools.tools.Add(dcmTool);
             Console.WriteLine("Tool added");
         }
         //------------------------------------------------------------------------------------
@@ -354,8 +357,8 @@ namespace KDRS_Analyse
                                     ProjectWarning(file, dcmTool.project, readProject, dcmTool.toolId);
                                 }
 
-                                if (file.result.toolNo == 0)
-                                    file.result.toolNo = Globals.toolCounter;
+                                if (String.IsNullOrEmpty(file.result.toolId))
+                                    file.result.toolId = dcmTool.toolId;
 
                                 if (newFile)
                                 {
@@ -377,7 +380,7 @@ namespace KDRS_Analyse
             dcmTool.inputPath.Add(inRootFolder);
             dcmTool.outputPath = outRootFolder;
 
-            Globals.extractionAnalyse.tools.Add(dcmTool);
+            Globals.extractionAnalyse.tools.tools.Add(dcmTool);
             Console.WriteLine("Tool added");
 
             if (usingTempFile && File.Exists(tempFile))
@@ -514,7 +517,7 @@ namespace KDRS_Analyse
                         Globals.extractionAnalyse.files.files.Add(droidFile);
                 }
             }
-            Globals.extractionAnalyse.tools.Add(droidTool);
+            Globals.extractionAnalyse.tools.tools.Add(droidTool);
             Console.WriteLine("Tool added");
         }
         //------------------------------------------------------------------------------------
@@ -573,7 +576,7 @@ namespace KDRS_Analyse
         //------------------------------------------------------------------------------------
         public AnalyseTool GetTool(string toolId)
         {
-            foreach (AnalyseTool tool in Globals.extractionAnalyse.tools)
+            foreach (AnalyseTool tool in Globals.extractionAnalyse.tools.tools)
             {
                 if (tool.toolId.Equals(toolId))
                     return tool;

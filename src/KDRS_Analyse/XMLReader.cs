@@ -196,7 +196,7 @@ namespace KDRS_Analyse
 
             veraTool.outputPath = outRootFolder;
 
-            Globals.extractionAnalyse.tools.Add(veraTool);
+            Globals.extractionAnalyse.tools.tools.Add(veraTool);
             
             nodeIter = nav.Select("//report/jobs/job", nsmgr);
 
@@ -232,21 +232,26 @@ namespace KDRS_Analyse
                 string profName = nodeIter.Current.SelectSingleNode("descendant::validationReport/@profileName").Value;
 
                 string profile = profName.Split(' ')[0];
-                string pdfAtype = "";
+                fileValid.type = profile;
+
                 if (profile.Contains("PDF"))
                 {
-                    string fileType = profile.Split('-')[0];
-                    Console.WriteLine("PRofile: " + profile.ToLower());
-                    fileValid.type = fileType;
                     if (Globals.puIdDict.ContainsKey(profile.ToLower()))
                         fileValid.puid = Globals.puIdDict[profile.ToLower()];
+                }
 
-
-
-                    pdfAtype = profile.Split('-')[1];
+                string readPuId = veraFile.outFile.puid;
+                if (!String.IsNullOrEmpty(readPuId))
+                {
+                    if (!readPuId.Equals(fileValid.puid))
+                    {
+                        PuIdWarning(veraFile, readPuId, fileValid.puid, veraTool.toolId);
+                    }
                 }
 
                 veraFile.valid.Add(fileValid);
+
+
 
                 if (newFile)
                     Globals.extractionAnalyse.files.files.Add(veraFile);
@@ -383,9 +388,19 @@ namespace KDRS_Analyse
                     string pdfAtype = nodeIter.Current.SelectSingleNode("descendant::FormatVL").Value;
 
                     string fileType = "PDF/A" + pdfAtype;
+                    fileValid.type = fileType;
 
                     if (Globals.puIdDict.ContainsKey(fileType.ToLower()))
                         fileValid.puid = Globals.puIdDict[fileType.ToLower()];
+                }
+
+                string readPuId = kostValFile.outFile.puid;
+                if (!String.IsNullOrEmpty(readPuId))
+                {
+                    if (!readPuId.Equals(fileValid.puid))
+                    {
+                        PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
+                    }
                 }
 
                 kostValFile.valid.Add(fileValid);
@@ -396,8 +411,20 @@ namespace KDRS_Analyse
                 OnProgressUpdate?.Invoke(fileCount);
             }
 
-            Globals.extractionAnalyse.tools.Add(kostValTool);
+            Globals.extractionAnalyse.tools.tools.Add(kostValTool);
            // Console.WriteLine("Tool added");
+        }
+
+        public void PuIdWarning(AnalyseFile file, string origPuId, string newPuID, string toolID)
+        {
+            AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning();
+            warning.toolId = toolID;
+
+            warning.value1 = origPuId;
+            warning.value2 = newPuID;
+            warning.text = "PUID mismatch";
+
+            file.warning.Add(warning);
         }
     }
 }

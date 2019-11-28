@@ -35,7 +35,7 @@ namespace KDRS_Analyse
         {
             
             //files = new List<AnalyseFile>();
-            tools = new List<AnalyseTool>();
+            //tools.tools = new List<AnalyseTool>();
             files = null;
 
         }
@@ -46,7 +46,7 @@ namespace KDRS_Analyse
         public ExtractorSoftware extractorSoftware { get; set; }
 
         [XmlElement("tools")]
-        public List<AnalyseTool> tools { get; set; }
+        public ToolsWrapper tools { get; set; }
 
         [XmlElement("files")]
         public FilesWrapper files { get; set; }
@@ -57,11 +57,19 @@ namespace KDRS_Analyse
         public string version { get; set; }
 
     }
+    //***************************************************************
 
     public class FilesWrapper
     {
         [XmlElement("file")]
         public List<AnalyseFile> files { get; set; }
+    }
+    //***************************************************************
+
+    public class ToolsWrapper
+    {
+        [XmlElement("tool")]
+        public List<AnalyseTool> tools { get; set; }
     }
     //***************************************************************
 
@@ -338,8 +346,7 @@ namespace KDRS_Analyse
         [XmlAttribute]
         public string id { get; set; }
         public Result result { get; set; }
-        public string start { get; set; }
-        public string end { get; set; }
+
         public FileInfo inFile { get; set; }
         public FileInfo outFile { get; set; }
 
@@ -355,10 +362,15 @@ namespace KDRS_Analyse
         public class Result
         {
             [XmlAttribute]
-            public int toolNo { get; set; }
+            public string toolId { get; set; }
 
             [XmlText]
             public string result { get; set; }
+
+            [XmlAttribute]
+            public string start { get; set; }
+            [XmlAttribute]
+            public string end { get; set; }
         }
 
         public class AnalyseWarning
