@@ -41,7 +41,10 @@ namespace KDRS_Analyse
 
             fileCount = 0;
 
-            FillDict("pdf-to-puid.ini", Globals.puIdDict);
+            FillDict("pdf-to-puid.ini", Globals.puIdDict, "PDF-TO-PUID");
+            FillDict("decom-log-sequences.ini", Globals.taskDict, "DECOM-LOG-TASK");
+            FillDict("decom-log-sequences.ini", Globals.seqDict, "DECOM-LOG-SEQUENCE");
+            FillDict("puid-to-type.ini", Globals.typeDict, "PUID-TO-TYPE");
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -239,9 +242,10 @@ namespace KDRS_Analyse
 
         }
 
-        private void FillDict(string file, Dictionary<string, string> dict)
+        private void FillDict(string file, Dictionary<string, string> dict, string section)
         {
             dict.Clear();
+            Console.WriteLine("FillDict");
 
             string[] keyPair = null;
 
@@ -252,16 +256,25 @@ namespace KDRS_Analyse
                     string line = "";
                     while ((line = sr.ReadLine()) != null)
                     {
-                        if (line.StartsWith(";") || String.IsNullOrEmpty(line) || line.StartsWith("["))
-                            continue;
-                        keyPair = line.Split('=');
-                        
-                        Console.WriteLine(keyPair[0] + " " + keyPair[1]);
-                        dict.Add(keyPair[0], keyPair[1]);
+                        if (line.Contains(section))
+                        {
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                if (line.StartsWith(";") || String.IsNullOrEmpty(line))
+                                    continue;
+                                if (line.StartsWith("["))
+                                    break;
+                                keyPair = line.Split('=');
 
+                                Console.WriteLine(keyPair[0] + " " + keyPair[1]);
+                                dict.Add(keyPair[0], keyPair[1]);
+                            }
+                        }
                     }
                 }
             }
+            else
+                txtBoxInfoText.AppendText("Ini file not found: " + file);
         }
 
         private void InitFiles()
@@ -291,6 +304,9 @@ namespace KDRS_Analyse
         };
 
         public static Dictionary<string, string> puIdDict = new Dictionary<string, string>();
+        public static Dictionary<string, string> taskDict = new Dictionary<string, string>();
+        public static Dictionary<string, string> seqDict = new Dictionary<string, string>();
+        public static Dictionary<string, string> typeDict = new Dictionary<string, string>();
 
     }
 }

@@ -13,7 +13,6 @@ namespace KDRS_Analyse
 
         public Dictionary<string, int> seqCount = new Dictionary<string, int>();
 
-
         public bool newFile = false;
         //------------------------------------------------------------------------------------
         // Reading Decom Blob report and assigning values to objects
@@ -165,6 +164,10 @@ namespace KDRS_Analyse
         //------------------------------------------------------------------------------------
         public void ReadDcmLog(string fileName, string inRootFolder, string outRootFolder)
         {
+            Globals.extractionAnalyse.sequences = new SequenceWrapper();
+
+            int uniqeKey = 1;
+
             string[] fileList;
 
             fileList = Directory.GetFiles(Path.GetDirectoryName(fileName));
@@ -192,8 +195,6 @@ namespace KDRS_Analyse
             dcmTool.role = "transform";
             dcmTool.subrole = "log";
 
-            Console.WriteLine("Reading file");
-
             string timeStamp = String.Empty;
             int lineCounter = 0;
             int startLine = 0;
@@ -205,8 +206,8 @@ namespace KDRS_Analyse
             string extBlobMiss = String.Empty;
             string readProject = String.Empty;
 
-
-            AnalyseFile file;
+            // Reading decom log file
+            AnalyseFile file = null;
             using (StreamReader reader = new StreamReader(fileName))
             {
                 string line;
@@ -227,32 +228,24 @@ namespace KDRS_Analyse
                         "Total referenced XML files found:", "Are external blobs missing:"};
                         dbName = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
-                        //Console.WriteLine("Found: " + dbName + " at line " + startLine);
-
                         line = reader.ReadLine();
                         lineCounter++;
                         intBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        //Console.WriteLine("Found: " + intBlob + " intblobs at line " + (startLine + 1));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         extBlob = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        //Console.WriteLine("Found: " + extBlob + " extBlob at line " + (startLine + 2));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         refXml = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        //Console.WriteLine("Found: " + refXml + " refXml at line " + (startLine + 3));
 
                         line = reader.ReadLine();
                         lineCounter++;
 
                         extBlobMiss = line.Split(splitAt, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-
-                        //Console.WriteLine("Time: " + timeStamp);
-                       //Console.WriteLine("DB name: " + dbName);
                     }
 
                     // Find confirmation of correct folder
@@ -287,6 +280,8 @@ namespace KDRS_Analyse
                         if (line.Contains(projSplit[0]))
                             readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
+                        //File region
+                        #region
 
                         // Extract file relevant information
                         while ((line = reader.ReadLine()) != null && !line.Contains("Working with:"))
@@ -307,7 +302,21 @@ namespace KDRS_Analyse
                                 else
                                     UpdateSeqCount(sequence);
 
-                                // if (String.IsNullOrEmpty(sequence))
+                                // Add sequense ID to file
+                                if (file != null)
+                                {
+                                    if (Globals.seqDict.ContainsKey(sequence))
+                                        file.result.seqId = Globals.seqDict[sequence].Split(';')[0];
+                                    else
+                                    {
+                                        string uniqueSeqID = "u" + uniqeKey;
+                                        file.result.seqId = uniqueSeqID;
+                                        Globals.seqDict.Add(sequence, uniqueSeqID);
+                                        uniqeKey++;
+                                    }
+                                }
+
+                                // Resetting sequence.
                                 sequence = "126";
 
                                 Console.WriteLine("Found 'Starting conversion of blob' at line: " + lineCounter);
@@ -317,7 +326,6 @@ namespace KDRS_Analyse
                                 string fileId = GetFileId(filePath, inRootFolder);
 
                                 file = GetFile(fileId);
-                                //Console.WriteLine("FileId aquired");
 
                                 if (String.IsNullOrEmpty(file.id))
                                 {
@@ -327,21 +335,17 @@ namespace KDRS_Analyse
 
                                 line = reader.ReadLine();
                                 sequence = AddSequence(sequence, line);
-                               // Console.WriteLine("Sequence: " + sequence);
-
                                 lineCounter++;
 
                                 line = reader.ReadLine();
                                 sequence = AddSequence(sequence, line);
-                                //Console.WriteLine("Sequence: " + sequence);
-
                                 lineCounter++;
 
                                 string[] splitMime = { "The detected MIME type of blob:", "is" };
 
-                                //string readMimeLine = ReadSpecificLine(fileName, (lineCounter + 3));
                                 string readMimeLine = reader.ReadLine();
                                 sequence = AddSequence(sequence, readMimeLine);
+
                                 while (!readMimeLine.Contains(splitMime[0]) && readMimeLine != null)
                                 {
                                     readMimeLine = reader.ReadLine();
@@ -382,18 +386,32 @@ namespace KDRS_Analyse
 
                                 if (String.IsNullOrEmpty(file.result.toolId))
                                     file.result.toolId = dcmTool.toolId;
+                                                               
                                 if (newFile)
                                 {
                                     Globals.extractionAnalyse.files.files.Add(file);
                                     Console.WriteLine("File added");
                                 }
-
-
                             }
                             Console.WriteLine("Line count: " + lineCounter);
                             OnProgressUpdate?.Invoke(lineCounter);
                         }
+                        #endregion
+
+                        // Update sequence count for the last file.
                         UpdateSeqCount(sequence);
+
+                        // Add sequense ID to the last file
+                        if (file != null)
+                        {
+                            if (Globals.seqDict.ContainsKey(sequence))
+                                file.result.seqId = Globals.seqDict[sequence].Split(';')[0];
+                            else
+                            {
+                                string uniqueSeqID = "u" + uniqeKey;
+                                file.result.seqId = uniqueSeqID;
+                            }
+                        }
 
                         break;
                     }
@@ -416,8 +434,15 @@ namespace KDRS_Analyse
 
             foreach(var entry in seqCount)
             {
-                Console.WriteLine(entry.Value + ", " + entry.Key);
+               foreach (SequenceWrapper.Sequence seq in Globals.extractionAnalyse.sequences.sequences)
+                {
+                    if (seq.sequence.Equals(entry.Key))
+                        seq.count = entry.Value;
+                }
             }
+
+            ReadSeqDict();
+            ReadSeqTaskDict();
         }
         //------------------------------------------------------------------------------------
         public string MergeDcmLogFiles(string[] fileList, string fileName)
@@ -488,7 +513,6 @@ namespace KDRS_Analyse
                         continue;
                     }
 
-                    //File droidFile = new File();
                     string filePath = split[3].Trim('"');
 
                     if (String.IsNullOrEmpty(filePath))
@@ -500,6 +524,7 @@ namespace KDRS_Analyse
                     else
                         fileId = GetFileId(filePath, outRootFolder);
 
+                    // Skip table .xml and .xsd if choosen
                     string readFileName = split[16].Trim('"');
                     if (!incTableXml && readFileName.Contains("table") && (readFileName.Contains(".xml") || readFileName.Contains(".xsd")))
                         continue;
@@ -526,6 +551,18 @@ namespace KDRS_Analyse
                         else if (fileMime != readMime)
                             MimeWarning(droidFile, true, readMime, droidTool.toolId);
 
+                        foreach (AnalyseFile.Valid valid in droidFile.valid)
+                        {
+                            string readPuId = valid.puid;
+                            if (!String.IsNullOrEmpty(readPuId) && !String.IsNullOrEmpty(droidFile.inFile.puid))
+                            {
+                                if (!readPuId.Equals(droidFile.inFile.puid))
+                                {
+                                    XMLReader.PuIdWarning(droidFile, readPuId, droidFile.inFile.puid, droidTool.toolId);
+                                }
+                            }
+                        }
+
                         droidFile.inFile.name = readFileName;
                         droidFile.inFile.version = split[17].Trim('"');
                     }
@@ -541,6 +578,19 @@ namespace KDRS_Analyse
                             droidFile.outFile.mime = readMime;
                         else if (fileMime != readMime)
                             MimeWarning(droidFile, false, readMime, droidTool.toolId);
+
+                        foreach (AnalyseFile.Valid valid in droidFile.valid)
+                        {
+                            string readPuId = valid.puid;
+                            if (!String.IsNullOrEmpty(readPuId) && !String.IsNullOrEmpty(droidFile.outFile.puid))
+                            {
+                                if (!readPuId.Equals(droidFile.outFile.puid))
+                                {
+                                    XMLReader.PuIdWarning(droidFile, readPuId, droidFile.outFile.puid, droidTool.toolId);
+                                }
+                            }
+                        }
+
 
                         droidFile.outFile.name = readFileName;
                         droidFile.outFile.version = split[17].Trim('"');
@@ -743,6 +793,7 @@ namespace KDRS_Analyse
             return content;
         }
         //------------------------------------------------------------------------------------
+        // Add new number to decom log file sequence
         private string AddSequence(string sequence, string line)
         {
             string[] splitArray = { "BLOBConversionProcess:", " - " };
@@ -755,7 +806,8 @@ namespace KDRS_Analyse
             }
             return sequence;
         }
-
+        //------------------------------------------------------------------------------------
+        // Update decom log sequence count
         private void UpdateSeqCount(string sequence)
         {
             if (seqCount.ContainsKey(sequence))
@@ -781,6 +833,71 @@ namespace KDRS_Analyse
                     Console.WriteLine("Unable to add sequence");
                     Console.WriteLine(sequence);
                 }
+            }
+        }
+        //------------------------------------------------------------------------------------
+        // Read sequence task dictionary to objects
+        private void ReadSeqTaskDict()
+        {
+            Globals.extractionAnalyse.sequences.tasks = new List<SequenceWrapper.SequenceTask>();
+            string[] values = null;
+
+            foreach (KeyValuePair<string,string> pair in Globals.taskDict)
+            {
+                SequenceWrapper.SequenceTask task = new SequenceWrapper.SequenceTask();
+
+                task.id = pair.Key;
+
+                values = pair.Value.Split(';');
+
+                Console.WriteLine("Values length: " + values.Length);
+
+                task.type = values[0];
+                if (!String.IsNullOrEmpty(values[1]))
+                    task.name = values[1];
+                if (!String.IsNullOrEmpty(values[2]))
+                    task.text1 = values[2].Trim();
+                if (!String.IsNullOrEmpty(values[3]))
+                    task.element1 = values[3];
+                if (!String.IsNullOrEmpty(values[4]))
+                    task.text2 = values[4].Trim();
+                if (!String.IsNullOrEmpty(values[5]))
+                    task.element2 = values[5];
+                if (!String.IsNullOrEmpty(values[6]))
+                    task.line2 = values[6];
+
+                Globals.extractionAnalyse.sequences.tasks.Add(task);
+                Console.WriteLine("Task added");
+
+            }
+        }
+        //------------------------------------------------------------------------------------
+        // Read sequence dictionary to objects
+        private void ReadSeqDict()
+        {
+            Globals.extractionAnalyse.sequences.sequences = new List<SequenceWrapper.Sequence>();
+            string[] values = null;
+
+            foreach (KeyValuePair<string, string> pair in Globals.seqDict)
+            {
+                SequenceWrapper.Sequence sequence = new SequenceWrapper.Sequence();
+
+                sequence.sequence = pair.Key;
+
+                values = pair.Value.Split(';');
+
+                Console.WriteLine("Values length: " + values.Length);
+
+                sequence.id = values[0];
+
+                if (!String.IsNullOrEmpty(values[1]))
+                    sequence.result = values[1].Trim();
+                if (!String.IsNullOrEmpty(values[2]))
+                    sequence.name = values[2];
+                if (!String.IsNullOrEmpty(values[3]))
+                    sequence.description = values[3].Trim();
+
+                Globals.extractionAnalyse.sequences.sequences.Add(sequence);
             }
         }
     }

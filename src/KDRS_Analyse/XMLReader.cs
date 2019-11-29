@@ -241,7 +241,7 @@ namespace KDRS_Analyse
                 }
 
                 string readPuId = veraFile.outFile.puid;
-                if (!String.IsNullOrEmpty(readPuId))
+                if (!String.IsNullOrEmpty(readPuId) && !String.IsNullOrEmpty(fileValid.puid))
                 {
                     if (!readPuId.Equals(fileValid.puid))
                     {
@@ -250,8 +250,6 @@ namespace KDRS_Analyse
                 }
 
                 veraFile.valid.Add(fileValid);
-
-
 
                 if (newFile)
                     Globals.extractionAnalyse.files.files.Add(veraFile);
@@ -339,8 +337,6 @@ namespace KDRS_Analyse
                     kostValFile.id = fileId;
                 }
                 
-               // kostValFile.valid = new List<AnalyseFile.Valid>();
-
                 AnalyseFile.Valid fileValid = new AnalyseFile.Valid();
 
                 fileValid.toolId = kostValTool.toolId;
@@ -385,7 +381,8 @@ namespace KDRS_Analyse
          
                 if (valType.Contains("PDF"))
                 {
-                    string pdfAtype = nodeIter.Current.SelectSingleNode("descendant::FormatVL").Value;
+                    XPathNavigator typeNode = nodeIter.Current.SelectSingleNode("descendant::FormatVL");
+                    string pdfAtype = GetInnerXml(typeNode);
 
                     string fileType = "PDF/A" + pdfAtype;
                     fileValid.type = fileType;
@@ -395,9 +392,18 @@ namespace KDRS_Analyse
                 }
 
                 string readPuId = kostValFile.outFile.puid;
-                if (!String.IsNullOrEmpty(readPuId))
+                if (!String.IsNullOrEmpty(readPuId) )
                 {
-                    if (!readPuId.Equals(fileValid.puid))
+                    if (String.IsNullOrEmpty(fileValid.puid))
+                    {
+                        if (Globals.typeDict.ContainsKey(readPuId))
+                        {
+                            string readType = Globals.typeDict[readPuId];
+                            if (!readType.Equals(fileValid.type.ToLower()))
+                                PuIdWarning(kostValFile, readType, fileValid.type, kostValTool.toolId);
+
+                        }
+                    } else if (!readPuId.Equals(fileValid.puid))
                     {
                         PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
                     }
@@ -416,7 +422,7 @@ namespace KDRS_Analyse
         }
         //------------------------------------------------------------------------------------
 
-        public void PuIdWarning(AnalyseFile file, string origPuId, string newPuID, string toolID)
+        public static void PuIdWarning(AnalyseFile file, string origPuId, string newPuID, string toolID)
         {
             AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning();
             warning.toolId = toolID;

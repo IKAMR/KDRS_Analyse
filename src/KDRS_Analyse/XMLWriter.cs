@@ -48,6 +48,9 @@ namespace KDRS_Analyse
         [XmlElement("tools")]
         public ToolsWrapper tools { get; set; }
 
+        [XmlElement("sequences")]
+        public SequenceWrapper sequences { get; set; }
+
         [XmlElement("files")]
         public FilesWrapper files { get; set; }
 
@@ -70,6 +73,49 @@ namespace KDRS_Analyse
     {
         [XmlElement("tool")]
         public List<AnalyseTool> tools { get; set; }
+    }
+    //***************************************************************
+
+    public class SequenceWrapper
+    {
+        [XmlElement("task")]
+        public List<SequenceTask> tasks { get; set; }
+
+        [XmlElement("sequence")]
+        public List<Sequence> sequences { get; set; }
+
+        public class SequenceTask
+        {
+            [XmlAttribute]
+            public string id { get; set; }
+            [XmlAttribute]
+            public string type { get; set; }
+            [XmlAttribute]
+            public string name { get; set; }
+
+            public string text1 { get; set; }
+            public string element1 { get; set; }
+            public string text2 { get; set; }
+            public string element2 { get; set; }
+            public string line2 { get; set; }
+
+        }
+
+        public class Sequence
+        {
+            [XmlAttribute]
+            public string id { get; set; }
+            [XmlAttribute]
+            public string result { get; set; }
+            [XmlAttribute]
+            public int count { get; set; }
+            [XmlAttribute]
+            public string name { get; set; }
+            [XmlAttribute]
+            public string description { get; set; }
+
+            public string sequence { get; set; }
+        }
     }
     //***************************************************************
 
@@ -363,6 +409,9 @@ namespace KDRS_Analyse
         {
             [XmlAttribute]
             public string toolId { get; set; }
+
+            [XmlAttribute]
+            public string seqId { get; set; }
 
             [XmlText]
             public string result { get; set; }
