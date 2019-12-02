@@ -163,7 +163,7 @@ namespace KDRS_Analyse
                 xmlReader.ReadVeraPdf(fileName, outRootFolder, inRootFolder);
                 checkedButtons.Add("X - veraPDF");
             }
-                 // readVera
+            // readVera
             else if (rBtnKOSTVal.Checked)
             {
                 InitFiles();
@@ -176,8 +176,11 @@ namespace KDRS_Analyse
 
             }
             else if (rBtnAnalyseXML.Checked)
-                xmlReader.ReadInfoXml(fileName); // readDcmN5Val
+            {
+                txtBoxInfoText.AppendText("analyse.xml: " + fileName + "\r\n");
 
+                xmlReader.ReadXML(fileName); // readDcmN5Val
+            }
             // osv for resten
         }
 
@@ -194,6 +197,12 @@ namespace KDRS_Analyse
 
             txtBoxInfoText.AppendText("JOB COMPLETE! \r\n");
             txtBoxInfoText.AppendText("Resultfile: " + outFile + "\r\n");
+
+            Console.WriteLine("FileList:");
+            foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
+            {
+                Console.WriteLine(file.id);
+            }
         }
 
         private void btnReset_Click(object sender, EventArgs e)
@@ -283,6 +292,7 @@ namespace KDRS_Analyse
             {
                 Globals.extractionAnalyse.files = new FilesWrapper();
                 Globals.extractionAnalyse.files.files = new List<AnalyseFile>();
+                Console.WriteLine("New Files");
             }
         }
     }
@@ -294,7 +304,7 @@ namespace KDRS_Analyse
     public static class Globals
     {
         public static readonly String toolName = "KDRS Analyse";
-        public static readonly String toolVersion = "0.3";
+        public static readonly String toolVersion = "0.4";
 
         public static int toolCounter = 0;
         public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse

@@ -33,13 +33,14 @@ namespace KDRS_Analyse
     {
         public ExtractionAnalyse()
         {
-            
+
             //files = new List<AnalyseFile>();
             //tools.tools = new List<AnalyseTool>();
             files = null;
 
         }
 
+        [XmlElement("info")]
         public AnalyseInfo info { get; set; }
         public Agents agents { get; set; }
         public SystemInfo system { get; set; }
@@ -58,6 +59,15 @@ namespace KDRS_Analyse
         public string name { get; set; }
         [XmlAttribute]
         public string version { get; set; }
+        [XmlAttribute]
+        public int toolCounter {
+            get{
+                return Globals.toolCounter;
+            }
+
+            set {
+                Globals.toolCounter = value;
+            } }
 
     }
     //***************************************************************
@@ -78,43 +88,54 @@ namespace KDRS_Analyse
 
     public class SequenceWrapper
     {
-        [XmlElement("task")]
-        public List<SequenceTask> tasks { get; set; }
+        [XmlElement("tasks")]
+        public SequenceTaskWrapper tasks { get; set; }
 
-        [XmlElement("sequence")]
-        public List<Sequence> sequences { get; set; }
+        [XmlElement("sequences")]
+        public SequencesWrapper sequences { get; set; }
 
-        public class SequenceTask
+        public class SequenceTaskWrapper
         {
-            [XmlAttribute]
-            public string id { get; set; }
-            [XmlAttribute]
-            public string type { get; set; }
-            [XmlAttribute]
-            public string name { get; set; }
+            [XmlElement("task")]
+            public List<SequenceTask> taskList { get; set; }
 
-            public string text1 { get; set; }
-            public string element1 { get; set; }
-            public string text2 { get; set; }
-            public string element2 { get; set; }
-            public string line2 { get; set; }
+            public class SequenceTask
+            {
+                [XmlAttribute]
+                public string id { get; set; }
+                [XmlAttribute]
+                public string type { get; set; }
+                [XmlAttribute]
+                public string name { get; set; }
 
+                public string text1 { get; set; }
+                public string element1 { get; set; }
+                public string text2 { get; set; }
+                public string element2 { get; set; }
+                public string line2 { get; set; }
+            }
         }
 
-        public class Sequence
+        public class SequencesWrapper
         {
-            [XmlAttribute]
-            public string id { get; set; }
-            [XmlAttribute]
-            public string result { get; set; }
-            [XmlAttribute]
-            public int count { get; set; }
-            [XmlAttribute]
-            public string name { get; set; }
-            [XmlAttribute]
-            public string description { get; set; }
+            [XmlElement("sequence")]
+            public List<Sequence> sequenceList { get; set; }
 
-            public string sequence { get; set; }
+            public class Sequence
+            {
+                [XmlAttribute]
+                public string id { get; set; }
+                [XmlAttribute]
+                public string result { get; set; }
+                [XmlAttribute]
+                public int count { get; set; }
+                [XmlAttribute]
+                public string name { get; set; }
+                [XmlAttribute]
+                public string description { get; set; }
+                [XmlText]
+                public string sequence { get; set; }
+            }
         }
     }
     //***************************************************************
@@ -216,7 +237,7 @@ namespace KDRS_Analyse
         public DcmFiles files { get; set; }
         public DcmDB database { get; set; }
 
-        public List<VeraRelease> buildInformation { get; set; }
+        public buildWrapper buildInformation { get; set; }
         public VeraSummary batchSummary { get; set; }
 
         public KOSTValToolInfo KOSTValInfo { get; set; }
@@ -282,6 +303,13 @@ namespace KDRS_Analyse
             public string extBlobMiss { get; set; }
             [XmlText]
             public string db{ get; set; }
+        }
+
+        public class buildWrapper
+        {
+            [XmlElement("releaseDetails")]
+            public List<VeraRelease> releaseDetails { get; set; }
+
         }
 
         public class VeraRelease

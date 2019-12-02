@@ -322,13 +322,15 @@ namespace KDRS_Analyse
                                 Console.WriteLine("Found 'Starting conversion of blob' at line: " + lineCounter);
                                 string[] split = { "Starting conversion of blob:", "and current conversion status is:" };
                                 string filePath = line.Split(split, 3, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-
+                                Console.WriteLine("input path: " + filePath);
                                 string fileId = GetFileId(filePath, inRootFolder);
+                                Console.WriteLine("File id: " + fileId);
 
                                 file = GetFile(fileId);
 
                                 if (String.IsNullOrEmpty(file.id))
                                 {
+                                    Console.WriteLine("New file");
                                     newFile = true;
                                     file.id = fileId;
                                 }
@@ -412,7 +414,6 @@ namespace KDRS_Analyse
                                 file.result.seqId = uniqueSeqID;
                             }
                         }
-
                         break;
                     }
                     Console.WriteLine("Line count: " + lineCounter);
@@ -439,7 +440,7 @@ namespace KDRS_Analyse
             Console.WriteLine("Adding seq count");
             foreach(var entry in seqCount)
             {
-               foreach (SequenceWrapper.Sequence seq in Globals.extractionAnalyse.sequences.sequences)
+               foreach (SequenceWrapper.SequencesWrapper.Sequence seq in Globals.extractionAnalyse.sequences.sequences.sequenceList)
                 {
                     if (seq.sequence.Equals(entry.Key))
                         seq.count = entry.Value;
@@ -843,12 +844,13 @@ namespace KDRS_Analyse
         // Read sequence task dictionary to objects
         private void ReadSeqTaskDict()
         {
-            Globals.extractionAnalyse.sequences.tasks = new List<SequenceWrapper.SequenceTask>();
+            Globals.extractionAnalyse.sequences.tasks = new SequenceWrapper.SequenceTaskWrapper();
+            Globals.extractionAnalyse.sequences.tasks.taskList = new List<SequenceWrapper.SequenceTaskWrapper.SequenceTask>();
             string[] values = null;
 
             foreach (KeyValuePair<string,string> pair in Globals.taskDict)
             {
-                SequenceWrapper.SequenceTask task = new SequenceWrapper.SequenceTask();
+                SequenceWrapper.SequenceTaskWrapper.SequenceTask task = new SequenceWrapper.SequenceTaskWrapper.SequenceTask();
 
                 task.id = pair.Key;
 
@@ -872,7 +874,7 @@ namespace KDRS_Analyse
                     if (!String.IsNullOrEmpty(values[6]))
                         task.line2 = values[6];
                 }
-                Globals.extractionAnalyse.sequences.tasks.Add(task);
+                Globals.extractionAnalyse.sequences.tasks.taskList.Add(task);
                 Console.WriteLine("Task added");
 
             }
@@ -881,12 +883,13 @@ namespace KDRS_Analyse
         // Read sequence dictionary to objects
         private void ReadSeqDict()
         {
-            Globals.extractionAnalyse.sequences.sequences = new List<SequenceWrapper.Sequence>();
+            Globals.extractionAnalyse.sequences.sequences = new SequenceWrapper.SequencesWrapper();
+            Globals.extractionAnalyse.sequences.sequences.sequenceList = new List<SequenceWrapper.SequencesWrapper.Sequence>();
             string[] values = null;
 
             foreach (KeyValuePair<string, string> pair in Globals.seqDict)
             {
-                SequenceWrapper.Sequence sequence = new SequenceWrapper.Sequence();
+                SequenceWrapper.SequencesWrapper.Sequence sequence = new SequenceWrapper.SequencesWrapper.Sequence();
 
                 sequence.sequence = pair.Key;
 
@@ -904,7 +907,7 @@ namespace KDRS_Analyse
                     if (!String.IsNullOrEmpty(values[3]))
                         sequence.description = values[3].Trim();
                 }
-                Globals.extractionAnalyse.sequences.sequences.Add(sequence);
+                Globals.extractionAnalyse.sequences.sequences.sequenceList.Add(sequence);
             }
         }
     }

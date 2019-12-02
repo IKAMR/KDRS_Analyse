@@ -21,22 +21,27 @@ namespace KDRS_Analyse
         {
             Console.WriteLine("Reading xml");
             XmlSerializer ser = new XmlSerializer(typeof(ExtractionAnalyse));
-            using (TextReader reader = new StreamReader(fileName))
+
+            using (XmlReader r = XmlReader.Create(fileName))
             {
+                Console.WriteLine("Can serialize?: " + ser.CanDeserialize(r));
                 try
                 {
-                    Globals.extractionAnalyse = (ExtractionAnalyse)ser.Deserialize(reader);
+                    Console.WriteLine("Deserializing");
+                    Globals.extractionAnalyse = (ExtractionAnalyse)ser.Deserialize(r);
                 }
                 catch (Exception ex)
                 {
                     throw ex;
                 }
             }
-            /*
-            using (XmlReader reader = XmlReader.Create(fileName))
+       /*     using (TextReader reader = new StreamReader(fileName))
             {
+                
 
-            }*/
+            }
+            
+*/
         }
 
         //------------------------------------------------------------------------------------
@@ -153,7 +158,8 @@ namespace KDRS_Analyse
            // Console.WriteLine(Globals.toolCounter);
             AnalyseTool veraTool = new AnalyseTool();
 
-            veraTool.buildInformation = new List<AnalyseTool.VeraRelease>();
+            veraTool.buildInformation = new AnalyseTool.buildWrapper();
+            veraTool.buildInformation.releaseDetails = new List<AnalyseTool.VeraRelease>();
 
             veraTool.batchSummary = new AnalyseTool.VeraSummary();
             //veraTool.files = new AnalyseTool.DcmFiles();
@@ -186,7 +192,7 @@ namespace KDRS_Analyse
                 detail.version = nodeIter.Current.GetAttribute("version", nsmgr.DefaultNamespace);
                 detail.buildDate = nodeIter.Current.GetAttribute("buildDate", nsmgr.DefaultNamespace);
 
-                veraTool.buildInformation.Add(detail);
+                veraTool.buildInformation.releaseDetails.Add(detail);
             }
 
             AnalyseTool.VeraSummary summary = new AnalyseTool.VeraSummary();
@@ -270,6 +276,18 @@ namespace KDRS_Analyse
                     if (!readPuId.Equals(fileValid.puid))
                     {
                         PuIdWarning(veraFile, readPuId, fileValid.puid, veraTool.toolId);
+                    }
+                }
+
+                foreach (AnalyseFile.Valid val in veraFile.valid)
+                {
+                    readPuId = val.puid;
+                    if (!String.IsNullOrEmpty(readPuId) && !String.IsNullOrEmpty(fileValid.puid))
+                    {
+                        if (!readPuId.Equals(fileValid.puid))
+                        {
+                            XMLReader.PuIdWarning(veraFile, readPuId, fileValid.puid, veraTool.toolId);
+                        }
                     }
                 }
 
@@ -430,6 +448,18 @@ namespace KDRS_Analyse
                     } else if (!readPuId.Equals(fileValid.puid))
                     {
                         PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
+                    }
+                }
+
+                foreach (AnalyseFile.Valid val in kostValFile.valid)
+                {
+                    readPuId = val.puid;
+                    if (!String.IsNullOrEmpty(readPuId) && !String.IsNullOrEmpty(fileValid.puid))
+                    {
+                        if (!readPuId.Equals(fileValid.puid))
+                        {
+                            XMLReader.PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
+                        }
                     }
                 }
 
