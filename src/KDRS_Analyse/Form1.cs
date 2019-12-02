@@ -175,8 +175,8 @@ namespace KDRS_Analyse
                 checkedButtons.Add("X - KOST-Val");
 
             }
-            else if (rBtnDcmN5val.Checked)
-                ; // readDcmN5Val
+            else if (rBtnAnalyseXML.Checked)
+                xmlReader.ReadInfoXml(fileName); // readDcmN5Val
 
             // osv for resten
         }

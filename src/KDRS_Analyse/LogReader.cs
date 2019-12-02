@@ -418,7 +418,6 @@ namespace KDRS_Analyse
                     Console.WriteLine("Line count: " + lineCounter);
                     OnProgressUpdate?.Invoke(lineCounter);
                 }
-
             }
             Console.WriteLine("Line count: " + lineCounter);
 
@@ -431,7 +430,13 @@ namespace KDRS_Analyse
             if (usingTempFile && File.Exists(tempFile))
                 File.Delete(tempFile);
 
+            Console.WriteLine("Read sequence dictionary");
+            ReadSeqDict();
+            Console.WriteLine("Read sequence task dictionary");
 
+            ReadSeqTaskDict();
+
+            Console.WriteLine("Adding seq count");
             foreach(var entry in seqCount)
             {
                foreach (SequenceWrapper.Sequence seq in Globals.extractionAnalyse.sequences.sequences)
@@ -441,8 +446,7 @@ namespace KDRS_Analyse
                 }
             }
 
-            ReadSeqDict();
-            ReadSeqTaskDict();
+
         }
         //------------------------------------------------------------------------------------
         public string MergeDcmLogFiles(string[] fileList, string fileName)
@@ -853,19 +857,21 @@ namespace KDRS_Analyse
                 Console.WriteLine("Values length: " + values.Length);
 
                 task.type = values[0];
-                if (!String.IsNullOrEmpty(values[1]))
-                    task.name = values[1];
-                if (!String.IsNullOrEmpty(values[2]))
-                    task.text1 = values[2].Trim();
-                if (!String.IsNullOrEmpty(values[3]))
-                    task.element1 = values[3];
-                if (!String.IsNullOrEmpty(values[4]))
-                    task.text2 = values[4].Trim();
-                if (!String.IsNullOrEmpty(values[5]))
-                    task.element2 = values[5];
-                if (!String.IsNullOrEmpty(values[6]))
-                    task.line2 = values[6];
-
+                if (values.Length > 1)
+                {
+                    if (!String.IsNullOrEmpty(values[1]))
+                        task.name = values[1];
+                    if (!String.IsNullOrEmpty(values[2]))
+                        task.text1 = values[2].Trim();
+                    if (!String.IsNullOrEmpty(values[3]))
+                        task.element1 = values[3];
+                    if (!String.IsNullOrEmpty(values[4]))
+                        task.text2 = values[4].Trim();
+                    if (!String.IsNullOrEmpty(values[5]))
+                        task.element2 = values[5];
+                    if (!String.IsNullOrEmpty(values[6]))
+                        task.line2 = values[6];
+                }
                 Globals.extractionAnalyse.sequences.tasks.Add(task);
                 Console.WriteLine("Task added");
 
@@ -889,14 +895,15 @@ namespace KDRS_Analyse
                 Console.WriteLine("Values length: " + values.Length);
 
                 sequence.id = values[0];
-
-                if (!String.IsNullOrEmpty(values[1]))
-                    sequence.result = values[1].Trim();
-                if (!String.IsNullOrEmpty(values[2]))
-                    sequence.name = values[2];
-                if (!String.IsNullOrEmpty(values[3]))
-                    sequence.description = values[3].Trim();
-
+                if (values.Length > 1)
+                {
+                    if (!String.IsNullOrEmpty(values[1]))
+                        sequence.result = values[1].Trim();
+                    if (!String.IsNullOrEmpty(values[2]))
+                        sequence.name = values[2];
+                    if (!String.IsNullOrEmpty(values[3]))
+                        sequence.description = values[3].Trim();
+                }
                 Globals.extractionAnalyse.sequences.sequences.Add(sequence);
             }
         }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Serialization;
 using System.Xml.XPath;
 
 namespace KDRS_Analyse
@@ -14,6 +16,28 @@ namespace KDRS_Analyse
         public event ProgressUpdate OnProgressUpdate;
 
         public bool newFile = false;
+        //------------------------------------------------------------------------------------
+        public void ReadXML(string fileName)
+        {
+            Console.WriteLine("Reading xml");
+            XmlSerializer ser = new XmlSerializer(typeof(ExtractionAnalyse));
+            using (TextReader reader = new StreamReader(fileName))
+            {
+                try
+                {
+                    Globals.extractionAnalyse = (ExtractionAnalyse)ser.Deserialize(reader);
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            /*
+            using (XmlReader reader = XmlReader.Create(fileName))
+            {
+
+            }*/
+        }
 
         //------------------------------------------------------------------------------------
         public void ReadInfoXml(string fileName)

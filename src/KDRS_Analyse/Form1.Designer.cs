@@ -37,7 +37,7 @@
             this.rBtnIKAVANoConvFiles = new System.Windows.Forms.RadioButton();
             this.rBtnVera = new System.Windows.Forms.RadioButton();
             this.rBtnKOSTVal = new System.Windows.Forms.RadioButton();
-            this.rBtnDcmN5val = new System.Windows.Forms.RadioButton();
+            this.rBtnAnalyseXML = new System.Windows.Forms.RadioButton();
             this.rBtnProd = new System.Windows.Forms.RadioButton();
             this.rBtnArch = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
@@ -153,15 +153,15 @@
             this.rBtnKOSTVal.Text = "KOST-Val";
             this.rBtnKOSTVal.UseVisualStyleBackColor = true;
             // 
-            // rBtnDcmN5val
+            // rBtnAnalyseXML
             // 
-            this.rBtnDcmN5val.AutoSize = true;
-            this.rBtnDcmN5val.Location = new System.Drawing.Point(12, 241);
-            this.rBtnDcmN5val.Name = "rBtnDcmN5val";
-            this.rBtnDcmN5val.Size = new System.Drawing.Size(142, 17);
-            this.rBtnDcmN5val.TabIndex = 9;
-            this.rBtnDcmN5val.Text = "Documaster N5 validator";
-            this.rBtnDcmN5val.UseVisualStyleBackColor = true;
+            this.rBtnAnalyseXML.AutoSize = true;
+            this.rBtnAnalyseXML.Location = new System.Drawing.Point(12, 241);
+            this.rBtnAnalyseXML.Name = "rBtnAnalyseXML";
+            this.rBtnAnalyseXML.Size = new System.Drawing.Size(87, 17);
+            this.rBtnAnalyseXML.TabIndex = 9;
+            this.rBtnAnalyseXML.Text = "Analyse XML";
+            this.rBtnAnalyseXML.UseVisualStyleBackColor = true;
             // 
             // rBtnProd
             // 
@@ -375,7 +375,7 @@
             this.Controls.Add(this.txtBoxOutFolder);
             this.Controls.Add(this.txtBoxInfoText);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.rBtnDcmN5val);
+            this.Controls.Add(this.rBtnAnalyseXML);
             this.Controls.Add(this.rBtnKOSTVal);
             this.Controls.Add(this.rBtnVera);
             this.Controls.Add(this.rBtnIKAVANoConvFiles);
@@ -406,7 +406,7 @@
         private System.Windows.Forms.RadioButton rBtnIKAVANoConvFiles;
         private System.Windows.Forms.RadioButton rBtnVera;
         private System.Windows.Forms.RadioButton rBtnKOSTVal;
-        private System.Windows.Forms.RadioButton rBtnDcmN5val;
+        private System.Windows.Forms.RadioButton rBtnAnalyseXML;
         private System.Windows.Forms.RadioButton rBtnProd;
         private System.Windows.Forms.RadioButton rBtnArch;
         private System.Windows.Forms.Label label1;
