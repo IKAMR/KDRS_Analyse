@@ -294,7 +294,10 @@ namespace KDRS_Analyse
                 veraFile.valid.Add(fileValid);
 
                 if (newFile)
+                {
                     Globals.extractionAnalyse.files.files.Add(veraFile);
+                    newFile = false;
+                }
                 fileCount++;
                 OnProgressUpdate?.Invoke(fileCount);
             }
@@ -466,7 +469,10 @@ namespace KDRS_Analyse
                 kostValFile.valid.Add(fileValid);
 
                 if (newFile)
+                {
                     Globals.extractionAnalyse.files.files.Add(kostValFile);
+                    newFile = false;
+                }
                 fileCount++;
                 OnProgressUpdate?.Invoke(fileCount);
             }

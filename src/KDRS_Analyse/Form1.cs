@@ -197,12 +197,6 @@ namespace KDRS_Analyse
 
             txtBoxInfoText.AppendText("JOB COMPLETE! \r\n");
             txtBoxInfoText.AppendText("Resultfile: " + outFile + "\r\n");
-
-            Console.WriteLine("FileList:");
-            foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
-            {
-                Console.WriteLine(file.id);
-            }
         }
 
         private void btnReset_Click(object sender, EventArgs e)

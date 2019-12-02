@@ -140,8 +140,11 @@ namespace KDRS_Analyse
                             file.result.end = TimeConv(endDate);
 
                         if (newFile)
+                        {
                             Globals.extractionAnalyse.files.files.Add(file);
-                        //Console.WriteLine("File added");
+                            newFile = false;
+                            //Console.WriteLine("File added");
+                        }
 
                         lineCount++;
                         OnProgressUpdate?.Invoke(fileCount);
@@ -392,6 +395,7 @@ namespace KDRS_Analyse
                                 if (newFile)
                                 {
                                     Globals.extractionAnalyse.files.files.Add(file);
+                                    newFile = false;
                                     Console.WriteLine("File added");
                                 }
                             }
@@ -602,7 +606,10 @@ namespace KDRS_Analyse
                     }
                     OnProgressUpdate?.Invoke(fileCount);
                     if (newFile)
+                    {
                         Globals.extractionAnalyse.files.files.Add(droidFile);
+                        newFile = false;
+                    }
                 }
             }
             Globals.extractionAnalyse.tools.tools.Add(droidTool);
