@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace KDRS_Analyse
 {
@@ -514,7 +515,8 @@ namespace KDRS_Analyse
                 string line = reader.ReadLine();
                 while ((line = reader.ReadLine()) != null)
                 {
-                    string[] split = line.Split(',');
+                    //string[] split = line.Split(',');
+                    string[] split = Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
                     if (!split[8].Contains("File"))
                     {
@@ -534,9 +536,10 @@ namespace KDRS_Analyse
                         fileId = GetFileId(filePath, outRootFolder);
 
                     // Skip table .xml and .xsd if choosen
-                    string readFileName = split[16].Trim('"');
-                    if (!incTableXml && readFileName.Contains("table") && (readFileName.Contains(".xml") || readFileName.Contains(".xsd")))
+                    if (!incTableXml && filePath.Contains("table") && (filePath.Contains(".xml") || filePath.Contains(".xsd")))
                         continue;
+
+                    string readFileName = split[16].Trim('"');
 
                     AnalyseFile droidFile = GetFile(fileId);
                     fileCount++;
@@ -549,10 +552,10 @@ namespace KDRS_Analyse
 
                     if (inFiles)
                     {
-                        droidFile.inFile.ext = split[9].Trim('"');
-                        droidFile.inFile.puid = split[14].Trim('"');
+                        droidFile.inFile.ext = split[9].Trim('"').Trim();
+                        droidFile.inFile.puid = split[14].Trim('"').Trim();
 
-                        string readMime = split[15].Trim('"');
+                        string readMime = split[15].Trim('"').Trim();
                         string fileMime = droidFile.inFile.mime;
 
                         if (String.IsNullOrEmpty(fileMime))
@@ -573,14 +576,14 @@ namespace KDRS_Analyse
                         }
 
                         droidFile.inFile.name = readFileName;
-                        droidFile.inFile.version = split[17].Trim('"');
+                        droidFile.inFile.version = split[17].Trim('"').Trim();
                     }
                     else
                     {
-                        droidFile.outFile.ext = split[9].Trim('"');
-                        droidFile.outFile.puid = split[14].Trim('"');
+                        droidFile.outFile.ext = split[9].Trim('"').Trim();
+                        droidFile.outFile.puid = split[14].Trim('"').Trim();
 
-                        string readMime = split[15].Trim('"');
+                        string readMime = split[15].Trim('"').Trim();
                         string fileMime = droidFile.outFile.mime;
 
                         if (String.IsNullOrEmpty(fileMime))
@@ -628,7 +631,7 @@ namespace KDRS_Analyse
             return parseDate.ToString("yyyy-MM-dd HH:mm:ss");
         }
         //------------------------------------------------------------------------------------
-        // Searches filst of file objects and returns object with same fileId as input. If no file exist with fileId -> creates new file object.
+        // Searches list of file objects and returns object with same fileId as input. If no file exist with fileId -> creates new file object.
         public static AnalyseFile GetFile(string fileId)
         {
             Console.WriteLine("Get file");
