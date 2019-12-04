@@ -278,7 +278,7 @@ namespace KDRS_Analyse
                         PuIdWarning(veraFile, readPuId, fileValid.puid, veraTool.toolId);
                     }
                 }
-
+                /*
                 foreach (AnalyseFile.Valid val in veraFile.valid)
                 {
                     readPuId = val.puid;
@@ -289,7 +289,7 @@ namespace KDRS_Analyse
                             XMLReader.PuIdWarning(veraFile, readPuId, fileValid.puid, veraTool.toolId);
                         }
                     }
-                }
+                }*/
 
                 veraFile.valid.Add(fileValid);
 
@@ -453,7 +453,7 @@ namespace KDRS_Analyse
                         PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
                     }
                 }
-
+                /*
                 foreach (AnalyseFile.Valid val in kostValFile.valid)
                 {
                     readPuId = val.puid;
@@ -464,7 +464,7 @@ namespace KDRS_Analyse
                             XMLReader.PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
                         }
                     }
-                }
+                }*/
 
                 kostValFile.valid.Add(fileValid);
 

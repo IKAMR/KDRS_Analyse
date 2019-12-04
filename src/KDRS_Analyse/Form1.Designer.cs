@@ -58,6 +58,8 @@
             this.chkBoxIncXsd = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnSaveLog = new System.Windows.Forms.Button();
+            this.btnSaveInput = new System.Windows.Forms.Button();
+            this.btnLoadInput = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,6 +70,7 @@
             this.rBtnInfoXml.Name = "rBtnInfoXml";
             this.rBtnInfoXml.Size = new System.Drawing.Size(60, 17);
             this.rBtnInfoXml.TabIndex = 0;
+            this.rBtnInfoXml.TabStop = true;
             this.rBtnInfoXml.Text = "info.xml";
             this.rBtnInfoXml.UseVisualStyleBackColor = true;
             // 
@@ -90,6 +93,7 @@
             this.rBtnDcmLog.Name = "rBtnDcmLog";
             this.rBtnDcmLog.Size = new System.Drawing.Size(92, 17);
             this.rBtnDcmLog.TabIndex = 2;
+            this.rBtnDcmLog.TabStop = true;
             this.rBtnDcmLog.Text = "Decom full log";
             this.rBtnDcmLog.UseVisualStyleBackColor = true;
             // 
@@ -100,6 +104,7 @@
             this.rBtnDrdFiles.Name = "rBtnDrdFiles";
             this.rBtnDrdFiles.Size = new System.Drawing.Size(81, 17);
             this.rBtnDrdFiles.TabIndex = 3;
+            this.rBtnDrdFiles.TabStop = true;
             this.rBtnDrdFiles.Text = "DROID files";
             this.rBtnDrdFiles.UseVisualStyleBackColor = true;
             // 
@@ -140,6 +145,7 @@
             this.rBtnVera.Name = "rBtnVera";
             this.rBtnVera.Size = new System.Drawing.Size(67, 17);
             this.rBtnVera.TabIndex = 7;
+            this.rBtnVera.TabStop = true;
             this.rBtnVera.Text = "veraPDF";
             this.rBtnVera.UseVisualStyleBackColor = true;
             // 
@@ -150,6 +156,7 @@
             this.rBtnKOSTVal.Name = "rBtnKOSTVal";
             this.rBtnKOSTVal.Size = new System.Drawing.Size(72, 17);
             this.rBtnKOSTVal.TabIndex = 8;
+            this.rBtnKOSTVal.TabStop = true;
             this.rBtnKOSTVal.Text = "KOST-Val";
             this.rBtnKOSTVal.UseVisualStyleBackColor = true;
             // 
@@ -160,6 +167,7 @@
             this.rBtnAnalyseXML.Name = "rBtnAnalyseXML";
             this.rBtnAnalyseXML.Size = new System.Drawing.Size(87, 17);
             this.rBtnAnalyseXML.TabIndex = 9;
+            this.rBtnAnalyseXML.TabStop = true;
             this.rBtnAnalyseXML.Text = "Analyse XML";
             this.rBtnAnalyseXML.UseVisualStyleBackColor = true;
             // 
@@ -170,7 +178,7 @@
             this.rBtnProd.Location = new System.Drawing.Point(3, 27);
             this.rBtnProd.Name = "rBtnProd";
             this.rBtnProd.Size = new System.Drawing.Size(94, 17);
-            this.rBtnProd.TabIndex = 10;
+            this.rBtnProd.TabIndex = 0;
             this.rBtnProd.TabStop = true;
             this.rBtnProd.Text = "Production (In)";
             this.rBtnProd.UseVisualStyleBackColor = true;
@@ -181,7 +189,8 @@
             this.rBtnArch.Location = new System.Drawing.Point(3, 50);
             this.rBtnArch.Name = "rBtnArch";
             this.rBtnArch.Size = new System.Drawing.Size(89, 17);
-            this.rBtnArch.TabIndex = 11;
+            this.rBtnArch.TabIndex = 1;
+            this.rBtnArch.TabStop = true;
             this.rBtnArch.Text = "Archival (Out)";
             this.rBtnArch.UseVisualStyleBackColor = true;
             // 
@@ -191,7 +200,7 @@
             this.label1.Location = new System.Drawing.Point(12, 18);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(54, 13);
-            this.label1.TabIndex = 14;
+            this.label1.TabIndex = 1;
             this.label1.Text = "Input type";
             // 
             // label2
@@ -211,26 +220,27 @@
             this.txtBoxInfoText.Multiline = true;
             this.txtBoxInfoText.Name = "txtBoxInfoText";
             this.txtBoxInfoText.ReadOnly = true;
-            this.txtBoxInfoText.Size = new System.Drawing.Size(484, 136);
-            this.txtBoxInfoText.TabIndex = 16;
+            this.txtBoxInfoText.Size = new System.Drawing.Size(488, 136);
+            this.txtBoxInfoText.TabIndex = 22;
+            this.txtBoxInfoText.TabStop = false;
             // 
             // txtBoxOutFolder
             // 
             this.txtBoxOutFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBoxOutFolder.Location = new System.Drawing.Point(157, 427);
+            this.txtBoxOutFolder.Location = new System.Drawing.Point(157, 464);
             this.txtBoxOutFolder.Name = "txtBoxOutFolder";
-            this.txtBoxOutFolder.Size = new System.Drawing.Size(631, 20);
-            this.txtBoxOutFolder.TabIndex = 17;
+            this.txtBoxOutFolder.Size = new System.Drawing.Size(635, 20);
+            this.txtBoxOutFolder.TabIndex = 14;
             // 
             // txtBoxOutFile
             // 
             this.txtBoxOutFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBoxOutFile.Location = new System.Drawing.Point(157, 453);
+            this.txtBoxOutFile.Location = new System.Drawing.Point(157, 490);
             this.txtBoxOutFile.Name = "txtBoxOutFile";
-            this.txtBoxOutFile.Size = new System.Drawing.Size(631, 20);
-            this.txtBoxOutFile.TabIndex = 18;
+            this.txtBoxOutFile.Size = new System.Drawing.Size(635, 20);
+            this.txtBoxOutFile.TabIndex = 15;
             // 
             // panel1
             // 
@@ -240,30 +250,30 @@
             this.panel1.Location = new System.Drawing.Point(12, 265);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(188, 80);
-            this.panel1.TabIndex = 19;
+            this.panel1.TabIndex = 10;
             // 
             // txtBoxInRoot
             // 
             this.txtBoxInRoot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBoxInRoot.Location = new System.Drawing.Point(157, 375);
+            this.txtBoxInRoot.Location = new System.Drawing.Point(157, 412);
             this.txtBoxInRoot.Name = "txtBoxInRoot";
-            this.txtBoxInRoot.Size = new System.Drawing.Size(631, 20);
-            this.txtBoxInRoot.TabIndex = 21;
+            this.txtBoxInRoot.Size = new System.Drawing.Size(635, 20);
+            this.txtBoxInRoot.TabIndex = 12;
             // 
             // txtBoxOutRoot
             // 
             this.txtBoxOutRoot.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBoxOutRoot.Location = new System.Drawing.Point(157, 401);
+            this.txtBoxOutRoot.Location = new System.Drawing.Point(157, 438);
             this.txtBoxOutRoot.Name = "txtBoxOutRoot";
-            this.txtBoxOutRoot.Size = new System.Drawing.Size(631, 20);
-            this.txtBoxOutRoot.TabIndex = 20;
+            this.txtBoxOutRoot.Size = new System.Drawing.Size(635, 20);
+            this.txtBoxOutRoot.TabIndex = 13;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 375);
+            this.label3.Location = new System.Drawing.Point(15, 412);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(81, 13);
             this.label3.TabIndex = 22;
@@ -272,7 +282,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 401);
+            this.label4.Location = new System.Drawing.Point(15, 438);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(89, 13);
             this.label4.TabIndex = 23;
@@ -281,7 +291,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 430);
+            this.label5.Location = new System.Drawing.Point(15, 467);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(73, 13);
             this.label5.TabIndex = 24;
@@ -290,7 +300,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 453);
+            this.label6.Location = new System.Drawing.Point(15, 490);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(86, 13);
             this.label6.TabIndex = 25;
@@ -301,7 +311,7 @@
             this.btnWriteXml.Location = new System.Drawing.Point(646, 172);
             this.btnWriteXml.Name = "btnWriteXml";
             this.btnWriteXml.Size = new System.Drawing.Size(142, 80);
-            this.btnWriteXml.TabIndex = 26;
+            this.btnWriteXml.TabIndex = 16;
             this.btnWriteXml.Text = "Create result file";
             this.btnWriteXml.UseVisualStyleBackColor = true;
             this.btnWriteXml.Click += new System.EventHandler(this.btnWriteXml_Click);
@@ -311,7 +321,7 @@
             this.btnReset.Location = new System.Drawing.Point(646, 265);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(142, 44);
-            this.btnReset.TabIndex = 27;
+            this.btnReset.TabIndex = 17;
             this.btnReset.Text = "Reset";
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
@@ -331,7 +341,7 @@
             this.chkBoxIncXsd.Location = new System.Drawing.Point(207, 265);
             this.chkBoxIncXsd.Name = "chkBoxIncXsd";
             this.chkBoxIncXsd.Size = new System.Drawing.Size(129, 17);
-            this.chkBoxIncXsd.TabIndex = 29;
+            this.chkBoxIncXsd.TabIndex = 11;
             this.chkBoxIncXsd.Text = "Include table.xsd/.xml";
             this.chkBoxIncXsd.UseVisualStyleBackColor = true;
             // 
@@ -349,16 +359,38 @@
             this.btnSaveLog.Location = new System.Drawing.Point(646, 315);
             this.btnSaveLog.Name = "btnSaveLog";
             this.btnSaveLog.Size = new System.Drawing.Size(142, 23);
-            this.btnSaveLog.TabIndex = 31;
+            this.btnSaveLog.TabIndex = 18;
             this.btnSaveLog.Text = "Save LOG";
             this.btnSaveLog.UseVisualStyleBackColor = true;
             this.btnSaveLog.Click += new System.EventHandler(this.btnSaveLog_Click);
+            // 
+            // btnSaveInput
+            // 
+            this.btnSaveInput.Location = new System.Drawing.Point(646, 344);
+            this.btnSaveInput.Name = "btnSaveInput";
+            this.btnSaveInput.Size = new System.Drawing.Size(142, 23);
+            this.btnSaveInput.TabIndex = 19;
+            this.btnSaveInput.Text = "Save input";
+            this.btnSaveInput.UseVisualStyleBackColor = true;
+            this.btnSaveInput.Click += new System.EventHandler(this.btnSaveInput_Click);
+            // 
+            // btnLoadInput
+            // 
+            this.btnLoadInput.Location = new System.Drawing.Point(646, 373);
+            this.btnLoadInput.Name = "btnLoadInput";
+            this.btnLoadInput.Size = new System.Drawing.Size(142, 23);
+            this.btnLoadInput.TabIndex = 20;
+            this.btnLoadInput.Text = "Load input";
+            this.btnLoadInput.UseVisualStyleBackColor = true;
+            this.btnLoadInput.Click += new System.EventHandler(this.btnLoadInput_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 483);
+            this.ClientSize = new System.Drawing.Size(804, 539);
+            this.Controls.Add(this.btnLoadInput);
+            this.Controls.Add(this.btnSaveInput);
             this.Controls.Add(this.btnSaveLog);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.chkBoxIncXsd);
@@ -427,6 +459,8 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnSaveLog;
         private System.Windows.Forms.Label lblProgress;
+        private System.Windows.Forms.Button btnSaveInput;
+        private System.Windows.Forms.Button btnLoadInput;
     }
 }
 

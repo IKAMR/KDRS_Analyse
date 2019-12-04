@@ -280,10 +280,6 @@ namespace KDRS_Analyse
                             }
                         }
 
-                        string[] projSplit = { "User has started the conversion process for project with name" };
-                        if (line.Contains(projSplit[0]))
-                            readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-
                         //File region
                         #region
 
@@ -293,6 +289,10 @@ namespace KDRS_Analyse
                             lineCounter++;
                             sequence = AddSequence(sequence, line);
                             //Console.WriteLine("Sequence: " + sequence);
+
+                            string[] projSplit = { "User has started the conversion process for project with name" };
+                            if (line.Contains(projSplit[0]))
+                                readProject = line.Split(projSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
 
                             Console.WriteLine("Reading over");
 
@@ -576,14 +576,17 @@ namespace KDRS_Analyse
                         }
 
                         droidFile.inFile.name = readFileName;
-                        droidFile.inFile.version = split[17].Trim('"').Trim();
+
+                        string fileVersion = split[17].Trim('"');
+                        if (!String.IsNullOrEmpty(fileVersion))
+                            droidFile.inFile.version = fileVersion;
                     }
                     else
                     {
-                        droidFile.outFile.ext = split[9].Trim('"').Trim();
-                        droidFile.outFile.puid = split[14].Trim('"').Trim();
+                        droidFile.outFile.ext = split[9].Trim('"');
+                        droidFile.outFile.puid = split[14].Trim('"');
 
-                        string readMime = split[15].Trim('"').Trim();
+                        string readMime = split[15].Trim('"');
                         string fileMime = droidFile.outFile.mime;
 
                         if (String.IsNullOrEmpty(fileMime))
@@ -603,9 +606,11 @@ namespace KDRS_Analyse
                             }
                         }
 
-
                         droidFile.outFile.name = readFileName;
-                        droidFile.outFile.version = split[17].Trim('"');
+
+                        string fileVersion = split[17].Trim('"');
+                        if (!String.IsNullOrEmpty(fileVersion))
+                            droidFile.outFile.version = fileVersion;
                     }
                     OnProgressUpdate?.Invoke(fileCount);
                     if (newFile)

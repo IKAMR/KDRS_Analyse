@@ -205,6 +205,8 @@ namespace KDRS_Analyse
             fileName = String.Empty;
             Globals.toolCounter = 0;
 
+            Properties.Settings.Default.Reset();
+
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -288,6 +290,28 @@ namespace KDRS_Analyse
                 Globals.extractionAnalyse.files.files = new List<AnalyseFile>();
                 Console.WriteLine("New Files");
             }
+        }
+
+        private void btnSaveInput_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default["inRootFolder"] = txtBoxInRoot.Text;
+            Properties.Settings.Default["outRootFolder"] = txtBoxOutRoot.Text;
+            Properties.Settings.Default["analyseFolder"] = txtBoxOutFolder.Text;
+            Properties.Settings.Default["analyseFileName"] = txtBoxOutFile.Text;
+
+            Properties.Settings.Default["incXsd"] = chkBoxIncXsd.Checked;
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void btnLoadInput_Click(object sender, EventArgs e)
+        {
+            txtBoxInRoot.Text = Properties.Settings.Default["inRootFolder"].ToString();
+            txtBoxOutRoot.Text = Properties.Settings.Default["outRootFolder"].ToString();
+            txtBoxOutFolder.Text = Properties.Settings.Default["analyseFolder"].ToString();
+            txtBoxOutFile.Text = Properties.Settings.Default["analyseFileName"].ToString();
+
+            chkBoxIncXsd.Checked = (bool) Properties.Settings.Default["incXsd"];
         }
     }
 
