@@ -75,6 +75,9 @@
     <None Include="decom-log-sequences.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="mime-synonym.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="pdf-to-puid.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

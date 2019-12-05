@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -535,6 +536,8 @@ namespace KDRS_Analyse
                     else
                         fileId = GetFileId(filePath, outRootFolder);
 
+                    Console.WriteLine("FileID: " + fileId);
+
                     // Skip table .xml and .xsd if choosen
                     if (!incTableXml && filePath.Contains("table") && (filePath.Contains(".xml") || filePath.Contains(".xsd")))
                         continue;
@@ -561,8 +564,17 @@ namespace KDRS_Analyse
                         if (String.IsNullOrEmpty(fileMime))
                             droidFile.inFile.mime = readMime;
                         else if (fileMime != readMime)
-                            MimeWarning(droidFile, true, readMime, droidTool.toolId);
-
+                        {
+                            foreach (var key in Globals.mimeDict.Keys)
+                            {
+                                if (!Globals.mimeDict[key].Contains(readMime) && !Globals.mimeDict[key].Contains(fileMime))
+                                    MimeWarning(droidFile, true, readMime, droidTool.toolId);
+                                else if (Globals.mimeDict[key].Contains(readMime) && !Globals.mimeDict[key].Contains(fileMime))
+                                    MimeWarning(droidFile, true, readMime, droidTool.toolId);
+                                else if (!Globals.mimeDict[key].Contains(readMime) && Globals.mimeDict[key].Contains(fileMime))
+                                    MimeWarning(droidFile, true, readMime, droidTool.toolId);
+                            }
+                        }
                         foreach (AnalyseFile.Valid valid in droidFile.valid)
                         {
                             string readPuId = valid.puid;
@@ -591,8 +603,17 @@ namespace KDRS_Analyse
 
                         if (String.IsNullOrEmpty(fileMime))
                             droidFile.outFile.mime = readMime;
-                        else if (fileMime != readMime)
-                            MimeWarning(droidFile, false, readMime, droidTool.toolId);
+                        else if (fileMime != readMime) {
+                            foreach (var key in Globals.mimeDict.Keys)
+                            {
+                                if (!Globals.mimeDict[key].Contains(readMime) && !Globals.mimeDict[key].Contains(fileMime))
+                                    MimeWarning(droidFile, true, readMime, droidTool.toolId);
+                                else if (Globals.mimeDict[key].Contains(readMime) && !Globals.mimeDict[key].Contains(fileMime))
+                                    MimeWarning(droidFile, true, readMime, droidTool.toolId);
+                                else if (!Globals.mimeDict[key].Contains(readMime) && Globals.mimeDict[key].Contains(fileMime))
+                                    MimeWarning(droidFile, true, readMime, droidTool.toolId);
+                            }
+                        }
 
                         foreach (AnalyseFile.Valid valid in droidFile.valid)
                         {
@@ -642,6 +663,7 @@ namespace KDRS_Analyse
             Console.WriteLine("Get file");
             try
             {
+                Console.WriteLine("Files: " + Globals.extractionAnalyse.files.files.Count);
                 //newFile = false;
                 foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
                 {
@@ -738,11 +760,17 @@ namespace KDRS_Analyse
             }
             sequence = sequenceBuilder.ToString();
 
-            string[] splitWord = { sequence };
+            string[] splitWord = { (sequence + @"\") };
 
             Console.WriteLine("Common path: " + sequence);
 
-            fileId = filePath.Substring(sequence.Length + 1);
+            string[] filePathSplit = filePath.Split(splitWord, 2, StringSplitOptions.RemoveEmptyEntries);
+
+            if (filePathSplit.Length > 1)
+                fileId = filePathSplit[1];
+            else
+                fileId = filePathSplit[0];
+            //fileId = filePath.Substring(sequence.Length + 1);
 
             return fileId;
         }

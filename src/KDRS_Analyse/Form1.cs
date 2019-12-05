@@ -45,6 +45,7 @@ namespace KDRS_Analyse
             FillDict("decom-log-sequences.ini", Globals.taskDict, "DECOM-LOG-TASK");
             FillDict("decom-log-sequences.ini", Globals.seqDict, "DECOM-LOG-SEQUENCE");
             FillDict("puid-to-type.ini", Globals.typeDict, "PUID-TO-TYPE");
+            FillDict("mime-synonym.ini", Globals.mimeDict, "MIME-SYNONYM");
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -272,6 +273,7 @@ namespace KDRS_Analyse
                                 keyPair = line.Split('=');
 
                                 Console.WriteLine(keyPair[0] + " " + keyPair[1]);
+                            
                                 dict.Add(keyPair[0], keyPair[1]);
                             }
                         }
@@ -335,6 +337,7 @@ namespace KDRS_Analyse
         public static Dictionary<string, string> taskDict = new Dictionary<string, string>();
         public static Dictionary<string, string> seqDict = new Dictionary<string, string>();
         public static Dictionary<string, string> typeDict = new Dictionary<string, string>();
+        public static Dictionary<string, string> mimeDict = new Dictionary<string, string>();
 
     }
 }
