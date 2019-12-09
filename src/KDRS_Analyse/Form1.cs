@@ -22,6 +22,7 @@ namespace KDRS_Analyse
         int fileCount;
 
         List<string> checkedButtons = new List<string>();
+        //******************************************************************
 
         public Form1()
         {
@@ -35,7 +36,6 @@ namespace KDRS_Analyse
             this.AllowDrop = true;
             this.DragDrop += new DragEventHandler(Form1_DragDrop);
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
-
 
             checkedButtons.Add("Checked buttons:");
 
@@ -55,6 +55,7 @@ namespace KDRS_Analyse
             else
                 e.Effect = DragDropEffects.None;
         }
+        //******************************************************************
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
@@ -100,6 +101,7 @@ namespace KDRS_Analyse
                 Console.WriteLine("outFile: " + outFile);
             }
         }
+        //******************************************************************
 
         private void ReadFile()
         {
@@ -123,7 +125,6 @@ namespace KDRS_Analyse
                 checkedButtons.Add("X - Decom blob report");
 
                 logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
-
             }
             else if (rBtnDcmLog.Checked)
             {
@@ -147,7 +148,6 @@ namespace KDRS_Analyse
                 checkedButtons.Add("X - Droid files");
 
                 logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder, chkBoxIncXsd.Checked);
-
             }
             else if (rBtnIKAVALog.Checked)
                 ; // readIKAVALog
@@ -174,7 +174,6 @@ namespace KDRS_Analyse
 
                 xmlReader.ReadKostVal(fileName, outRootFolder); // readArk5Xml
                 checkedButtons.Add("X - KOST-Val");
-
             }
             else if (rBtnAnalyseXML.Checked)
             {
@@ -184,6 +183,7 @@ namespace KDRS_Analyse
             }
             // osv for resten
         }
+        //******************************************************************
 
         private void btnWriteXml_Click(object sender, EventArgs e)
         {
@@ -199,7 +199,8 @@ namespace KDRS_Analyse
             txtBoxInfoText.AppendText("JOB COMPLETE! \r\n");
             txtBoxInfoText.AppendText("Resultfile: " + outFile + "\r\n");
         }
-
+        //******************************************************************
+        // Reset form and all results.
         private void btnReset_Click(object sender, EventArgs e)
         {
             txtBoxInfoText.Clear();
@@ -208,14 +209,22 @@ namespace KDRS_Analyse
 
             Properties.Settings.Default.Reset();
 
+            Globals.extractionAnalyse = new ExtractionAnalyse
+            {
+                name = Globals.toolName,
+                version = Globals.toolVersion
+            };
+
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
+        //******************************************************************
 
         public string GetTimeStamp()
         {
             return DateTime.Now.ToString("yyyy-MM-dd_HHmm");
         }
+        //******************************************************************
 
         private void reader_OnProgressUpdate(int count)
         {
@@ -226,6 +235,7 @@ namespace KDRS_Analyse
                 lblProgress.Refresh();
             });
         }
+        //******************************************************************
 
         private void btnSaveLog_Click(object sender, EventArgs e)
         {
@@ -247,6 +257,7 @@ namespace KDRS_Analyse
             System.IO.File.AppendAllText(logFile, txtBoxInfoText.Text);
 
         }
+        //******************************************************************
 
         private void FillDict(string file, Dictionary<string, string> dict, string section)
         {
@@ -283,6 +294,7 @@ namespace KDRS_Analyse
             else
                 txtBoxInfoText.AppendText("Ini file not found: " + file);
         }
+        //******************************************************************
 
         private void InitFiles()
         {
@@ -294,8 +306,24 @@ namespace KDRS_Analyse
             }
         }
 
+        //******************************************************************
         private void btnSaveInput_Click(object sender, EventArgs e)
         {
+            string saveInputFile = Path.Combine(outFolder, "analyse_input_parameters.txt");
+
+            string inRoot = "In root folder: " + txtBoxInRoot.Text;
+            string outRoot = "Out root folder: " + txtBoxOutRoot.Text;
+
+            string analyseFolder = "Analyse folder: " + txtBoxOutFolder.Text;
+            string analyseFileName = "Analyse file name: " + txtBoxOutFile.Text;
+
+            string xmlChecked = chkBoxIncXsd.Checked.ToString();
+
+            string[] names = { inRoot, outRoot, analyseFolder, analyseFileName, xmlChecked };
+
+            File.WriteAllLines(saveInputFile, names);
+
+            /*
             Properties.Settings.Default["inRootFolder"] = txtBoxInRoot.Text;
             Properties.Settings.Default["outRootFolder"] = txtBoxOutRoot.Text;
             Properties.Settings.Default["analyseFolder"] = txtBoxOutFolder.Text;
@@ -303,23 +331,35 @@ namespace KDRS_Analyse
 
             Properties.Settings.Default["incXsd"] = chkBoxIncXsd.Checked;
 
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.Save();*/
         }
+        //******************************************************************
 
         private void btnLoadInput_Click(object sender, EventArgs e)
         {
+            string[] input = null;
+            string loadInputFile = Path.Combine(outFolder, "analyse_input_parameters.txt");
+            if (File.Exists(loadInputFile))
+            {
+                input = File.ReadAllLines(loadInputFile);
+
+                txtBoxInRoot.Text = input[0].Split(':')[1].Trim();
+                txtBoxOutRoot.Text = input[1].Split(':')[1].Trim();
+                txtBoxOutFolder.Text = input[2].Split(':')[1].Trim();
+                txtBoxOutFile.Text = input[3].Split(':')[1].Trim();
+                chkBoxIncXsd.Checked = Boolean.Parse(input[4].Trim());
+            }
+            /*
             txtBoxInRoot.Text = Properties.Settings.Default["inRootFolder"].ToString();
             txtBoxOutRoot.Text = Properties.Settings.Default["outRootFolder"].ToString();
             txtBoxOutFolder.Text = Properties.Settings.Default["analyseFolder"].ToString();
             txtBoxOutFile.Text = Properties.Settings.Default["analyseFileName"].ToString();
 
-            chkBoxIncXsd.Checked = (bool) Properties.Settings.Default["incXsd"];
+            chkBoxIncXsd.Checked = (bool) Properties.Settings.Default["incXsd"];*/
         }
     }
 
-    public static class UpdateStatus
-    {
-   }
+    //====================================================================================================
 
     public static class Globals
     {

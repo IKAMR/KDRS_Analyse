@@ -17,22 +17,23 @@ namespace KDRS_Analyse
 
         public bool newFile = false;
         //------------------------------------------------------------------------------------
-        // Reading Decom Blob report and assigning values to objects
+        // Reading Decom Blobs report and assigning values to objects
         public void ReadDcmBlbRpt(string fileName, string inRootFolder, string outRootFolder)
         {
 
             Globals.toolCounter++;
             Console.WriteLine(Globals.toolCounter);
-            AnalyseTool dcmTool = new AnalyseTool();
-
-            dcmTool.dcmTool = new AnalyseTool.DcmTool();
-            dcmTool.files = new AnalyseTool.DcmFiles();
-            dcmTool.toolNo = Globals.toolCounter.ToString();
-            dcmTool.name = "Decom";
-            dcmTool.version = "1.3.0";
-            dcmTool.toolId = "101";
-            dcmTool.role = "transform";
-            dcmTool.subrole = "project";
+            AnalyseTool dcmTool = new AnalyseTool
+            {
+                dcmTool = new AnalyseTool.DcmTool(),
+                files = new AnalyseTool.DcmFiles(),
+                toolNo = Globals.toolCounter.ToString(),
+                name = "Decom",
+                version = "1.3.0",
+                toolId = "101",
+                role = "transform",
+                subrole = "project"
+            };
 
             Console.WriteLine("Tool created");
 
@@ -42,6 +43,7 @@ namespace KDRS_Analyse
                 Console.WriteLine("Start read");
                 int lineCount = 0;
                 int fileCount = 0;
+
                 // Read all lines in file one at the time
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -97,18 +99,19 @@ namespace KDRS_Analyse
                         Console.WriteLine("input path: " + inputPath);
                         Console.WriteLine("In root folder: " + inRootFolder);
 
+                        // Get file id based on file path and input root folder.
                         string fileId = GetFileId(inputPath, inRootFolder);
+
+                        // Get file element based on fileId. Create new if none exists.
                         AnalyseFile file = GetFile(fileId);
-                        Console.WriteLine("File created");
                         fileCount++;
 
                         string[] timeSplit = { "time:", "date:" };
                         string startTime = firstSplit[0].Split(timeSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
-                        Console.WriteLine("Start time: " + startTime);
-
                         file.result.start = TimeConv(startTime);
 
                         file.inFile.path = GetFileId(inputPath, inRootFolder);
+
                         if (String.IsNullOrEmpty(file.id))
                         {
                             newFile = true;
@@ -117,6 +120,7 @@ namespace KDRS_Analyse
                         string readMime = firstSplit[2].Split(inputSplit, 2, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                         string fileMime = file.inFile.mime;
 
+                        // Check if file mime match mime found by other tools.
                         if (String.IsNullOrEmpty(fileMime))
                             file.inFile.mime = readMime;
                         else if (fileMime != readMime)
@@ -141,6 +145,7 @@ namespace KDRS_Analyse
                         if (String.IsNullOrEmpty(file.result.end))
                             file.result.end = TimeConv(endDate);
 
+                        // If new file created add this to file list.
                         if (newFile)
                         {
                             Globals.extractionAnalyse.files.files.Add(file);
@@ -163,10 +168,12 @@ namespace KDRS_Analyse
             dcmTool.inputPath.Add(inRootFolder);
             dcmTool.outputPath = outRootFolder;
 
+            // Add tool to tool list.
             Globals.extractionAnalyse.tools.tools.Add(dcmTool);
             Console.WriteLine("Tool added");
         }
         //------------------------------------------------------------------------------------
+        // Read decom desktop.log file. If multiple files this wil find correct file to start with and reads all in correct order.
         public void ReadDcmLog(string fileName, string inRootFolder, string outRootFolder)
         {
             Globals.extractionAnalyse.sequences = new SequenceWrapper();
@@ -175,6 +182,7 @@ namespace KDRS_Analyse
 
             string[] fileList;
 
+            // Get all files if more than one.
             fileList = Directory.GetFiles(Path.GetDirectoryName(fileName));
             bool usingTempFile = false;
             string tempFile = String.Empty;
@@ -190,15 +198,18 @@ namespace KDRS_Analyse
 
             Globals.toolCounter++;
             Console.WriteLine(Globals.toolCounter);
-            AnalyseTool dcmTool = new AnalyseTool();
-            dcmTool.database = new AnalyseTool.DcmDB();
-            dcmTool.dcmTool = new AnalyseTool.DcmTool();
-            dcmTool.toolNo = Globals.toolCounter.ToString();
-            dcmTool.name = "Decom";
-            dcmTool.version = "1.3.0";
-            dcmTool.toolId = "101";
-            dcmTool.role = "transform";
-            dcmTool.subrole = "log";
+
+            AnalyseTool dcmTool = new AnalyseTool
+            {
+                database = new AnalyseTool.DcmDB(),
+                dcmTool = new AnalyseTool.DcmTool(),
+                toolNo = Globals.toolCounter.ToString(),
+                name = "Decom",
+                version = "1.3.0",
+                toolId = "101",
+                role = "transform",
+                subrole = "log"
+            };
 
             string timeStamp = String.Empty;
             int lineCounter = 0;
@@ -328,9 +339,12 @@ namespace KDRS_Analyse
                                 string[] split = { "Starting conversion of blob:", "and current conversion status is:" };
                                 string filePath = line.Split(split, 3, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
                                 Console.WriteLine("input path: " + filePath);
+
+                                // Get file id based on file path and input root folder.
                                 string fileId = GetFileId(filePath, inRootFolder);
                                 Console.WriteLine("File id: " + fileId);
 
+                                // Get file element based on fileId. Create new if non exists.
                                 file = GetFile(fileId);
 
                                 if (String.IsNullOrEmpty(file.id))
@@ -488,14 +502,18 @@ namespace KDRS_Analyse
             return tempFile;
         }
         //------------------------------------------------------------------------------------
+        // Read droid.csv file. Choose between droid scan made before or after conversion of files. Choose if siard format table.xml and table.xsd should be included.
         public void ReadDroidFiles(string fileName, bool inFiles, string inRootFolder, string outRootFolder, bool incTableXml)
         {
+            // In or out files,
             string isIn = "in";
             if (!inFiles)
                 isIn = "out";
 
             Globals.toolCounter++;
             Console.WriteLine(Globals.toolCounter);
+
+            // Create new tool element.
             AnalyseTool droidTool = new AnalyseTool
             {
                 toolNo = Globals.toolCounter.ToString(),
@@ -516,7 +534,7 @@ namespace KDRS_Analyse
                 string line = reader.ReadLine();
                 while ((line = reader.ReadLine()) != null)
                 {
-                    //string[] split = line.Split(',');
+                    // Split line on ",", to get correct information.
                     string[] split = Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
                     if (!split[8].Contains("File"))
@@ -530,6 +548,7 @@ namespace KDRS_Analyse
                     if (String.IsNullOrEmpty(filePath))
                         continue;
 
+                    // Find fileid from file path and either in- or out-root folder
                     string fileId;
                     if (inFiles)
                         fileId = GetFileId(filePath, inRootFolder);
@@ -544,6 +563,7 @@ namespace KDRS_Analyse
 
                     string readFileName = split[16].Trim('"');
 
+                    // Get file element based on fileId. Create new if non exists.
                     AnalyseFile droidFile = GetFile(fileId);
                     fileCount++;
 
@@ -561,6 +581,7 @@ namespace KDRS_Analyse
                         string readMime = split[15].Trim('"').Trim();
                         string fileMime = droidFile.inFile.mime;
 
+                        // Validate that file Mime is same as found by other tools.
                         if (String.IsNullOrEmpty(fileMime))
                             droidFile.inFile.mime = readMime;
                         else if (fileMime != readMime)
@@ -575,6 +596,8 @@ namespace KDRS_Analyse
                                     MimeWarning(droidFile, true, readMime, droidTool.toolId);
                             }
                         }
+
+                        // Validate if file puId is same as found by other tools.
                         foreach (AnalyseFile.Valid valid in droidFile.valid)
                         {
                             string readPuId = valid.puid;
@@ -601,6 +624,7 @@ namespace KDRS_Analyse
                         string readMime = split[15].Trim('"');
                         string fileMime = droidFile.outFile.mime;
 
+                        // Validate that file Mime is same as found by other tools.
                         if (String.IsNullOrEmpty(fileMime))
                             droidFile.outFile.mime = readMime;
                         else if (fileMime != readMime) {
@@ -615,6 +639,7 @@ namespace KDRS_Analyse
                             }
                         }
 
+                        // Validate if file puId is same as found by other tools.
                         foreach (AnalyseFile.Valid valid in droidFile.valid)
                         {
                             string readPuId = valid.puid;
@@ -645,6 +670,7 @@ namespace KDRS_Analyse
             Console.WriteLine("Tool added");
         }
         //------------------------------------------------------------------------------------
+        // Convert time format found in Dcm blobs report to desired format.
         public string TimeConv(string timeString)
         {
             DateTime parseDate = new DateTime();
@@ -689,8 +715,6 @@ namespace KDRS_Analyse
                             return file;
                     }
                 }
-
-                //newFile = true;
                 return new AnalyseFile();
             }
             catch (Exception ex)
@@ -699,6 +723,7 @@ namespace KDRS_Analyse
             }
         }
         //------------------------------------------------------------------------------------
+        // Returns tool based on toolId. (Not in use.)
         public AnalyseTool GetTool(string toolId)
         {
             foreach (AnalyseTool tool in Globals.extractionAnalyse.tools.tools)
@@ -775,6 +800,8 @@ namespace KDRS_Analyse
             return fileId;
         }
         //------------------------------------------------------------------------------------
+        // Creates a warning if file mime doesn't match mime found by other tools.
+        // file with the mismatch, if the file is in or out, new mime found by new tool, toolId of tool identifying new mime.
         public void MimeWarning(AnalyseFile file, bool inFile, string mime, string toolID)
         {
             AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning();
@@ -791,6 +818,7 @@ namespace KDRS_Analyse
             file.warning.Add(warning);
         }
         //------------------------------------------------------------------------------------
+        // Warning created if project found by new tool dosen't match project found by other tools.
         public void ProjectWarning(AnalyseFile file, string refProject, string project, string toolID)
         {
             AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning();
@@ -805,6 +833,7 @@ namespace KDRS_Analyse
             file.warning.Add(warning);
         }
         //------------------------------------------------------------------------------------
+        // Check if line contains spesific string. Return false if not.
         public bool CheckLine(string line)
         {
             if (line.Contains("INFO  com.documaster.decom.views.blobconversion.BLOBConversionProcess"))
@@ -813,6 +842,7 @@ namespace KDRS_Analyse
             return false;
         }
         //------------------------------------------------------------------------------------
+        // Read line on spesific position in file. (Not in use).
         static string ReadSpecificLine(string filePath, int lineNumber)
         {
             string content = String.Empty;
@@ -919,22 +949,24 @@ namespace KDRS_Analyse
                 }
                 Globals.extractionAnalyse.sequences.tasks.taskList.Add(task);
                 Console.WriteLine("Task added");
-
             }
         }
         //------------------------------------------------------------------------------------
-        // Read sequence dictionary to objects
+        // Read sequence dictionary to objects.
         private void ReadSeqDict()
         {
-            Globals.extractionAnalyse.sequences.sequences = new SequenceWrapper.SequencesWrapper();
-            Globals.extractionAnalyse.sequences.sequences.sequenceList = new List<SequenceWrapper.SequencesWrapper.Sequence>();
+            Globals.extractionAnalyse.sequences.sequences = new SequenceWrapper.SequencesWrapper
+            {
+                sequenceList = new List<SequenceWrapper.SequencesWrapper.Sequence>()
+            };
             string[] values = null;
 
             foreach (KeyValuePair<string, string> pair in Globals.seqDict)
             {
-                SequenceWrapper.SequencesWrapper.Sequence sequence = new SequenceWrapper.SequencesWrapper.Sequence();
-
-                sequence.sequence = pair.Key;
+                SequenceWrapper.SequencesWrapper.Sequence sequence = new SequenceWrapper.SequencesWrapper.Sequence
+                {
+                    sequence = pair.Key
+                };
 
                 values = pair.Value.Split(';');
 

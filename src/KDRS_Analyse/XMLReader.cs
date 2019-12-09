@@ -17,6 +17,7 @@ namespace KDRS_Analyse
 
         public bool newFile = false;
         //------------------------------------------------------------------------------------
+        // Reads previous generated analyse.xml file.
         public void ReadXML(string fileName)
         {
             Console.WriteLine("Reading xml");
@@ -35,16 +36,10 @@ namespace KDRS_Analyse
                     throw ex;
                 }
             }
-       /*     using (TextReader reader = new StreamReader(fileName))
-            {
-                
-
-            }
-            
-*/
         }
 
         //------------------------------------------------------------------------------------
+        // Reads info.xml file. populates info, agents system and extractorsoftware elements.
         public void ReadInfoXml(string fileName)
         {
             XPathNavigator nav;
@@ -151,7 +146,7 @@ namespace KDRS_Analyse
         }
 
         //------------------------------------------------------------------------------------
-
+        // Read result xml from veraPDF. Controls puId from Droid.
         public void ReadVeraPdf(string fileName, string outRootFolder, string inRootFolder)
         {
             Globals.toolCounter++;
@@ -278,19 +273,7 @@ namespace KDRS_Analyse
                         PuIdWarning(veraFile, readPuId, fileValid.puid, veraTool.toolId);
                     }
                 }
-                /*
-                foreach (AnalyseFile.Valid val in veraFile.valid)
-                {
-                    readPuId = val.puid;
-                    if (!String.IsNullOrEmpty(readPuId) && !String.IsNullOrEmpty(fileValid.puid))
-                    {
-                        if (!readPuId.Equals(fileValid.puid))
-                        {
-                            XMLReader.PuIdWarning(veraFile, readPuId, fileValid.puid, veraTool.toolId);
-                        }
-                    }
-                }*/
-
+              
                 veraFile.valid.Add(fileValid);
 
                 if (newFile)
@@ -303,18 +286,18 @@ namespace KDRS_Analyse
             }
         }
         //------------------------------------------------------------------------------------
-
+        // Reads result xml file from KOST-Val. Controls puId and mime from Droid and Dcm.
         public void ReadKostVal(string fileName, string outRootFolder)
         {
             Globals.toolCounter++;
-           // Console.WriteLine(Globals.toolCounter);
-            AnalyseTool kostValTool = new AnalyseTool();
-
-
-            kostValTool.toolNo = Globals.toolCounter.ToString();
-            kostValTool.toolId = "104";
-            kostValTool.name = "KOST-Val";
-            kostValTool.version = "";
+            // Console.WriteLine(Globals.toolCounter);
+            AnalyseTool kostValTool = new AnalyseTool
+            {
+                toolNo = Globals.toolCounter.ToString(),
+                toolId = "104",
+                name = "KOST-Val",
+                version = ""
+            };
 
             Console.WriteLine("Tool created");
 
@@ -453,18 +436,6 @@ namespace KDRS_Analyse
                         PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
                     }
                 }
-                /*
-                foreach (AnalyseFile.Valid val in kostValFile.valid)
-                {
-                    readPuId = val.puid;
-                    if (!String.IsNullOrEmpty(readPuId) && !String.IsNullOrEmpty(fileValid.puid))
-                    {
-                        if (!readPuId.Equals(fileValid.puid))
-                        {
-                            XMLReader.PuIdWarning(kostValFile, readPuId, fileValid.puid, kostValTool.toolId);
-                        }
-                    }
-                }*/
 
                 kostValFile.valid.Add(fileValid);
 
@@ -481,15 +452,17 @@ namespace KDRS_Analyse
            // Console.WriteLine("Tool added");
         }
         //------------------------------------------------------------------------------------
-
+        // PuId warning generated if puId found by tool dosen't match puId in file element.
         public static void PuIdWarning(AnalyseFile file, string origPuId, string newPuID, string toolID)
         {
-            AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning();
-            warning.toolId = toolID;
+            AnalyseFile.AnalyseWarning warning = new AnalyseFile.AnalyseWarning
+            {
+                toolId = toolID,
 
-            warning.value1 = origPuId;
-            warning.value2 = newPuID;
-            warning.text = "PUID mismatch";
+                value1 = origPuId,
+                value2 = newPuID,
+                text = "PUID mismatch"
+            };
 
             file.warning.Add(warning);
         }

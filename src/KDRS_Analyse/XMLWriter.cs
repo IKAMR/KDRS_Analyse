@@ -33,11 +33,9 @@ namespace KDRS_Analyse
     {
         public ExtractionAnalyse()
         {
-
             //files = new List<AnalyseFile>();
             //tools.tools = new List<AnalyseTool>();
             files = null;
-
         }
 
         [XmlElement("info")]
@@ -68,7 +66,6 @@ namespace KDRS_Analyse
             set {
                 Globals.toolCounter = value;
             } }
-
     }
     //***************************************************************
 
