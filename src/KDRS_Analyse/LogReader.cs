@@ -407,7 +407,7 @@ namespace KDRS_Analyse
 
                                 if (String.IsNullOrEmpty(file.result.toolId))
                                     file.result.toolId = dcmTool.toolId;
-                                                               
+
                                 if (newFile)
                                 {
                                     Globals.extractionAnalyse.files.files.Add(file);
@@ -458,9 +458,9 @@ namespace KDRS_Analyse
             ReadSeqTaskDict();
 
             Console.WriteLine("Adding seq count");
-            foreach(var entry in seqCount)
+            foreach (var entry in seqCount)
             {
-               foreach (SequenceWrapper.SequencesWrapper.Sequence seq in Globals.extractionAnalyse.sequences.sequences.sequenceList)
+                foreach (SequenceWrapper.SequencesWrapper.Sequence seq in Globals.extractionAnalyse.sequences.sequences.sequenceList)
                 {
                     if (seq.sequence.Equals(entry.Key))
                         seq.count = entry.Value;
@@ -627,7 +627,8 @@ namespace KDRS_Analyse
                         // Validate that file Mime is same as found by other tools.
                         if (String.IsNullOrEmpty(fileMime))
                             droidFile.outFile.mime = readMime;
-                        else if (fileMime != readMime) {
+                        else if (fileMime != readMime)
+                        {
                             foreach (var key in Globals.mimeDict.Keys)
                             {
                                 if (!Globals.mimeDict[key].Contains(readMime) && !Globals.mimeDict[key].Contains(fileMime))
@@ -691,6 +692,8 @@ namespace KDRS_Analyse
             {
                 Console.WriteLine("Files: " + Globals.extractionAnalyse.files.files.Count);
                 //newFile = false;
+
+                /*
                 foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
                 {
                     if (file.id.Contains(fileId) || fileId.Contains(file.id))
@@ -715,7 +718,41 @@ namespace KDRS_Analyse
                             return file;
                     }
                 }
-                return new AnalyseFile();
+                */
+                if (Globals.toolCounter > 1)
+                {
+                    if (Globals.fileDict.ContainsKey(fileId))
+                    {
+                        return Globals.fileDict[fileId];
+                    }
+                    else if (Globals.fileDict.Any(fileIDKey => fileIDKey.Key.Contains(fileId)) || Globals.fileDict.Any(fileIDKey => fileId.Contains(fileIDKey.Key)))
+                    {
+                        foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
+                        {
+                            if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
+                                return file;
+                            else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
+                                return file;
+                            else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
+                                return file;
+                            else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
+                                return file;
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
+                                return file;
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
+                                return file;
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
+                                return file;
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
+                                return file;
+                        }
+                    }
+                }
+
+                AnalyseFile fileNew = new AnalyseFile();
+                Globals.fileDict.Add(fileId, fileNew);
+                return fileNew;
+
             }
             catch (Exception ex)
             {
@@ -921,7 +958,7 @@ namespace KDRS_Analyse
             Globals.extractionAnalyse.sequences.tasks.taskList = new List<SequenceWrapper.SequenceTaskWrapper.SequenceTask>();
             string[] values = null;
 
-            foreach (KeyValuePair<string,string> pair in Globals.taskDict)
+            foreach (KeyValuePair<string, string> pair in Globals.taskDict)
             {
                 SequenceWrapper.SequenceTaskWrapper.SequenceTask task = new SequenceWrapper.SequenceTaskWrapper.SequenceTask();
 

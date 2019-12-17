@@ -215,6 +215,8 @@ namespace KDRS_Analyse
                 version = Globals.toolVersion
             };
 
+            Globals.fileDict.Clear();
+
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -379,5 +381,6 @@ namespace KDRS_Analyse
         public static Dictionary<string, string> typeDict = new Dictionary<string, string>();
         public static Dictionary<string, string> mimeDict = new Dictionary<string, string>();
 
+        public static Dictionary<string, AnalyseFile> fileDict = new Dictionary<string, AnalyseFile>();
     }
 }
