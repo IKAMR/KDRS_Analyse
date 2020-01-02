@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -85,21 +86,54 @@ namespace KDRS_Analyse
 
                 Console.WriteLine("File name: " + fileName);
 
-                try
-                {
-                    ReadFile();
-                    if (fileCount > 0)
-                        txtBoxInfoText.AppendText("File has been read with " + fileCount + " files!\r\n");
-                    else 
-                        txtBoxInfoText.AppendText("File has been read!\r\n");
-                }
-                catch (Exception ex)
-                {
-                    txtBoxInfoText.AppendText(ex.Message);
-                }
+                this.AllowDrop = false;
+                btnWriteXml.Enabled = false;
+                btnReset.Enabled = false;
 
-                Console.WriteLine("outFile: " + outFile);
+                backgroundWorker1 = new BackgroundWorker();
+                backgroundWorker1.DoWork += backgroundWorker1_DoWork;
+                backgroundWorker1.ProgressChanged += backgroundWorker1_ProgressChanged;
+                backgroundWorker1.RunWorkerCompleted += backgroundWorker1_RunWorkerCompleted;
+                backgroundWorker1.WorkerReportsProgress = true;
+                backgroundWorker1.RunWorkerAsync();
             }
+        }
+        //******************************************************************
+
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+
+            try
+            {
+                Console.WriteLine("Reading file");
+
+                ReadFile();
+
+            }
+            catch (Exception ex)
+            {
+                txtBoxInfoText.AppendText(ex.Message);
+            }
+
+            Console.WriteLine("outFile: " + outFile);
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            txtBoxInfoText.AppendText(e.UserState.ToString());
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (fileCount > 0)
+                txtBoxInfoText.AppendText("File has been read with " + fileCount + " files!\r\n");
+            else
+                txtBoxInfoText.AppendText("File has been read!\r\n");
+
+            this.AllowDrop = true;
+            btnWriteXml.Enabled = true;
+            btnReset.Enabled = true;
+
         }
         //******************************************************************
 
@@ -109,7 +143,7 @@ namespace KDRS_Analyse
             {
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
-                txtBoxInfoText.AppendText("info.xml: " + fileName + "\r\n");
+                backgroundWorker1.ReportProgress(0, "info.xml: " + fileName + "\r\n");
                 checkedButtons.Add("X - Info xml");
 
                 xmlReader.ReadInfoXml(fileName);// readInfoXml
@@ -121,7 +155,8 @@ namespace KDRS_Analyse
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 Console.WriteLine("Dcm blobreport");
-                txtBoxInfoText.AppendText("Decom Blobs report: " + fileName + "\r\n");
+                backgroundWorker1.ReportProgress(0, "Decom Blobs report: " + fileName + "\r\n");
+               // txtBoxInfoText.AppendText("Decom Blobs report: " + fileName + "\r\n");
                 checkedButtons.Add("X - Decom blob report");
 
                 logReader.ReadDcmBlbRpt(fileName, inRootFolder, outRootFolder);// readDcmBlbRpt
@@ -132,7 +167,7 @@ namespace KDRS_Analyse
 
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
-                txtBoxInfoText.AppendText("Decom log: " + fileName + "\r\n");
+                backgroundWorker1.ReportProgress(0, "Decom log: " + fileName + "\r\n");
                 checkedButtons.Add("X - Decom log");
 
                 logReader.ReadDcmLog(fileName, inRootFolder, outRootFolder); // readDcmLog
@@ -144,7 +179,7 @@ namespace KDRS_Analyse
                 logReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 Console.WriteLine("Droid files");
-                txtBoxInfoText.AppendText("Droid files.csv: " + fileName + "\r\n");
+                backgroundWorker1.ReportProgress(0, "Droid files.csv: " + fileName + "\r\n");
                 checkedButtons.Add("X - Droid files");
 
                 logReader.ReadDroidFiles(fileName, rBtnProd.Checked, inRootFolder, outRootFolder, chkBoxIncXsd.Checked);
@@ -160,7 +195,7 @@ namespace KDRS_Analyse
                 xmlReader.OnProgressUpdate += reader_OnProgressUpdate;
 
                 Console.WriteLine("veraPDF results");
-                txtBoxInfoText.AppendText("veraPDF XML: " + fileName + "\r\n");
+                backgroundWorker1.ReportProgress(0, "veraPDF XML: " + fileName + "\r\n");
                 xmlReader.ReadVeraPdf(fileName, outRootFolder, inRootFolder);
                 checkedButtons.Add("X - veraPDF");
             }
@@ -170,16 +205,17 @@ namespace KDRS_Analyse
                 InitFiles();
                 xmlReader.OnProgressUpdate += reader_OnProgressUpdate;
                 Console.WriteLine("KOST-Val results");
-                txtBoxInfoText.AppendText("KOST-Val: " + fileName + "\r\n");
+                backgroundWorker1.ReportProgress(0, "KOST-Val: " + fileName + "\r\n");
 
                 xmlReader.ReadKostVal(fileName, outRootFolder); // readArk5Xml
                 checkedButtons.Add("X - KOST-Val");
             }
             else if (rBtnAnalyseXML.Checked)
             {
-                txtBoxInfoText.AppendText("analyse.xml: " + fileName + "\r\n");
+                backgroundWorker1.ReportProgress(0, "analyse.xml: " + fileName + "\r\n");
 
                 xmlReader.ReadXML(fileName); // readDcmN5Val
+                checkedButtons.Add("X - Analyse.xml");
             }
             // osv for resten
         }

@@ -362,7 +362,7 @@ namespace KDRS_Analyse
                                 sequence = AddSequence(sequence, line);
                                 lineCounter++;
 
-                                string[] splitMime = { "The detected MIME type of blob:", "is" };
+                                string[] splitMime = { "The detected MIME type of blob:", " is " };
 
                                 string readMimeLine = reader.ReadLine();
                                 sequence = AddSequence(sequence, readMimeLine);

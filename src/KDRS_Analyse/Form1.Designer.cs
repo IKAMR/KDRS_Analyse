@@ -60,6 +60,7 @@
             this.btnSaveLog = new System.Windows.Forms.Button();
             this.btnSaveInput = new System.Windows.Forms.Button();
             this.btnLoadInput = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -384,6 +385,10 @@
             this.btnLoadInput.UseVisualStyleBackColor = true;
             this.btnLoadInput.Click += new System.EventHandler(this.btnLoadInput_Click);
             // 
+            // backgroundWorker1
+            // 
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -461,6 +466,7 @@
         private System.Windows.Forms.Label lblProgress;
         private System.Windows.Forms.Button btnSaveInput;
         private System.Windows.Forms.Button btnLoadInput;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 
