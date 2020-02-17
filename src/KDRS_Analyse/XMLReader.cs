@@ -67,7 +67,7 @@ namespace KDRS_Analyse
             node = nav.SelectSingleNode("//mets:mets/@TYPE", nsmgr);
             info.ipType = GetInnerXml(node);
 
-            node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='DELIVERYSPECIFICATION']", nsmgr);
+            node = nav.SelectSingleNode("//mets:metsHdr/@CREATEDATE", nsmgr);
             info.extractionDateTime = GetInnerXml(node);
 
             node = nav.SelectSingleNode("//mets:altRecordID[@TYPE='SUBMISSIONAGREEMENT']", nsmgr);
