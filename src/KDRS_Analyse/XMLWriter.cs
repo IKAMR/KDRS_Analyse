@@ -59,13 +59,16 @@ namespace KDRS_Analyse
         public string version { get; set; }
         [XmlAttribute]
         public int toolCounter {
-            get{
+            get
+            {
                 return Globals.toolCounter;
             }
 
-            set {
+            set
+            {
                 Globals.toolCounter = value;
-            } }
+            }
+        }
     }
     //***************************************************************
 

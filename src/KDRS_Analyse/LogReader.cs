@@ -725,26 +725,54 @@ namespace KDRS_Analyse
                     {
                         return Globals.fileDict[fileId];
                     }
-                    else if (Globals.fileDict.Any(fileIDKey => fileIDKey.Key.Contains(fileId)) || Globals.fileDict.Any(fileIDKey => fileId.Contains(fileIDKey.Key)))
+                   // else if (Globals.fileDict.Any(fileIDKey => fileIDKey.Key.Contains(fileId)) || Globals.fileDict.Any(fileIDKey => fileId.Contains(fileIDKey.Key)))
+                   else
                     {
                         foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
                         {
-                            if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
-                                return file;
-                            else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
-                                return file;
-                            else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
-                                return file;
-                            else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
-                                return file;
-                            else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
-                                return file;
-                            else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
-                                return file;
-                            else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
-                                return file;
-                            else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
-                                return file;
+                            if (file.id.Contains(fileId) || fileId.Contains(file.id))
+                            {
+                                if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                                else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                                else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                                else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                                else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                                else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                                else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                                else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
+                                {
+                                    Globals.fileDict.Add(fileId, file);
+                                    return file;
+                                }
+                            }
                         }
                     }
                 }

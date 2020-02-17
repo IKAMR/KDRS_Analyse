@@ -29,8 +29,8 @@ namespace KDRS_Analyse
         {
             InitializeComponent();
 
-            Globals.extractionAnalyse.tools = new ToolsWrapper();
-            Globals.extractionAnalyse.tools.tools = new List<AnalyseTool>();
+            //Globals.extractionAnalyse.tools = new ToolsWrapper();
+            //Globals.extractionAnalyse.tools.tools = new List<AnalyseTool>();
 
             Text = Globals.toolName + " " + Globals.toolVersion;
 
@@ -239,7 +239,11 @@ namespace KDRS_Analyse
         // Reset form and all results.
         private void btnReset_Click(object sender, EventArgs e)
         {
+            backgroundWorker1.Dispose();
             txtBoxInfoText.Clear();
+            lblProgress.Text = String.Empty;
+            lblProgress.Refresh();
+
             fileName = String.Empty;
             Globals.toolCounter = 0;
 
@@ -248,7 +252,12 @@ namespace KDRS_Analyse
             Globals.extractionAnalyse = new ExtractionAnalyse
             {
                 name = Globals.toolName,
-                version = Globals.toolVersion
+                version = Globals.toolVersion,
+
+                tools = new ToolsWrapper
+                {
+                    tools = new List<AnalyseTool>()
+                }
             };
 
             Globals.fileDict.Clear();
@@ -402,13 +411,18 @@ namespace KDRS_Analyse
     public static class Globals
     {
         public static readonly String toolName = "KDRS Analyse";
-        public static readonly String toolVersion = "0.4";
+        public static readonly String toolVersion = "0.5";
 
         public static int toolCounter = 0;
         public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse
         {
             name = toolName,
-            version = toolVersion
+            version = toolVersion,
+
+            tools = new ToolsWrapper
+            {
+                tools = new List<AnalyseTool>()
+            }
         };
 
         public static Dictionary<string, string> puIdDict = new Dictionary<string, string>();
