@@ -77,7 +77,7 @@ namespace KDRS_Analyse
                     outFolder = txtBoxOutFolder.Text;
 
                 if ("" != txtBoxOutFile.Text)
-                    outFileName = Path.GetFileNameWithoutExtension(txtBoxOutFile.Text);
+                    outFileName = txtBoxOutFile.Text;
 
                 inRootFolder = txtBoxInRoot.Text;
                 outRootFolder = txtBoxOutRoot.Text;
