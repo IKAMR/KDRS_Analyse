@@ -365,15 +365,19 @@ namespace KDRS_Analyse
                                 string[] splitMime = { "The detected MIME type of blob:", " is " };
 
                                 string readMimeLine = reader.ReadLine();
+                                lineCounter++;
+
                                 sequence = AddSequence(sequence, readMimeLine);
 
-                                while (!readMimeLine.Contains(splitMime[0]) && readMimeLine != null)
+                                while (!readMimeLine.Contains(splitMime[0]) && readMimeLine != null && CheckLine(readMimeLine))
                                 {
                                     readMimeLine = reader.ReadLine();
                                     sequence = AddSequence(sequence, readMimeLine);
 
                                     lineCounter++;
                                 }
+
+                                Console.WriteLine("Error split");
 
                                 string[] errorSplit = { "BLOBConversionProcess:151 -", " - " };
                                 string readMime = "";
@@ -719,63 +723,61 @@ namespace KDRS_Analyse
                     }
                 }
                 */
-                if (Globals.toolCounter > 1)
+                if (Globals.fileDict.ContainsKey(fileId))
                 {
-                    if (Globals.fileDict.ContainsKey(fileId))
+                    return Globals.fileDict[fileId];
+                }
+                // else if (Globals.fileDict.Any(fileIDKey => fileIDKey.Key.Contains(fileId)) || Globals.fileDict.Any(fileIDKey => fileId.Contains(fileIDKey.Key)))
+                else if (Globals.toolCounter > 1)
+                {
+                    foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
                     {
-                        return Globals.fileDict[fileId];
-                    }
-                   // else if (Globals.fileDict.Any(fileIDKey => fileIDKey.Key.Contains(fileId)) || Globals.fileDict.Any(fileIDKey => fileId.Contains(fileIDKey.Key)))
-                   else
-                    {
-                        foreach (AnalyseFile file in Globals.extractionAnalyse.files.files)
+                        if (file.id.Contains(fileId) || fileId.Contains(file.id))
                         {
-                            if (file.id.Contains(fileId) || fileId.Contains(file.id))
+                            if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
                             {
-                                if (file.id.Equals(fileId.Remove(fileId.Length - 4)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
-                                else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
-                                else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
-                                else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
-                                else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
-                                else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
-                                else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
-                                else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
-                                {
-                                    Globals.fileDict.Add(fileId, file);
-                                    return file;
-                                }
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
+                            }
+                            else if (file.id.Equals(fileId.Remove(fileId.Length - 5)))
+                            {
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
+                            }
+                            else if (file.id.Equals(fileId.Remove(fileId.Length - 8)))
+                            {
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
+                            }
+                            else if (file.id.Equals(fileId.Remove(fileId.Length - 9)))
+                            {
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
+                            }
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 4)))
+                            {
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
+                            }
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 8)))
+                            {
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
+                            }
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 5)))
+                            {
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
+                            }
+                            else if (fileId.Equals(file.id.Remove(file.id.Length - 9)))
+                            {
+                                Globals.fileDict.Add(fileId, file);
+                                return file;
                             }
                         }
                     }
                 }
+
 
                 AnalyseFile fileNew = new AnalyseFile();
                 Globals.fileDict.Add(fileId, fileNew);

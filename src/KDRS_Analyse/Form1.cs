@@ -112,7 +112,7 @@ namespace KDRS_Analyse
             }
             catch (Exception ex)
             {
-                txtBoxInfoText.AppendText(ex.Message);
+                backgroundWorker1.ReportProgress(0, ex.Message);
             }
 
             Console.WriteLine("outFile: " + outFile);
@@ -356,6 +356,9 @@ namespace KDRS_Analyse
         //******************************************************************
         private void btnSaveInput_Click(object sender, EventArgs e)
         {
+            if ("" != txtBoxOutFolder.Text)
+                outFolder = txtBoxOutFolder.Text;
+
             string saveInputFile = Path.Combine(outFolder, "analyse_input_parameters.txt");
 
             string inRoot = "In root folder: " + txtBoxInRoot.Text;
@@ -384,6 +387,9 @@ namespace KDRS_Analyse
 
         private void btnLoadInput_Click(object sender, EventArgs e)
         {
+            if ("" != txtBoxOutFolder.Text)
+                outFolder = txtBoxOutFolder.Text;
+
             string[] input = null;
             string loadInputFile = Path.Combine(outFolder, "analyse_input_parameters.txt");
             if (File.Exists(loadInputFile))
@@ -411,7 +417,7 @@ namespace KDRS_Analyse
     public static class Globals
     {
         public static readonly String toolName = "KDRS Analyse";
-        public static readonly String toolVersion = "0.5";
+        public static readonly String toolVersion = "0.5.1";
 
         public static int toolCounter = 0;
         public static ExtractionAnalyse extractionAnalyse = new ExtractionAnalyse
