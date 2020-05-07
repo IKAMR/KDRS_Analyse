@@ -168,6 +168,7 @@ namespace KDRS_Analyse
             XPathNavigator nav;
             XPathDocument xDoc;
             XPathNodeIterator nodeIter;
+            XPathNavigator node;
 
             xDoc = new XPathDocument(fileName);
 
@@ -245,19 +246,30 @@ namespace KDRS_Analyse
                 AnalyseFile.Valid fileValid = new AnalyseFile.Valid();
 
                 fileValid.toolId = veraTool.toolId;
-                string isCompliant = nodeIter.Current.SelectSingleNode("descendant::validationReport/@isCompliant").Value;
+                node = nodeIter.Current.SelectSingleNode("descendant::validationReport/@isCompliant");
+                string isCompliant = GetInnerXml(node);
+                //string isCompliant = nodeIter.Current.SelectSingleNode("descendant::validationReport/@isCompliant").Value;
                 fileValid.isValid = isCompliant;
-               // Console.WriteLine("Is compliant: " + isCompliant);
+                // Console.WriteLine("Is compliant: " + isCompliant);
 
-                fileValid.passedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedRules").Value;
-                fileValid.failedRules = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedRules").Value;
-                fileValid.passedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedChecks").Value;
-                fileValid.failedChecks = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedChecks").Value;
-                
-                string profName = nodeIter.Current.SelectSingleNode("descendant::validationReport/@profileName").Value;
+                node = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedRules");
+                fileValid.passedRules = GetInnerXml(node);
+                node = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedRules");
+                fileValid.failedRules = GetInnerXml(node);
+                node = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@passedChecks");
+                fileValid.passedChecks = GetInnerXml(node);
+                node = nodeIter.Current.SelectSingleNode("descendant::validationReport/details/@failedChecks");
+                fileValid.failedChecks = GetInnerXml(node);
 
-                string profile = profName.Split(' ')[0];
-                fileValid.type = profile;
+                node = nodeIter.Current.SelectSingleNode("descendant::validationReport/@profileName");
+                string profName = GetInnerXml(node);
+
+                string profile = "";
+                if (!String.IsNullOrEmpty(profName))
+                {
+                    profile = profName.Split(' ')[0];
+                    fileValid.type = profile;
+                }
 
                 if (profile.Contains("PDF"))
                 {

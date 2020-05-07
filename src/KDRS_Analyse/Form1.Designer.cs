@@ -112,37 +112,40 @@
             // rBtnIKAVALog
             // 
             this.rBtnIKAVALog.AutoSize = true;
-            this.rBtnIKAVALog.Location = new System.Drawing.Point(12, 126);
+            this.rBtnIKAVALog.Location = new System.Drawing.Point(12, 173);
             this.rBtnIKAVALog.Name = "rBtnIKAVALog";
             this.rBtnIKAVALog.Size = new System.Drawing.Size(73, 17);
             this.rBtnIKAVALog.TabIndex = 4;
             this.rBtnIKAVALog.Text = "IKAVA log";
             this.rBtnIKAVALog.UseVisualStyleBackColor = true;
+            this.rBtnIKAVALog.Visible = false;
             // 
             // rBtnIKAVAConvFiles
             // 
             this.rBtnIKAVAConvFiles.AutoSize = true;
-            this.rBtnIKAVAConvFiles.Location = new System.Drawing.Point(12, 149);
+            this.rBtnIKAVAConvFiles.Location = new System.Drawing.Point(12, 196);
             this.rBtnIKAVAConvFiles.Name = "rBtnIKAVAConvFiles";
             this.rBtnIKAVAConvFiles.Size = new System.Drawing.Size(128, 17);
             this.rBtnIKAVAConvFiles.TabIndex = 5;
             this.rBtnIKAVAConvFiles.Text = "IKAVA converted files";
             this.rBtnIKAVAConvFiles.UseVisualStyleBackColor = true;
+            this.rBtnIKAVAConvFiles.Visible = false;
             // 
             // rBtnIKAVANoConvFiles
             // 
             this.rBtnIKAVANoConvFiles.AutoSize = true;
-            this.rBtnIKAVANoConvFiles.Location = new System.Drawing.Point(12, 172);
+            this.rBtnIKAVANoConvFiles.Location = new System.Drawing.Point(12, 218);
             this.rBtnIKAVANoConvFiles.Name = "rBtnIKAVANoConvFiles";
             this.rBtnIKAVANoConvFiles.Size = new System.Drawing.Size(146, 17);
             this.rBtnIKAVANoConvFiles.TabIndex = 6;
             this.rBtnIKAVANoConvFiles.Text = "IKAVA files not converted";
             this.rBtnIKAVANoConvFiles.UseVisualStyleBackColor = true;
+            this.rBtnIKAVANoConvFiles.Visible = false;
             // 
             // rBtnVera
             // 
             this.rBtnVera.AutoSize = true;
-            this.rBtnVera.Location = new System.Drawing.Point(12, 195);
+            this.rBtnVera.Location = new System.Drawing.Point(12, 126);
             this.rBtnVera.Name = "rBtnVera";
             this.rBtnVera.Size = new System.Drawing.Size(67, 17);
             this.rBtnVera.TabIndex = 7;
@@ -153,7 +156,7 @@
             // rBtnKOSTVal
             // 
             this.rBtnKOSTVal.AutoSize = true;
-            this.rBtnKOSTVal.Location = new System.Drawing.Point(12, 218);
+            this.rBtnKOSTVal.Location = new System.Drawing.Point(12, 149);
             this.rBtnKOSTVal.Name = "rBtnKOSTVal";
             this.rBtnKOSTVal.Size = new System.Drawing.Size(72, 17);
             this.rBtnKOSTVal.TabIndex = 8;
